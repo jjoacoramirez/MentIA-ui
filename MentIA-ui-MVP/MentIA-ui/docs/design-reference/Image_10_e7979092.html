@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-container": "#645efb", "surface-tint": "#006398", "accent-cyan-light": "#e0f2fe", "accent-cyan": "#0284c7", "accent-indigo": "#4f46e5", "surface-variant": "#dae2fd", "dark-surface-subtle": "#1e293b", "on-primary-fixed": "#001d31", "tertiary-fixed-dim": "#89ceff", "text-secondary": "#475569", "on-surface-variant": "#3f4850", "primary-fixed": "#cce5ff", "tertiary": "#00628d", "border-strong": "#cbd5e1", "surface-card": "#ffffff", "on-tertiary": "#ffffff", "text-primary": "#0f172a", "secondary": "#4b41e1", "dark-surface-base": "#0b1120", "surface-base": "#f8fafc", "error": "#ba1a1a", "accent-indigo-light": "#e0e7ff", "on-secondary-container": "#fffbff", "primary": "#006194", "tertiary-container": "#007cb1", "on-tertiary-fixed": "#001e2f", "outline": "#707881", "dark-text-primary": "#f8fafc", "secondary-fixed": "#e2dfff", "surface-container-low": "#f2f3ff", "on-primary-fixed-variant": "#004b73", "tertiary-fixed": "#c9e6ff", "surface-bright": "#faf8ff", "surface-container-highest": "#dae2fd", "success": "#059669", "accent-violet-light": "#ede9fe", "inverse-primary": "#93ccff", "accent-violet": "#7c3aed", "on-background": "#131b2e", "on-tertiary-container": "#fcfcff", "warning": "#d97706", "dark-border-subtle": "#334155", "surface-dim": "#d2d9f4", "border-subtle": "#e2e8f0", "surface-container-high": "#e2e7ff", "primary-fixed-dim": "#93ccff", "on-tertiary-fixed-variant": "#004c6e", "error-container": "#ffdad6", "on-error": "#ffffff", "on-secondary": "#ffffff", "background": "#faf8ff", "on-error-container": "#93000a", "danger": "#e11d48", "inverse-on-surface": "#eef0ff", "text-muted": "#94a3b8", "outline-variant": "#bfc7d2", "on-surface": "#131b2e", "dark-text-secondary": "#cbd5e1", "on-primary": "#ffffff", "on-secondary-fixed": "#0f0069", "surface-container": "#eaedff", "on-primary-container": "#fdfcff", "primary-container": "#007bb9", "surface-subtle": "#f1f5f9", "secondary-fixed-dim": "#c3c0ff", "surface": "#faf8ff", "surface-container-lowest": "#ffffff", "inverse-surface": "#283044", "dark-surface-card": "#131b2e", "on-secondary-fixed-variant": "#3323cc" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "space-xl": "2.5rem", "gutter": "1rem", "margin": "1.25rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem" }, fontFamily: { "body-md": ["DM Sans"], "label-lg": ["Space Grotesk"], "body-sm": ["DM Sans"], "headline-lg": ["Space Grotesk"], "label-sm": ["Space Grotesk"], "body-lg": ["DM Sans"], "headline-sm": ["Space Grotesk"], "display-lg-mobile": ["Space Grotesk"], "display-lg": ["Space Grotesk"], "headline-md": ["Space Grotesk"], "label-md": ["Space Grotesk"] }, fontSize: { "body-md": ["15px", { lineHeight: "22px", fontWeight: "400" }], "label-lg": ["14px", { lineHeight: "18px", letterSpacing: "0.04em", fontWeight: "700" }], "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }], "headline-lg": ["30px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }], "label-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "700" }], "body-lg": ["17px", { lineHeight: "26px", fontWeight: "400" }], "headline-sm": ["19px", { lineHeight: "26px", letterSpacing: "0", fontWeight: "600" }], "display-lg-mobile": ["34px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }], "display-lg": ["44px", { lineHeight: "52px", letterSpacing: "-0.03em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "30px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }] } } } };</script><style>@layer base{html,body{width:100%;min-height:100%;margin:0;padding:0;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface-base font-body-md text-body-md text-text-primary flex flex-col min-h-screen antialiased selection:bg-accent-cyan-light selection:text-accent-cyan"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-card/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(15,23,42,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-xs"><button aria-label="Volver" class="w-11 h-11 -ml-space-xs flex items-center justify-center rounded-full text-text-primary hover:bg-surface-subtle transition-colors" onclick="history.back()"><span class="material-symbols-outlined text-[22px]">arrow_back</span></button><img alt="Brand logo. - Primary color: #06b6d4
+- Font: spaceGrotesk
+- Mode: dark
+- Roundness: rounded-full
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XHiSACxv6Spfey8Ce1HbzVsax4X5IAxmtCOJP32kDAUuj0WCWkSMgNhpfRHBGCIGYoGGDXW2Ru_Ve8vA-csWHcl_oHIqvTho8Qpz2OrONA1KTQGIx5gNqhZNw3BUKuthgfMrBApwyM-XZS7WWTfBLcHBS_sBbXqRTxDwyauRjkoi0Adz4hCg9orpwFTBEcQZ_jPH1KNbbfX97PiRu00u1ZgyqWYt168mafJgo8GBHzfx5ju5NpknzDMcOu"/><h1 class="font-headline-sm text-headline-sm text-text-primary truncate max-w-[180px]">Sesion Activa</h1></div><div class="flex items-center gap-space-xs"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col w-full max-w-lg mx-auto pt-16 pb-space-lg px-margin bg-surface-base"><div class="flex flex-col w-full pb-space-lg gap-y-space-md">
+<!-- HUD & Progreso de Sesión -->
+<section class="bg-surface-card rounded-lg p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="w-2.5 h-2.5 rounded-full bg-accent-cyan animate-pulse"></span>
+<span class="font-label-md text-label-md text-text-secondary uppercase tracking-wider">Actividad 2 de 5</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<div class="flex items-center gap-1 bg-accent-cyan-light px-space-sm py-1 rounded-full text-accent-cyan">
+<span class="material-symbols-outlined text-[16px]">timer</span>
+<span class="font-label-md text-label-md font-bold" id="session-timer">00:43</span>
+</div>
+<button aria-label="Cerrar ejercicio" class="w-8 h-8 rounded-full bg-surface-subtle hover:bg-surface-dim flex items-center justify-center text-text-secondary transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Barra de progreso -->
+<div class="w-full h-2 rounded-full bg-surface-subtle overflow-hidden">
+<div class="h-full rounded-full bg-accent-cyan transition-all duration-500 ease-out" style="width: 40%"></div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm uppercase tracking-wide">
+<span class="material-symbols-outlined text-[14px]">psychology</span>
+        Atención Selectiva
+      </span>
+<span class="font-label-sm text-label-sm text-text-muted">40% completado</span>
+</div>
+</section>
+<!-- Tarjeta de Instrucción & Estado -->
+<section class="flex flex-col gap-space-xs px-1">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-0.5 rounded-full bg-accent-cyan text-on-primary font-label-sm text-label-sm tracking-widest uppercase">
+        Fase Memorización
+      </span>
+<span class="font-label-md text-label-md text-text-secondary flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-accent-indigo">visibility</span>
+        Nivel Activo
+      </span>
+</div>
+<h2 class="font-headline-md text-headline-md text-text-primary">Recordá la secuencia</h2>
+<p class="font-body-md text-body-md text-text-secondary">
+      Tocá los símbolos en el orden numérico correcto (<strong class="text-accent-cyan font-bold">1 → 4</strong>).
+    </p>
+</section>
+<!-- Matriz de Selección 3x3 -->
+<section class="bg-surface-subtle p-space-sm rounded-lg">
+<div class="grid grid-cols-3 gap-space-sm" id="grid-container">
+<!-- 01 Hexágono -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="1" data-symbol="Hexágono" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">01</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">hexagon</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Hexágono</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 02 Triángulo -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="2" data-symbol="Triángulo" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">02</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">change_history</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Triángulo</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 03 Diamante -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="3" data-symbol="Diamante" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">03</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">diamond</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Diamante</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 04 Cubo -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="4" data-symbol="Cubo" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">04</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">deployed_code</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Cubo</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 05 Círculo -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="5" data-symbol="Círculo" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">05</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">circle</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Círculo</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 06 Cuadrado -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="6" data-symbol="Cuadrado" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">06</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">square</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Cuadrado</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 07 Estrella -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="7" data-symbol="Estrella" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">07</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">star</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Estrella</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 08 Cuadrícula -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="8" data-symbol="Cuadrícula" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">08</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">grid_view</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Cuadrícula</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+<!-- 09 Anillo -->
+<button class="symbol-node relative aspect-square bg-surface-card rounded-DEFAULT shadow-sm flex flex-col items-center justify-center transition-all duration-150 active:scale-95 group focus:outline-none" data-id="9" data-symbol="Anillo" type="button">
+<span class="absolute top-2 left-2.5 font-label-sm text-label-sm text-text-muted font-bold group-hover:text-accent-cyan">09</span>
+<span class="material-symbols-outlined text-[34px] text-text-primary group-hover:text-accent-cyan transition-colors">radio_button_unchecked</span>
+<span class="font-label-sm text-label-sm text-text-secondary mt-1">Anillo</span>
+<div class="selection-badge hidden absolute inset-0 bg-accent-cyan-light/80 rounded-DEFAULT items-center justify-center">
+<span class="order-indicator font-headline-sm text-headline-sm text-accent-cyan font-bold"></span>
+</div>
+</button>
+</div>
+</section>
+<!-- Rastro Visual y Reset -->
+<section class="bg-surface-card rounded-lg p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider">Tu Secuencia</span>
+<button class="inline-flex items-center gap-1 text-accent-cyan hover:text-accent-indigo transition-colors font-label-sm text-label-sm py-1 px-2 rounded-full hover:bg-accent-cyan-light" id="btn-reset" type="button">
+<span class="material-symbols-outlined text-[16px]">refresh</span>
+        Reiniciar
+      </button>
+</div>
+<!-- 4 Slots de rastro -->
+<div class="grid grid-cols-4 gap-space-xs">
+<div class="h-14 rounded-DEFAULT bg-surface-subtle flex flex-col items-center justify-center transition-colors" id="slot-0">
+<span class="slot-text font-headline-sm text-headline-sm text-text-muted">-</span>
+<span class="slot-label font-label-sm text-label-sm text-text-muted hidden"></span>
+</div>
+<div class="h-14 rounded-DEFAULT bg-surface-subtle flex flex-col items-center justify-center transition-colors" id="slot-1">
+<span class="slot-text font-headline-sm text-headline-sm text-text-muted">-</span>
+<span class="slot-label font-label-sm text-label-sm text-text-muted hidden"></span>
+</div>
+<div class="h-14 rounded-DEFAULT bg-surface-subtle flex flex-col items-center justify-center transition-colors" id="slot-2">
+<span class="slot-text font-headline-sm text-headline-sm text-text-muted">-</span>
+<span class="slot-label font-label-sm text-label-sm text-text-muted hidden"></span>
+</div>
+<div class="h-14 rounded-DEFAULT bg-surface-subtle flex flex-col items-center justify-center transition-colors" id="slot-3">
+<span class="slot-text font-headline-sm text-headline-sm text-text-muted">-</span>
+<span class="slot-label font-label-sm text-label-sm text-text-muted hidden"></span>
+</div>
+</div>
+</section>
+<!-- Botón de Confirmación Principal -->
+<section class="mt-space-xs flex flex-col gap-2">
+<button class="w-full h-[54px] rounded-full bg-surface-dim text-text-muted font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm transition-all duration-200 cursor-not-allowed" disabled="" id="btn-submit" type="button">
+<span>Confirmar respuesta</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-1 text-text-muted">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+<span class="font-label-sm text-label-sm">Completá 4 selecciones para continuar</span>
+</div>
+</section>
+</div>
+<script>
+  (function() {
+    const selectedSequence = [];
+    const maxSelections = 4;
+    const buttons = document.querySelectorAll('.symbol-node');
+    const submitBtn = document.getElementById('btn-submit');
+    const resetBtn = document.getElementById('btn-reset');
+
+    function updateSlots() {
+      for (let i = 0; i < maxSelections; i++) {
+        const slot = document.getElementById(`slot-${i}`);
+        const slotText = slot.querySelector('.slot-text');
+        const slotLabel = slot.querySelector('.slot-label');
+
+        if (selectedSequence[i]) {
+          slot.className = 'h-14 rounded-DEFAULT bg-accent-cyan-light flex flex-col items-center justify-center transition-all scale-100 shadow-sm';
+          slotText.className = 'slot-text font-headline-sm text-headline-sm text-accent-cyan font-bold';
+          slotText.textContent = selectedSequence[i].id;
+          slotLabel.className = 'slot-label font-label-sm text-label-sm text-accent-cyan truncate max-w-[65px]';
+          slotLabel.textContent = selectedSequence[i].symbol;
+          slotLabel.classList.remove('hidden');
+        } else {
+          slot.className = 'h-14 rounded-DEFAULT bg-surface-subtle flex flex-col items-center justify-center transition-colors';
+          slotText.className = 'slot-text font-headline-sm text-headline-sm text-text-muted';
+          slotText.textContent = '-';
+          slotLabel.classList.add('hidden');
+        }
+      }
+
+      if (selectedSequence.length === maxSelections) {
+        submitBtn.disabled = false;
+        submitBtn.className = 'w-full h-[54px] rounded-full bg-accent-cyan hover:bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md transition-all duration-150 active:scale-[0.98] cursor-pointer';
+      } else {
+        submitBtn.disabled = true;
+        submitBtn.className = 'w-full h-[54px] rounded-full bg-surface-dim text-text-muted font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm transition-all duration-200 cursor-not-allowed';
+      }
+    }
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-id');
+        const symbol = btn.getAttribute('data-symbol');
+        const badge = btn.querySelector('.selection-badge');
+        const indicator = btn.querySelector('.order-indicator');
+
+        const existingIndex = selectedSequence.findIndex(item => item.id === id);
+
+        if (existingIndex > -1) {
+          selectedSequence.splice(existingIndex, 1);
+          badge.classList.add('hidden');
+          badge.classList.remove('flex');
+          // Re-render order badges
+          refreshBadges();
+        } else {
+          if (selectedSequence.length < maxSelections) {
+            selectedSequence.push({ id, symbol, element: btn });
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+            indicator.textContent = selectedSequence.length;
+          }
+        }
+        updateSlots();
+      });
+    });
+
+    function refreshBadges() {
+      buttons.forEach(b => {
+        const badge = b.querySelector('.selection-badge');
+        badge.classList.add('hidden');
+        badge.classList.remove('flex');
+      });
+      selectedSequence.forEach((item, index) => {
+        const b = item.element;
+        const badge = b.querySelector('.selection-badge');
+        const indicator = b.querySelector('.order-indicator');
+        badge.classList.remove('hidden');
+        badge.classList.add('flex');
+        indicator.textContent = index + 1;
+      });
+    }
+
+    resetBtn.addEventListener('click', () => {
+      selectedSequence.length = 0;
+      refreshBadges();
+      updateSlots();
+    });
+
+    submitBtn.addEventListener('click', () => {
+      if (selectedSequence.length === maxSelections) {
+        submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[20px]">sync</span><span>Procesando...</span>';
+        setTimeout(() => {
+          submitBtn.className = 'w-full h-[54px] rounded-full bg-success text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md';
+          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">check_circle</span><span>¡Completado con éxito!</span>';
+        }, 600);
+      }
+    });
+
+    // Temporizador regresivo estético
+    let seconds = 43;
+    const timerElem = document.getElementById('session-timer');
+    const timerInterval = setInterval(() => {
+      if (seconds > 0) {
+        seconds--;
+        timerElem.textContent = '00:' + (seconds < 10 ? '0' : '') + seconds;
+      } else {
+        clearInterval(timerInterval);
+      }
+    }, 1000);
+  })();
+</script></main></body></html>

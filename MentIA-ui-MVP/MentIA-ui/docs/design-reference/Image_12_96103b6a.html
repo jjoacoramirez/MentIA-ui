@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="h-full" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Space+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-container": "#645efb", "surface-tint": "#006398", "accent-cyan-light": "#e0f2fe", "accent-cyan": "#0284c7", "accent-indigo": "#4f46e5", "surface-variant": "#dae2fd", "dark-surface-subtle": "#1e293b", "on-primary-fixed": "#001d31", "tertiary-fixed-dim": "#89ceff", "text-secondary": "#475569", "on-surface-variant": "#3f4850", "primary-fixed": "#cce5ff", "tertiary": "#00628d", "border-strong": "#cbd5e1", "surface-card": "#ffffff", "on-tertiary": "#ffffff", "text-primary": "#0f172a", "secondary": "#4b41e1", "dark-surface-base": "#0b1120", "surface-base": "#f8fafc", "error": "#ba1a1a", "accent-indigo-light": "#e0e7ff", "on-secondary-container": "#fffbff", "primary": "#006194", "tertiary-container": "#007cb1", "on-tertiary-fixed": "#001e2f", "outline": "#707881", "dark-text-primary": "#f8fafc", "secondary-fixed": "#e2dfff", "surface-container-low": "#f2f3ff", "on-primary-fixed-variant": "#004b73", "tertiary-fixed": "#c9e6ff", "surface-bright": "#faf8ff", "surface-container-highest": "#dae2fd", "success": "#059669", "accent-violet-light": "#ede9fe", "inverse-primary": "#93ccff", "accent-violet": "#7c3aed", "on-background": "#131b2e", "on-tertiary-container": "#fcfcff", "warning": "#d97706", "dark-border-subtle": "#334155", "surface-dim": "#d2d9f4", "border-subtle": "#e2e8f0", "surface-container-high": "#e2e7ff", "primary-fixed-dim": "#93ccff", "on-tertiary-fixed-variant": "#004c6e", "error-container": "#ffdad6", "on-error": "#ffffff", "on-secondary": "#ffffff", "background": "#faf8ff", "on-error-container": "#93000a", "danger": "#e11d48", "inverse-on-surface": "#eef0ff", "text-muted": "#94a3b8", "outline-variant": "#bfc7d2", "on-surface": "#131b2e", "dark-text-secondary": "#cbd5e1", "on-primary": "#ffffff", "on-secondary-fixed": "#0f0069", "surface-container": "#eaedff", "on-primary-container": "#fdfcff", "primary-container": "#007bb9", "surface-subtle": "#f1f5f9", "secondary-fixed-dim": "#c3c0ff", "surface": "#faf8ff", "surface-container-lowest": "#ffffff", "inverse-surface": "#283044", "dark-surface-card": "#131b2e", "on-secondary-fixed-variant": "#3323cc" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "space-xl": "2.5rem", "gutter": "1rem", "margin": "1.25rem", "space-sm": "0.5rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "space-md": "1rem" }, fontFamily: { "body-md": ["DM Sans"], "label-lg": ["Space Grotesk"], "body-sm": ["DM Sans"], "headline-lg": ["Space Grotesk"], "label-sm": ["Space Grotesk"], "body-lg": ["DM Sans"], "headline-sm": ["Space Grotesk"], "display-lg-mobile": ["Space Grotesk"], "display-lg": ["Space Grotesk"], "headline-md": ["Space Grotesk"], "label-md": ["Space Grotesk"] }, fontSize: { "body-md": ["15px", { lineHeight: "22px", fontWeight: "400" }], "label-lg": ["14px", { lineHeight: "18px", letterSpacing: "0.04em", fontWeight: "700" }], "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }], "headline-lg": ["30px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }], "label-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "700" }], "body-lg": ["17px", { lineHeight: "26px", fontWeight: "400" }], "headline-sm": ["19px", { lineHeight: "26px", letterSpacing: "0", fontWeight: "600" }], "display-lg-mobile": ["34px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }], "display-lg": ["44px", { lineHeight: "52px", letterSpacing: "-0.03em", fontWeight: "700" }], "headline-md": ["24px", { lineHeight: "30px", letterSpacing: "-0.01em", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }] } } } };</script><style>@layer base{html,body{width:100%;min-height:100%;margin:0;padding:0;}body{overscroll-behavior-y:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface-base font-body-md text-body-md text-text-primary flex flex-col min-h-screen antialiased selection:bg-accent-cyan-light selection:text-accent-cyan"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-card/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(15,23,42,0.04)]"><div class="h-16 px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><img alt="Brand logo. - Primary color: #06b6d4
+- Font: spaceGrotesk
+- Mode: dark
+- Roundness: rounded-full
+" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1XHiSACxv6Spfey8Ce1HbzVsax4X5IAxmtCOJP32kDAUuj0WCWkSMgNhpfRHBGCIGYoGGDXW2Ru_Ve8vA-csWHcl_oHIqvTho8Qpz2OrONA1KTQGIx5gNqhZNw3BUKuthgfMrBApwyM-XZS7WWTfBLcHBS_sBbXqRTxDwyauRjkoi0Adz4hCg9orpwFTBEcQZ_jPH1KNbbfX97PiRu00u1ZgyqWYt168mafJgo8GBHzfx5ju5NpknzDMcOu"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-text-primary leading-none tracking-tight">MentIA</span><span class="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider leading-none mt-0.5">Perfil</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Cambiar tema o ajustes" class="w-11 h-11 flex items-center justify-center rounded-full text-text-secondary hover:text-text-primary hover:bg-surface-subtle transition-colors"><span class="material-symbols-outlined text-[20px]">routine</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col w-full max-w-lg mx-auto pt-16 pb-28 px-margin bg-surface-base"><div class="flex flex-col w-full pb-8">
+<!-- USER CARD HEADER -->
+<section class="bg-surface-card rounded-lg p-space-md shadow-md mb-space-md relative overflow-hidden">
+<div class="absolute -right-6 -top-6 w-32 h-32 bg-accent-cyan-light rounded-full blur-2xl opacity-60 pointer-events-none"></div>
+<div class="relative z-10 flex items-center gap-space-md">
+<div class="relative flex-shrink-0">
+<div class="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-accent-indigo flex items-center justify-center shadow-md">
+<span class="font-headline-sm text-headline-sm text-on-primary font-bold tracking-tight">W</span>
+</div>
+<div class="absolute -bottom-1 -right-1 bg-success w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-surface-card">
+<span class="material-symbols-outlined text-white text-[12px]">bolt</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-space-xs">
+<h2 class="font-headline-sm text-headline-sm text-text-primary truncate">Wanda</h2>
+<span class="bg-surface-container-high text-accent-indigo font-label-sm text-label-sm px-space-xs py-0.5 rounded-full uppercase">
+            Nivel 4
+          </span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary truncate">@wanda_mind</p>
+<div class="flex items-center gap-space-xs mt-1">
+<span class="font-label-md text-label-md text-primary">Exploradora Ágil</span>
+<span class="text-text-muted text-[10px]">•</span>
+<div class="flex items-center gap-0.5">
+<span class="material-symbols-outlined text-warning text-[14px]" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="font-label-md text-label-md text-text-primary font-bold">420 XP</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Mental Stat Bar -->
+<div class="mt-space-md pt-space-sm bg-surface-subtle rounded-DEFAULT p-space-sm flex items-center justify-around text-center">
+<div>
+<span class="font-headline-sm text-headline-sm text-text-primary block leading-none font-bold">14</span>
+<span class="font-label-sm text-label-sm text-text-secondary">Días racha</span>
+</div>
+<div class="w-px h-6 bg-border-subtle"></div>
+<div>
+<span class="font-headline-sm text-headline-sm text-text-primary block leading-none font-bold">96%</span>
+<span class="font-label-sm text-label-sm text-text-secondary">Precisión</span>
+</div>
+<div class="w-px h-6 bg-border-subtle"></div>
+<div>
+<span class="font-headline-sm text-headline-sm text-accent-cyan block leading-none font-bold">Top 8%</span>
+<span class="font-label-sm text-label-sm text-text-secondary">Agilidad</span>
+</div>
+</div>
+</section>
+<!-- APARIENCIA Y TEMA (FEATURED HERO SECTION) -->
+<section class="bg-surface-card rounded-lg p-space-md shadow-md mb-space-md relative">
+<div class="flex items-center justify-between mb-space-xs">
+<div class="flex items-center gap-space-xs">
+<div class="w-8 h-8 rounded-full bg-accent-cyan-light flex items-center justify-center">
+<span class="material-symbols-outlined text-accent-cyan text-[18px]">palette</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Apariencia y tema</h3>
+</div>
+<span class="font-label-sm text-label-sm bg-accent-cyan-light text-accent-cyan px-space-xs py-0.5 rounded-full font-bold">
+        Activo: Claro
+      </span>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mb-space-md">
+      Ajustá la interfaz para máxima comodidad de lectura y menor fatiga visual según tu entorno cognitivo.
+    </p>
+<!-- Visual Interactive Selector -->
+<div class="grid grid-cols-3 gap-space-xs mb-space-sm" id="theme-selector-group">
+<!-- Option 1: Claro (Selected Default) -->
+<button class="flex flex-col items-center p-space-xs rounded-DEFAULT bg-surface-base text-text-primary shadow-sm ring-2 ring-accent-cyan transition-all relative group text-left" id="theme-btn-light" onclick="selectTheme('light')" type="button">
+<div class="w-full h-16 rounded-DEFAULT bg-white flex flex-col p-1.5 justify-between shadow-inner mb-space-xs overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="w-4 h-1.5 rounded-full bg-accent-cyan"></div>
+<span class="material-symbols-outlined text-warning text-[14px]" style="font-variation-settings: 'FILL' 1;">light_mode</span>
+</div>
+<div class="space-y-1">
+<div class="w-8 h-1 rounded-full bg-surface-subtle"></div>
+<div class="w-12 h-1.5 rounded-full bg-accent-indigo-light"></div>
+</div>
+</div>
+<div class="w-full flex items-center justify-between px-0.5">
+<span class="font-label-md text-label-md font-bold text-text-primary">Claro</span>
+<span class="material-symbols-outlined text-accent-cyan text-[16px]" id="check-light">check_circle</span>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted leading-tight mt-0.5 text-left w-full">Paper White</span>
+</button>
+<!-- Option 2: Oscuro -->
+<button class="flex flex-col items-center p-space-xs rounded-DEFAULT bg-surface-subtle text-text-secondary transition-all relative group text-left" id="theme-btn-dark" onclick="selectTheme('dark')" type="button">
+<div class="w-full h-16 rounded-DEFAULT bg-dark-surface-base flex flex-col p-1.5 justify-between shadow-inner mb-space-xs overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="w-4 h-1.5 rounded-full bg-accent-indigo"></div>
+<span class="material-symbols-outlined text-accent-cyan-light text-[14px]">dark_mode</span>
+</div>
+<div class="space-y-1">
+<div class="w-8 h-1 rounded-full bg-dark-surface-subtle"></div>
+<div class="w-12 h-1.5 rounded-full bg-dark-border-subtle"></div>
+</div>
+</div>
+<div class="w-full flex items-center justify-between px-0.5">
+<span class="font-label-md text-label-md font-bold text-text-primary">Oscuro</span>
+<span class="material-symbols-outlined text-text-muted text-[16px] hidden" id="check-dark">check_circle</span>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted leading-tight mt-0.5 text-left w-full">Modo noche</span>
+</button>
+<!-- Option 3: Dispositivo -->
+<button class="flex flex-col items-center p-space-xs rounded-DEFAULT bg-surface-subtle text-text-secondary transition-all relative group text-left" id="theme-btn-system" onclick="selectTheme('system')" type="button">
+<div class="w-full h-16 rounded-DEFAULT bg-gradient-to-r from-white via-surface-container-high to-dark-surface-base flex flex-col p-1.5 justify-between shadow-inner mb-space-xs overflow-hidden">
+<div class="flex items-center justify-between">
+<div class="w-4 h-1.5 rounded-full bg-secondary"></div>
+<span class="material-symbols-outlined text-text-primary text-[14px]">brightness_auto</span>
+</div>
+<div class="space-y-1">
+<div class="w-10 h-1 rounded-full bg-text-muted/40"></div>
+<div class="w-6 h-1.5 rounded-full bg-primary/40"></div>
+</div>
+</div>
+<div class="w-full flex items-center justify-between px-0.5">
+<span class="font-label-md text-label-md font-bold text-text-primary">Sistema</span>
+<span class="material-symbols-outlined text-text-muted text-[16px] hidden" id="check-system">check_circle</span>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted leading-tight mt-0.5 text-left w-full">Auto sincronía</span>
+</button>
+</div>
+<div class="bg-surface-subtle rounded-DEFAULT p-space-sm flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-accent-cyan text-[18px]">wb_incandescent</span>
+<p class="font-body-sm text-body-sm text-text-secondary flex-1">
+        El modo claro actual utiliza balance de contraste AAA con superficie de relajación ocular <strong class="text-text-primary font-bold">#F8FAFC</strong>.
+      </p>
+</div>
+</section>
+<!-- PREFERENCIAS DE ENTRENAMIENTO -->
+<section class="bg-surface-card rounded-lg p-space-md shadow-md mb-space-md">
+<div class="flex items-center gap-space-xs mb-space-sm">
+<div class="w-8 h-8 rounded-full bg-accent-indigo-light flex items-center justify-center">
+<span class="material-symbols-outlined text-accent-indigo text-[18px]">tune</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Preferencias de entrenamiento</h3>
+<p class="font-body-sm text-body-sm text-text-secondary">Tu plan adaptativo para optimizar rendimiento diario.</p>
+</div>
+</div>
+<!-- Micro Cards Grid -->
+<div class="space-y-space-sm mt-space-sm">
+<!-- Frecuencia -->
+<div class="bg-surface-subtle rounded-DEFAULT p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+</div>
+<div>
+<span class="font-label-md text-label-md text-text-primary block font-bold">Frecuencia recomendada</span>
+<span class="font-body-sm text-body-sm text-text-secondary">Micro-sesiones de enfoque</span>
+</div>
+</div>
+<span class="bg-accent-indigo-light text-accent-indigo font-label-sm text-label-sm px-space-sm py-1 rounded-full font-bold">
+          3 a 5 min / día
+        </span>
+</div>
+<!-- Capacidades Priorizadas -->
+<div class="bg-surface-subtle rounded-DEFAULT p-space-sm">
+<div class="flex items-center justify-between mb-space-xs">
+<span class="font-label-md text-label-md text-text-primary font-bold">Capacidades priorizadas</span>
+<span class="font-label-sm text-label-sm text-text-secondary">2 activas</span>
+</div>
+<div class="flex flex-wrap gap-space-xs">
+<div class="flex items-center gap-1 bg-white px-space-sm py-1 rounded-full shadow-sm text-text-primary">
+<span class="w-2 h-2 rounded-full bg-accent-cyan"></span>
+<span class="font-label-sm text-label-sm">Memoria de trabajo</span>
+</div>
+<div class="flex items-center gap-1 bg-white px-space-sm py-1 rounded-full shadow-sm text-text-primary">
+<span class="w-2 h-2 rounded-full bg-accent-indigo"></span>
+<span class="font-label-sm text-label-sm">Atención sostenida</span>
+</div>
+<button class="flex items-center gap-1 bg-transparent border-0 px-space-xs py-1 rounded-full text-accent-cyan font-label-sm text-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+            Editar
+          </button>
+</div>
+</div>
+</div>
+</section>
+<!-- SEGURIDAD Y PRIVACIDAD (MINIMIZACIÓN DE DATOS) -->
+<section class="bg-surface-card rounded-lg p-space-md shadow-md mb-space-md">
+<div class="flex items-center gap-space-xs mb-space-xs">
+<div class="w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-[18px]">verified_user</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-text-primary">Seguridad y privacidad</h3>
+<span class="font-label-sm text-label-sm text-success font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px]">lock</span>
+          Arquitectura zero-knowledge
+        </span>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-text-secondary mb-space-sm">
+      Guardá este código para ingresar en cualquier dispositivo sin depender de contraseñas ni registrar tu email.
+    </p>
+<!-- Key Container Box -->
+<div class="bg-surface-subtle rounded-DEFAULT p-space-sm flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-xs min-w-0">
+<span class="material-symbols-outlined text-text-secondary text-[20px]">vpn_key</span>
+<div class="min-w-0">
+<span class="font-label-sm text-label-sm text-text-secondary block">Código de recuperación</span>
+<code class="font-label-lg text-label-lg text-text-primary font-bold tracking-wider select-all" id="recovery-code">
+            MTIA-9482-XK
+          </code>
+</div>
+</div>
+<button class="h-9 px-space-sm bg-surface-card text-accent-cyan hover:bg-accent-cyan-light rounded-full font-label-sm text-label-sm flex items-center gap-1 shadow-sm transition-all active:scale-95 flex-shrink-0" id="copy-code-btn" onclick="copyCode()" type="button">
+<span class="material-symbols-outlined text-[16px]" id="copy-icon">content_copy</span>
+<span id="copy-text">Copiar</span>
+</button>
+</div>
+<div class="mt-space-sm flex items-start gap-space-xs text-text-muted">
+<span class="material-symbols-outlined text-[16px] mt-0.5">info</span>
+<p class="font-body-sm text-body-sm text-text-secondary text-xs">
+        MentIA almacena tus matrices neuronales de forma disociada. Si perdés tu clave secreta, nadie podrá recuperar tu historial de progreso.
+      </p>
+</div>
+</section>
+<!-- LOGOUT & DESTRUCTIVE ACTIONS -->
+<div class="flex flex-col items-center gap-space-sm mt-space-xs">
+<button class="w-full h-12 rounded-full bg-surface-card hover:bg-surface-subtle text-danger font-label-md text-label-md flex items-center justify-center gap-space-xs shadow-sm transition-transform active:scale-98" type="button">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+      Cerrar sesión en este dispositivo
+    </button>
+<p class="font-label-sm text-label-sm text-text-muted text-center">
+      MentIA v2.4.0 • Modo Cognitivo Saludable
+    </p>
+</div>
+</div>
+<script>
+  function selectTheme(mode) {
+    const lightBtn = document.getElementById('theme-btn-light');
+    const darkBtn = document.getElementById('theme-btn-dark');
+    const systemBtn = document.getElementById('theme-btn-system');
+
+    const checkLight = document.getElementById('check-light');
+    const checkDark = document.getElementById('check-dark');
+    const checkSystem = document.getElementById('check-system');
+
+    // Reset base styles
+    [lightBtn, darkBtn, systemBtn].forEach(btn => {
+      btn.className = 'flex flex-col items-center p-space-xs rounded-DEFAULT bg-surface-subtle text-text-secondary transition-all relative group text-left';
+    });
+    [checkLight, checkDark, checkSystem].forEach(chk => {
+      chk.classList.add('hidden');
+      chk.classList.remove('text-accent-cyan');
+    });
+
+    if (mode === 'light') {
+      lightBtn.className = 'flex flex-col items-center p-space-xs rounded-DEFAULT bg-surface-base text-text-primary shadow-sm ring-2 ring-accent-cyan transition-all relative group text-left';
+      checkLight.classList.remove('hidden');
+      checkLight.classList.add('text-accent-cyan');
+    } else if (mode === 'dark') {
+      darkBtn.className = 'flex flex-col items-center p-space-xs rounded-DEFAULT bg-surface-base text-text-primary shadow-sm ring-2 ring-accent-cyan transition-all relative group text-left';
+      checkDark.classList.remove('hidden');
+      checkDark.classList.add('text-accent-cyan');
+    } else {
+      systemBtn.className = 'flex flex-col items-center p-space-xs rounded-DEFAULT bg-surface-base text-text-primary shadow-sm ring-2 ring-accent-cyan transition-all relative group text-left';
+      checkSystem.classList.remove('hidden');
+      checkSystem.classList.add('text-accent-cyan');
+    }
+  }
+
+  function copyCode() {
+    const code = document.getElementById('recovery-code').innerText.trim();
+    navigator.clipboard?.writeText(code).then(() => {
+      const copyText = document.getElementById('copy-text');
+      const copyIcon = document.getElementById('copy-icon');
+      copyText.innerText = '¡Copiado!';
+      copyIcon.innerText = 'done';
+      setTimeout(() => {
+        copyText.innerText = 'Copiar';
+        copyIcon.innerText = 'content_copy';
+      }, 2000);
+    }).catch(() => {
+      const copyText = document.getElementById('copy-text');
+      copyText.innerText = 'Copiado';
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe pointer-events-none" data-active-classes="text-accent-cyan font-bold scale-105"><div class="max-w-lg mx-auto px-margin pb-space-sm"><div class="pointer-events-auto h-16 bg-surface-card/90 backdrop-blur-xl rounded-full shadow-[0_12px_32px_-4px_rgba(15,23,42,0.08),0_4px_8px_-2px_rgba(15,23,42,0.02)] flex items-center justify-around px-space-xs"><a class="flex-1 flex flex-col items-center justify-center h-full text-text-secondary hover:text-text-primary transition-all" data-path="inicio" href="#"><span class="material-symbols-outlined text-[22px]">grid_view</span><span class="font-label-sm text-label-sm leading-none mt-1">Inicio</span></a><a class="flex-1 flex flex-col items-center justify-center h-full text-text-secondary hover:text-text-primary transition-all" data-path="entrenar" href="#"><span class="material-symbols-outlined text-[22px]">neurology</span><span class="font-label-sm text-label-sm leading-none mt-1">Entrenar</span></a><a class="flex-1 flex flex-col items-center justify-center h-full text-text-secondary hover:text-text-primary transition-all" data-path="progreso" href="#"><span class="material-symbols-outlined text-[22px]">insights</span><span class="font-label-sm text-label-sm leading-none mt-1">Progreso</span></a><a aria-current="page" class="flex-1 flex flex-col items-center justify-center h-full transition-all text-accent-cyan font-bold scale-105" data-path="perfil" href="#"><span class="material-symbols-outlined text-[22px]">account_circle</span><span class="font-label-sm text-label-sm leading-none mt-1">Perfil</span></a></div></div></nav></body></html>

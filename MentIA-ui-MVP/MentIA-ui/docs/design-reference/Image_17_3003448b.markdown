@@ -1,0 +1,246 @@
+---
+name: MentIA Light Clarity
+colors:
+  surface: '#faf8ff'
+  surface-dim: '#d2d9f4'
+  surface-bright: '#faf8ff'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#f2f3ff'
+  surface-container: '#eaedff'
+  surface-container-high: '#e2e7ff'
+  surface-container-highest: '#dae2fd'
+  on-surface: '#131b2e'
+  on-surface-variant: '#3f4850'
+  inverse-surface: '#283044'
+  inverse-on-surface: '#eef0ff'
+  outline: '#707881'
+  outline-variant: '#bfc7d2'
+  surface-tint: '#006398'
+  primary: '#006194'
+  on-primary: '#ffffff'
+  primary-container: '#007bb9'
+  on-primary-container: '#fdfcff'
+  inverse-primary: '#93ccff'
+  secondary: '#4b41e1'
+  on-secondary: '#ffffff'
+  secondary-container: '#645efb'
+  on-secondary-container: '#fffbff'
+  tertiary: '#00628d'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#007cb1'
+  on-tertiary-container: '#fcfcff'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#cce5ff'
+  primary-fixed-dim: '#93ccff'
+  on-primary-fixed: '#001d31'
+  on-primary-fixed-variant: '#004b73'
+  secondary-fixed: '#e2dfff'
+  secondary-fixed-dim: '#c3c0ff'
+  on-secondary-fixed: '#0f0069'
+  on-secondary-fixed-variant: '#3323cc'
+  tertiary-fixed: '#c9e6ff'
+  tertiary-fixed-dim: '#89ceff'
+  on-tertiary-fixed: '#001e2f'
+  on-tertiary-fixed-variant: '#004c6e'
+  background: '#faf8ff'
+  on-background: '#131b2e'
+  surface-variant: '#dae2fd'
+  surface-base: '#f8fafc'
+  surface-card: '#ffffff'
+  surface-subtle: '#f1f5f9'
+  border-subtle: '#e2e8f0'
+  border-strong: '#cbd5e1'
+  text-primary: '#0f172a'
+  text-secondary: '#475569'
+  text-muted: '#94a3b8'
+  accent-cyan: '#0284c7'
+  accent-cyan-light: '#e0f2fe'
+  accent-indigo: '#4f46e5'
+  accent-indigo-light: '#e0e7ff'
+  accent-violet: '#7c3aed'
+  accent-violet-light: '#ede9fe'
+  success: '#059669'
+  warning: '#d97706'
+  danger: '#e11d48'
+  dark-surface-base: '#0b1120'
+  dark-surface-card: '#131b2e'
+  dark-surface-subtle: '#1e293b'
+  dark-border-subtle: '#334155'
+  dark-text-primary: '#f8fafc'
+  dark-text-secondary: '#cbd5e1'
+typography:
+  display-lg:
+    fontFamily: Space Grotesk
+    fontSize: 44px
+    fontWeight: '700'
+    lineHeight: 52px
+    letterSpacing: -0.03em
+  display-lg-mobile:
+    fontFamily: Space Grotesk
+    fontSize: 34px
+    fontWeight: '700'
+    lineHeight: 40px
+    letterSpacing: -0.02em
+  headline-lg:
+    fontFamily: Space Grotesk
+    fontSize: 30px
+    fontWeight: '700'
+    lineHeight: 36px
+    letterSpacing: -0.02em
+  headline-md:
+    fontFamily: Space Grotesk
+    fontSize: 24px
+    fontWeight: '600'
+    lineHeight: 30px
+    letterSpacing: -0.01em
+  headline-sm:
+    fontFamily: Space Grotesk
+    fontSize: 19px
+    fontWeight: '600'
+    lineHeight: 26px
+    letterSpacing: '0'
+  body-lg:
+    fontFamily: DM Sans
+    fontSize: 17px
+    fontWeight: '400'
+    lineHeight: 26px
+  body-md:
+    fontFamily: DM Sans
+    fontSize: 15px
+    fontWeight: '400'
+    lineHeight: 22px
+  body-sm:
+    fontFamily: DM Sans
+    fontSize: 13px
+    fontWeight: '400'
+    lineHeight: 18px
+  label-lg:
+    fontFamily: Space Grotesk
+    fontSize: 14px
+    fontWeight: '700'
+    lineHeight: 18px
+    letterSpacing: 0.04em
+  label-md:
+    fontFamily: Space Grotesk
+    fontSize: 12px
+    fontWeight: '600'
+    lineHeight: 16px
+    letterSpacing: 0.05em
+  label-sm:
+    fontFamily: Space Grotesk
+    fontSize: 10px
+    fontWeight: '700'
+    lineHeight: 14px
+    letterSpacing: 0.08em
+rounded:
+  sm: 0.5rem
+  DEFAULT: 1rem
+  md: 1.5rem
+  lg: 2rem
+  xl: 3rem
+  full: 9999px
+spacing:
+  gutter: 1rem
+  margin: 1.25rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 1rem
+  space-lg: 1.5rem
+  space-xl: 2.5rem
+---
+
+## Brand & Style
+
+This design system delivers an energetic, high-performance mental training environment tuned for students, creators, and professionals. Moving decisively away from dreary clinical interfaces and dark gamer basements, the aesthetic embraces an open, daylight-infused "cognitive lab" atmosphere. It balances technical precision with breezy approachability.
+
+The visual direction centers on **Fresh Neomorphic-Modernism**:
+- **Pristine surfaces:** Clean paper-white and cool slate backdrops (#F8FAFC, #FFFFFF, #F1F5F9) eliminate visual heaviness and eye strain across extended practice sessions.
+- **Electric chromatic accents:** Vibrant cyan, energetic indigo, and violet triggers deliver crisp feedback, guide thumb micro-gestures, and reward flow-state accomplishments.
+- **Confident typography:** Geometric Grotesk titling meets warm, highly legible body fonts, giving the interface a sharp, product-forward voice.
+- **Fluid pill ergonomics:** Generously rounded boundaries (Level 3) soften interactive feedback, creating friendly, tactile targets tailored for rapid mobile tapping.
+
+## Colors
+
+The color architecture defaults strictly to a high-clarity light theme, engineered around cool oceanic blues, electric indigo, and structured neutral slate:
+
+- **Primary (`#0284C7` - Deep Sky Cyan):** Anchors primary call-to-actions, focused tabs, active game triggers, and key cognitive achievements.
+- **Secondary (`#4F46E5` - Electric Indigo):** Directs analytical modules, memory tracks, secondary controls, and logic metrics.
+- **Tertiary (`#0EA5E9` - Radiant Azure):** Accentuates timers, progress rings, live counters, and positive momentum indicators.
+- **Surface & Neutral Hierarchy:**
+  - `surface-base` (`#F8FAFC`): The primary app canvas, soft on eyes under high brightness.
+  - `surface-card` (`#FFFFFF`): Elevated content decks, training quadrants, and floating sheets.
+  - `surface-subtle` (`#F1F5F9`): Unselected inputs, chip backings, and inactive button trays.
+  - `border-subtle` (`#E2E8F0`): Hairline boundary lines defining structural edges without visual noise.
+  - `text-primary` (`#0F172A`): Deep slate for maximum legibility and crisp contrast ratios exceeding 12:1.
+  - `text-secondary` (`#475569`): Muted copy for supporting stats, body text, and training guidance.
+- **Dual-Mode Tokens:** While light mode remains primary, companion dark tokens (`dark-surface-base`, `dark-surface-card`, `dark-border-subtle`) ensure high-contrast inverted rendering for late-night drills.
+
+## Typography
+
+Typography strikes a functional balance between technical instrumentation and effortless readability:
+
+- **Headlines & Scores (`Space Grotesk`):** Built with angular, geometric accents that evoke speed, algorithmic calculation, and intellectual momentum. Used for primary drill titling, big score numbers, millisecond timers, and performance tiers. Tight negative letter spacing at display levels gives the layout an energetic punch.
+- **Continuous Reading & Explanations (`DM Sans`):** Features neutral, low-contrast letterforms with open counters. Ideal for quick reading of cognitive drill rules, analytical feedback, and personal metrics.
+- **Labels & System Badges (`Space Grotesk`):** Tracked with intentional positive spacing (`0.04em` to `0.08em`) to resemble diagnostic instruments and telemetry readouts.
+
+## Layout & Spacing
+
+The layout is built around an 8px base rhythm, prioritizing mobile ergonomic reachability:
+
+- **Touch & Reach Philosophy:** All primary trigger mechanics (answering questions, next rounds, primary filters) are clustered in the lower 40% of the screen. Critical session stats and HUD meters rest along the upper periphery.
+- **Mobile Grid Structure:** Single-column layout using `margin: 1.25rem` (20px) horizontal outer boundaries to keep interactive surfaces clear of thumb edges. Interactive answer options use a 2-column or 4-column layout with `gutter: 1rem` (16px).
+- **Desktop & Wide Layouts:** When scaled to wider screens, the interactive arena remains centered at a maximum constraint of `560px` to maintain focused eye tracking, or unfolds into a two-column diagnostic split (interactive field on the left, telemetry and progression tree on the right).
+
+## Elevation & Depth
+
+Rather than relying on heavy dark shadows, this design system builds depth through pure surface luminance, hairline delineation, and tinted ambient atmospheric glows:
+
+- **Level 0 (App Base):** `#F8FAFC` foundation without shadows or structural borders.
+- **Level 1 (Card & Module Decks):** `#FFFFFF` surfaces paired with a crisp `1px solid #E2E8F0` border and a delicate ambient shadow:
+  `box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05)`.
+- **Level 2 (Floating Trays & Modals):** High-level interactive elements featuring:
+  `box-shadow: 0 12px 32px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.02)`.
+- **Level 3 (Focused & Interactive Glows):** When an element is selected, active, or triggered during a speed streak, a chromatic ambient glow reinforces the action:
+  - Cyan State: `box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15), 0 8px 24px -4px rgba(2, 132, 199, 0.25)`
+  - Indigo State: `box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15), 0 8px 24px -4px rgba(79, 70, 229, 0.25)`
+- **Frosted Glass Navigation:** Bottom tab docks and floating workout HUDs use a semi-translucent backdrop (`background: rgba(255, 255, 255, 0.82)` with `backdrop-filter: blur(16px)` and an outline of `1px solid rgba(226, 232, 240, 0.8)`).
+
+## Shapes
+
+The design system incorporates full Level 3 pill and capsule ergonomics, making high-speed interactions feel friendly and forgiving:
+
+- **Capsule Targets (`9999px`):** All actionable buttons, status chips, search bars, and bottom floating docks use complete pill shapes.
+- **Card Containers (`rounded-lg` / 2rem / 32px):** Drill cards, analytical overview boards, and bottom sheet containers utilize generous curved corners that soften large informational panels.
+- **Micro Elements (`rounded` / 1rem / 16px):** Game choice tiles, checkbox nodes, and stat badges maintain comfortable curves, eliminating visual sharpness.
+
+## Components
+
+### 1. Buttons
+- **Primary Pill:** Height `54px`, `rounded-full`. Solid `#0284C7` background with pure `#FFFFFF` `Space Grotesk` text (weight 700). On press, it scales smoothly to `scale(0.98)` with a soft cyan ambient shadow.
+- **Secondary Subtle:** Height `54px`, `rounded-full`. `#F1F5F9` background, `border: 1px solid #E2E8F0`, text in `#0F172A`. Hover and focus shift background to `#E0F2FE` with an indigo border.
+- **Ghost Action:** Transparent background, text `#0284C7`, padding `0.5rem 1rem`.
+
+### 2. Chips & Categorical Selectors
+- **Pill Filters:** Height `36px`, `rounded-full`, padding `0.25rem 1rem`. Unselected state uses `#F1F5F9` with `#475569` text. Selected state switches to a vibrant gradient from `#0284C7` to `#4F46E5` with `#FFFFFF` text.
+
+### 3. Cards & Training Matrices
+- **Cognitive Deck Card:** Elevated `#FFFFFF` surface with `32px` corner rounding and `1px solid #E2E8F0`. Includes an accent badge top-right (`#E0F2FE` pill with `#0284C7` text).
+- **Drill Choice Matrix:** Minimum height `68px`, flex centered, `rounded-2xl` (16px), background `#FFFFFF`, border `1.5px solid #E2E8F0`. Correct choice triggers an instantaneous transition to `#E0F2FE` with a `#0284C7` border and check icon.
+
+### 4. Form Fields & Inputs
+- **Search & Text Input:** Height `50px`, full pill radius (`rounded-full`), background `#F8FAFC`, border `1px solid #E2E8F0`, padding `0 1.25rem`. Focus state transitions border to `#0284C7` accompanied by a `3px` translucent sky-blue ring.
+
+### 5. Checkboxes & Radio Controls
+- **Radio Nodes:** 22px diameter circular nodes, border `2px solid #CBD5E1`. On selection, fills with `#0284C7` displaying an inner 8px white circle.
+- **Checkboxes:** 22px rounded squares (`rounded-md`, 8px), `#0284C7` active fill with a centered white check icon.
+
+### 6. Progress Indicators & Metrics
+- **Continuous Pill Meter:** 8px height, `rounded-full`, track background `#E2E8F0`. The fill uses a horizontal gradient (`#0284C7` to `#4F46E5`) with smooth CSS easing transitions.
+- **Circular Telemetry Dial:** 80px SVG dial with a background stroke in `#E2E8F0` (stroke-width 8) and an active stroke in `#0284C7`, featuring centered `Space Grotesk` metrics.
+
+### 7. Floating Bottom Navigation
+- **Dock Container:** Pill-shaped floating bar docked 16px above the viewport bottom, surfaced in `#FFFFFF` with 85% opacity, `backdrop-filter: blur(16px)`, and `border: 1px solid #E2E8F0`.
+- **Nav Items:** 4 distinct tabs (Hub, Entrenar, Progreso, Perfil). Active tab features an indigo/cyan icon with an electric micro-indicator dot below.

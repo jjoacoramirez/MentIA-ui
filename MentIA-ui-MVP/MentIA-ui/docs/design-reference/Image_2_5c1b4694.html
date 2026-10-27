@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#0f131c;}body{overscroll-behavior:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "surface-tint": "#4cd7f6", "surface": "#0f131c", "primary-fixed-dim": "#4cd7f6", "surface-variant": "#31353e", "error-container": "#93000a", "on-surface": "#dfe2ee", "primary": "#4cd7f6", "inverse-surface": "#dfe2ee", "on-error": "#690005", "secondary-fixed": "#e1e0ff", "primary-container": "#06b6d4", "surface-bright": "#353942", "on-primary-fixed-variant": "#004e5c", "on-secondary-container": "#b0b2ff", "secondary-fixed-dim": "#c0c1ff", "secondary-container": "#3131c0", "tertiary": "#ffb95f", "primary-fixed": "#acedff", "outline": "#869397", "outline-variant": "#3d494c", "tertiary-container": "#e79400", "background": "#0f131c", "surface-container-low": "#181c24", "on-primary-fixed": "#001f26", "inverse-on-surface": "#2c3039", "on-tertiary-fixed-variant": "#653e00", "tertiary-fixed": "#ffddb8", "on-error-container": "#ffdad6", "on-background": "#dfe2ee", "surface-container": "#1c2028", "surface-container-lowest": "#0a0e16", "inverse-primary": "#00687a", "tertiary-fixed-dim": "#ffb95f", "on-tertiary-container": "#563400", "on-tertiary": "#472a00", "on-primary-container": "#00424f", "surface-container-highest": "#31353e", "surface-dim": "#0f131c", "on-surface-variant": "#bcc9cd", "error": "#ffb4ab", "secondary": "#c0c1ff", "on-secondary": "#1000a9", "on-tertiary-fixed": "#2a1700", "on-primary": "#003640", "on-secondary-fixed-variant": "#2f2ebe", "on-secondary-fixed": "#07006c", "surface-container-high": "#262a33" }, borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" }, spacing: { "space-xs": "0.25rem", "margin": "1.25rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "gutter": "1rem", "space-md": "1rem", "space-xl": "2.5rem" }, fontFamily: { "display-lg-mobile": ["Space Grotesk"], "body-sm": ["DM Sans"], "label-sm": ["Space Grotesk"], "label-md": ["Space Grotesk"], "headline-lg": ["Space Grotesk"], "headline-sm": ["Space Grotesk"], "body-md": ["DM Sans"], "display-lg": ["Space Grotesk"], "label-lg": ["Space Grotesk"], "body-lg": ["DM Sans"], "headline-md": ["Space Grotesk"] }, fontSize: { "display-lg-mobile": ["36px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }], "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }], "label-sm": ["10px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "600" }], "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.06em", fontWeight: "600" }], "headline-lg": ["32px", { lineHeight: "38px", letterSpacing: "-0.02em", fontWeight: "700" }], "headline-sm": ["20px", { lineHeight: "26px", letterSpacing: "0", fontWeight: "600" }], "body-md": ["15px", { lineHeight: "22px", fontWeight: "400" }], "display-lg": ["48px", { lineHeight: "52px", letterSpacing: "-0.03em", fontWeight: "700" }], "label-lg": ["14px", { lineHeight: "18px", letterSpacing: "0.04em", fontWeight: "700" }], "body-lg": ["18px", { lineHeight: "26px", fontWeight: "400" }], "headline-md": ["24px", { lineHeight: "30px", letterSpacing: "-0.01em", fontWeight: "600" }] } } } };</script></head><body class="bg-surface text-on-surface flex flex-col items-center min-h-screen"><div class="w-full max-w-[390px] min-h-screen flex flex-col relative bg-surface pt-safe pb-safe"><main class="flex-1 flex flex-col w-full px-margin bg-surface"><div class="flex flex-col w-full pb-8 select-none">
+<!-- Dynamic Ambient Glow & Sparks -->
+<div class="relative w-full flex flex-col items-center pt-4 overflow-hidden">
+<div class="absolute -top-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute top-24 -right-10 w-44 h-44 bg-secondary-container/20 rounded-full blur-2xl pointer-events-none"></div>
+<!-- Brand Header -->
+<div class="relative z-10 flex flex-col items-center text-center">
+<!-- Glow Ring Logo Container -->
+<div class="relative group cursor-pointer transition-transform duration-300 active:scale-95">
+<div class="absolute -inset-1.5 bg-gradient-to-tr from-primary via-primary-container to-secondary rounded-full blur-md opacity-40 group-hover:opacity-75 transition-opacity"></div>
+<div class="relative w-24 h-24 rounded-full bg-surface-container-lowest p-1 shadow-2xl flex items-center justify-center">
+<img alt="MentIA Logo" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AEtjO1XHiSACxv6Spfey8Ce1HbzVsax4X5IAxmtCOJP32kDAUuj0WCWkSMgNhpfRHBGCIGYoGGDXW2Ru_Ve8vA-csWHcl_oHIqvTho8Qpz2OrONA1KTQGIx5gNqhZNw3BUKuthgfMrBApwyM-XZS7WWTfBLcHBS_sBbXqRTxDwyauRjkoi0Adz4hCg9orpwFTBEcQZ_jPH1KNbbfX97PiRu00u1ZgyqWYt168mafJgo8GBHzfx5ju5NpknzDMcOu"/>
+</div>
+<!-- Pulse Status Node -->
+<span class="absolute bottom-1 right-1 flex h-4 w-4">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-4 w-4 bg-primary shadow-sm shadow-primary"></span>
+</span>
+</div>
+<!-- App Name & Slogan -->
+<div class="mt-4 flex flex-col items-center">
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high mb-2">
+<span class="material-symbols-outlined text-primary text-[14px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+<span class="font-label-sm text-label-sm text-primary tracking-wider uppercase">Gimnasio Cognitivo</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">MentIA</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-[280px] mt-1 font-medium">
+          Un entrenamiento para cada mente.
+        </p>
+</div>
+</div>
+</div>
+<!-- Pillars Carousel / Interactive Stack -->
+<div class="mt-6 flex flex-col gap-3">
+<div class="flex items-center justify-between px-1">
+<span class="font-label-md text-label-md text-outline tracking-wider uppercase">Pilares de Agilidad</span>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-1">
+        3 MODALIDADES
+        <span class="material-symbols-outlined text-[12px]">auto_awesome</span>
+</span>
+</div>
+<!-- Pillar 1: Memoria -->
+<div class="group relative overflow-hidden rounded-2xl bg-surface-container p-4 transition-all duration-300 hover:bg-surface-container-high active:scale-[0.99] shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 bg-primary/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-start gap-3.5 relative z-10">
+<div class="flex-shrink-0 w-11 h-11 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary shadow-inner">
+<span class="material-symbols-outlined text-[24px]">psychology</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate">Memoria</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-primary">RETENCIÓN</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+            Ejercitá retención y recuerdo ágil de secuencias y patrones cotidianos.
+          </p>
+</div>
+</div>
+</div>
+<!-- Pillar 2: Atención y concentración -->
+<div class="group relative overflow-hidden rounded-2xl bg-surface-container p-4 transition-all duration-300 hover:bg-surface-container-high active:scale-[0.99] shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 bg-tertiary/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-start gap-3.5 relative z-10">
+<div class="flex-shrink-0 w-11 h-11 rounded-xl bg-surface-container-lowest flex items-center justify-center text-tertiary shadow-inner">
+<span class="material-symbols-outlined text-[24px]">center_focus_strong</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate">Atención &amp; Foco</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-tertiary">ENFOQUE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+            Mantené el foco sin interrupciones en tus sesiones intensas de estudio o trabajo.
+          </p>
+</div>
+</div>
+</div>
+<!-- Pillar 3: Memoria de trabajo -->
+<div class="group relative overflow-hidden rounded-2xl bg-surface-container p-4 transition-all duration-300 hover:bg-surface-container-high active:scale-[0.99] shadow-sm">
+<div class="absolute -right-6 -bottom-6 w-24 h-24 bg-secondary/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-start gap-3.5 relative z-10">
+<div class="flex-shrink-0 w-11 h-11 rounded-xl bg-surface-container-lowest flex items-center justify-center text-secondary shadow-inner">
+<span class="material-symbols-outlined text-[24px]">instant_mix</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate">Memoria de Trabajo</h3>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-lowest font-label-sm text-label-sm text-secondary">PROCESO</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1 leading-snug">
+            Agilidad mental y velocidad de procesamiento inmediato en tiempo real.
+          </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Adaptive Experience Micro-Highlight -->
+<div class="mt-4 flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-surface-container-low">
+<span class="material-symbols-outlined text-primary text-[20px] flex-shrink-0">tune</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-tight">
+      Actividades breves que se adaptan progresivamente a tu desempeño diario.
+    </p>
+</div>
+<!-- Interactive Daily Metric Preview -->
+<div class="mt-5 p-3.5 rounded-2xl bg-surface-container-lowest flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">timer</span>
+</div>
+<div>
+<div class="font-label-sm text-label-sm text-outline uppercase">Tiempo promedio</div>
+<div class="font-label-lg text-label-lg text-on-surface">3 a 5 min por sesión</div>
+</div>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm text-primary bg-surface-container-high px-2 py-1 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+        IA Adaptativa
+      </span>
+</div>
+</div>
+<!-- Bottom CTA Control Center -->
+<div class="mt-6 flex flex-col gap-3">
+<!-- Primary CTA -->
+<button class="group relative w-full h-14 rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-lg shadow-primary/20 transition-all duration-200 active:scale-[0.97] hover:brightness-105" id="btn-start" type="button">
+<span>Comenzar</span>
+<span class="material-symbols-outlined text-[20px] transition-transform duration-200 group-hover:translate-x-1">arrow_forward</span>
+</button>
+<!-- Secondary Outline CTA -->
+<button class="w-full h-14 rounded-xl bg-surface-container-high text-on-surface font-label-lg text-label-lg flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.97] hover:bg-surface-bright" id="btn-login" type="button">
+<span class="material-symbols-outlined text-[20px] text-outline">login</span>
+<span>Ya tengo una cuenta</span>
+</button>
+</div>
+<!-- Gamification Toast (Micro-interaction triggered on tap) -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[350px] bg-surface-container-highest/95 backdrop-blur-md px-4 py-3 rounded-full flex items-center justify-between text-on-surface opacity-0 pointer-events-none transition-all duration-300 shadow-2xl z-50 translate-y-4" id="quick-feedback">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">rocket_launch</span>
+<span class="font-body-sm text-body-sm font-medium">Iniciando diagnóstico dinámico...</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary font-bold">100%</span>
+</div>
+</div>
+<script>
+  (function() {
+    const btnStart = document.getElementById('btn-start');
+    const toast = document.getElementById('quick-feedback');
+
+    if (btnStart && toast) {
+      btnStart.addEventListener('click', () => {
+        toast.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+        toast.classList.add('opacity-100', 'translate-y-0');
+        
+        setTimeout(() => {
+          toast.classList.remove('opacity-100', 'translate-y-0');
+          toast.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+        }, 2200);
+      });
+    }
+  })();
+</script></main></div></body></html>
