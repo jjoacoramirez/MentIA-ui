@@ -374,30 +374,24 @@ export function HistoryScreen() {
         )}
         {history
           .filter((r) => filter === "ALL" || r.status === filter)
-          .map((r) => (
-            <button
-              className="flow-card w-full text-left"
-              key={r.id}
-              disabled={r.status === "ABANDONED"}
-              onClick={() => select(r)}
-            >
-              <strong className="block">
-                {r.type === "INITIAL_ASSESSMENT"
-                  ? "Evaluación inicial"
-                  : "Entrenamiento"}{" "}
-                · {r.status === "COMPLETED" ? "Completada" : "Abandonada"}
-              </strong>
-              <span className="block text-sm mt-2">
-                {new Date(r.finishedAt).toLocaleString("es-AR")} ·{" "}
-                {r.itemsCompleted} intentos
+          .map((r) => {
+            const complete = r.status === "COMPLETED";
+            const content = <>
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <span className="history-icon material-symbols-outlined" aria-hidden="true">{complete ? "task_alt" : "pause_circle"}</span>
+                <span className={`status-badge ${complete ? "completed" : "abandoned"}`}>{complete ? "Completada" : "Abandonada"}</span>
+              </div>
+              <strong className="block font-space">{r.type === "INITIAL_ASSESSMENT" ? "Evaluación inicial" : "Entrenamiento"} · {complete ? "Completada" : "Abandonada"}</strong>
+              <span className="block text-sm mt-2 text-slate-500 dark:text-slate-400">
+                {new Date(r.finishedAt).toLocaleString("es-AR")} · {r.itemsCompleted} intentos
               </span>
-              {r.status === "COMPLETED" && (
-                <span className="flow-link">
-                  Ver resultado · {Math.round(r.accuracy * 100)}%
-                </span>
-              )}
-            </button>
-          ))}
+              {complete ? <span className="flex justify-between items-center mt-4 pt-3 border-t border-slate-200 dark:border-white/10 flow-link">
+                Ver resultado · {Math.round(r.accuracy * 100)}%<span aria-hidden="true">→</span>
+              </span> : <span className="block text-sm mt-3 text-slate-500 dark:text-slate-400">Sesión sin finalizar · sin XP</span>}
+            </>;
+            return complete ? <button className="flow-card history-card w-full text-left" key={r.id} onClick={() => select(r)}>{content}</button>
+              : <article className="flow-card w-full text-left" key={r.id}>{content}</article>;
+          })}
       </div>
     </Panel>
   );

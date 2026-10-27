@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useJourney } from "../context/JourneyContext";
-import { Panel } from "./FlowScreens";
+import { Pause, X, Timer, Brain, CheckCircle2 } from "lucide-react";
 const symbols = ["◆", "▲", "●", "■", "★", "⬡", "✚", "◎", "✦"];
 function sequence() {
   const pool = [...symbols];
@@ -63,29 +63,31 @@ export const GameSessionScreen: React.FC = () => {
     setRemaining(6);
   }
   return (
-    <Panel
-      title={assessment ? "Evaluación de ejemplo" : "Entrenamiento de ejemplo"}
-    >
-      <div className="flex justify-between items-center mb-4">
-        <span>
-          Secuencia {Math.min(round + (phase === "feedback" ? 0 : 1), 3)} de 3
-        </span>
-        <span aria-live="off">{remaining} s</span>
-        <button className="flow-link" onClick={() => setPaused(true)}>
-          Pausar
-        </button>
-        <button className="flow-link" onClick={() => setExit(true)}>
-          Salir
-        </button>
-      </div>
-      <progress
-        className="w-full accent-cyan-500 mb-5"
-        value={round}
-        max={3}
-        aria-label="Avance de sesión"
-      />
+    <div className="session-screen">
+      <header className="session-header" aria-label="Controles del ejercicio">
+        <div className="flex items-center justify-between gap-3">
+          <button className="session-icon" aria-label="Salir" onClick={() => setExit(true)}><X size={20} /></button>
+          <div className="text-center min-w-0">
+            <p className="text-[10px] uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-300 font-bold">{assessment ? "Evaluación inicial" : "Entrenamiento"} · demo</p>
+            <h1 className="font-space font-bold text-lg">Secuencias visuales</h1>
+          </div>
+          <button className="session-icon" aria-label="Pausar" onClick={() => setPaused(true)}><Pause size={20} /></button>
+        </div>
+        <div className="flex justify-between items-center mt-5 mb-3 text-xs font-semibold">
+          <span>Secuencia {Math.min(round + (phase === "feedback" ? 0 : 1), 3)} de 3</span>
+          <span className="session-timer"><Timer size={14} aria-hidden="true" /><span aria-live="off">{remaining} s</span></span>
+        </div>
+        <div className="session-progress" role="progressbar" aria-label="Avance de sesión" aria-valuenow={round} aria-valuemin={0} aria-valuemax={3}>
+          <div style={{ width: `${round / 3 * 100}%` }} />
+        </div>
+      </header>
+      <div className="session-content">
+        <div className="session-phase">
+          {phase === "feedback" ? <CheckCircle2 size={16} /> : <Brain size={16} />}
+          {phase === "memorize" ? "Fase de memorización" : phase === "answer" ? "Tu turno" : "Resultado del intento"}
+        </div>
       <section
-        className="flow-card"
+        className="flow-card session-card"
         style={{ visibility: paused || exit ? "hidden" : "visible" }}
       >
         <h2 className="text-lg font-bold mb-3">
@@ -172,6 +174,7 @@ export const GameSessionScreen: React.FC = () => {
           </div>
         )}
       </section>
+      </div>
       {(paused || exit) && (
         <div
           className="absolute inset-0 z-50 bg-black/70 flex items-center justify-center p-5"
@@ -209,6 +212,6 @@ export const GameSessionScreen: React.FC = () => {
           </div>
         </div>
       )}
-    </Panel>
+    </div>
   );
 };

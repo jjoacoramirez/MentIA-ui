@@ -41,6 +41,11 @@ export const Header: React.FC<HeaderProps> = ({
         return "Progreso";
       case "perfil":
         return "Perfil";
+      case "historial": return "Historial";
+      case "logros": return "Logros";
+      case "resultado": return "Resultados";
+      case "configuracion": return "Preferencias";
+      case "evaluacion": return "Evaluación inicial";
       default:
         return "";
     }
@@ -48,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 w-full z-40 bg-white/90 dark:bg-[#0f131c]/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-white/[0.06] transition-colors">
-      <div className="h-16 px-4 flex items-center justify-between max-w-lg mx-auto">
+      <div className="h-16 px-4 flex items-center justify-between w-full mx-auto">
         {/* Left: Back button or Logo + Title */}
         <div className="flex items-center gap-2.5">
           {showBack ? (
@@ -66,8 +71,9 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           ) : null}
 
-          <div
+          <button
             onClick={() => setCurrentTab("inicio")}
+            aria-label="Ir al inicio"
             className="flex items-center gap-2 cursor-pointer select-none group"
           >
             <BrandLogo size="sm" />
@@ -81,11 +87,12 @@ export const Header: React.FC<HeaderProps> = ({
                 </span>
               )}
             </div>
-          </div>
+          </button>
         </div>
 
         {/* Right: Actions */}
         <div className="flex items-center gap-1.5">
+          {currentTab === "inicio" && <button onClick={() => setCurrentTab("historial")} aria-label="Historial" title="Historial" className="session-icon"><span aria-hidden="true" className="material-symbols-outlined">history</span></button>}
           {/* Quick theme toggle */}
           <button
             onClick={toggleTheme}

@@ -202,41 +202,30 @@ const MainLayout: React.FC = () => {
           {!publicTabs.includes(currentTab) && currentTab !== "juego" && (
             <Header
               title="MentIA"
-              showBack={false}
-              onBack={() => setCurrentTab("inicio")}
+              showBack={["historial", "logros", "resultado", "configuracion", "evaluacion"].includes(currentTab)}
+              onBack={() => setCurrentTab(["historial", "logros", "resultado"].includes(currentTab) ? "progreso" : "inicio")}
             />
           )}
 
-          <div
-            className="px-4 py-2 bg-cyan-50 dark:bg-cyan-950/40 text-cyan-900 dark:text-cyan-200 text-xs"
-            role="status"
-          >
-            Demo sin conexión al backend · datos temporales
-          </div>
-          {journey.username &&
-            [
-              "inicio",
-              "progreso",
-              "perfil",
-              "historial",
-              "logros",
-              "resultado",
-            ].includes(currentTab) && (
-              <div className="px-4 py-3 flex flex-wrap gap-4 text-sm">
-                <button
-                  className="flow-link"
-                  onClick={() => setCurrentTab("historial")}
-                >
-                  Historial
+          {currentTab !== "juego" && (
+            <div className="demo-notice" role="status">
+              <span className="demo-dot" /> Vista de demostración · datos temporales
+            </div>
+          )}
+          {journey.username && ["progreso", "historial", "logros"].includes(currentTab) && (
+            <nav aria-label="Secciones de progreso" className="section-nav">
+              {([
+                ["progreso", "Evolución", "monitoring"],
+                ["historial", "Historial", "history"],
+                ["logros", "Logros", "workspace_premium"],
+              ] as const).map(([tab, label, icon]) => (
+                <button key={tab} aria-current={currentTab === tab ? "page" : undefined}
+                  onClick={() => setCurrentTab(tab)} className={currentTab === tab ? "active" : ""}>
+                  <span aria-hidden="true" className="material-symbols-outlined">{icon}</span>{label}
                 </button>
-                <button
-                  className="flow-link"
-                  onClick={() => setCurrentTab("logros")}
-                >
-                  Logros
-                </button>
-              </div>
-            )}
+              ))}
+            </nav>
+          )}
           {/* Screen View */}
           <main className="flex-1 w-full flex flex-col overflow-y-auto relative">
             {(journey.username || publicTabs.includes(currentTab)) &&

@@ -126,3 +126,46 @@ a:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Shared navigation and controls match the original MentIA surfaces. */
+.demo-notice { display:flex; align-items:center; justify-content:center; gap:.4rem; padding:.45rem 1rem; font-size:.65rem; color:#64748b; background:#f1f5f980; }
+.dark .demo-notice { color:#94a3b8; background:#ffffff04; }
+.demo-dot { width:5px; height:5px; border-radius:50%; background:#0891b2; flex-shrink:0; }
+.section-nav { display:flex; gap:.25rem; margin:1rem 1rem 0; padding:.3rem; border-radius:1rem; background:#e2e8f080; flex-shrink:0; }
+.section-nav button { flex:1; display:flex; align-items:center; justify-content:center; gap:.35rem; padding:.65rem .25rem; border-radius:.75rem; font-size:.75rem; font-weight:600; color:#64748b; cursor:pointer; }
+.section-nav .material-symbols-outlined { font-size:18px; }
+.section-nav button.active { background:white; color:#087e99; box-shadow:0 2px 5px #0f172a0a; }
+.dark .section-nav { background:#ffffff06; }
+.dark .section-nav button { color:#94a3b8; }
+.dark .section-nav button.active { background:#ffffff0d; color:#67e8f9; }
+.flow-page { padding-bottom:2rem; }
+.flow-card { box-shadow:0 3px 18px #0f172a03; border-color:#e2e8f0; }
+.flow-page input:not([type="checkbox"]), .flow-page select { border-color:#e2e8f0; background-color:#f8fafc; min-height:48px; transition:border-color .2s,box-shadow .2s; }
+.flow-page select { appearance:none; padding-right:2.75rem; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%230891b2' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 1rem center; }
+.flow-page input:focus, .flow-page select:focus { outline:2px solid #06b6d4; outline-offset:2px; }
+.flow-primary { background:linear-gradient(110deg,#0891b2,#0e7490); box-shadow:0 5px 16px #0891b21a; min-height:48px; transition:filter .2s; }
+.flow-primary:hover { filter:brightness(1.08); }
+.history-card { cursor:pointer; transition:border-color .2s,background .2s; }
+.history-card:hover { border-color:#06b6d4; }
+.history-icon { display:flex; width:36px; height:36px; align-items:center; justify-content:center; border-radius:12px; color:#0891b2; background:#06b6d410; }
+.status-badge { border-radius:999px; padding:.3rem .65rem; font-size:.65rem; font-weight:700; }
+.status-badge.completed { background:#10b98112; color:#047857; }
+.status-badge.abandoned { background:#64748b12; color:#475569; }
+.dark .status-badge.completed { color:#6ee7b7; }
+.dark .status-badge.abandoned { color:#cbd5e1; }
+.session-screen { display:flex; flex-direction:column; flex:1; min-height:100%; }
+.session-header { position:sticky; top:0; z-index:20; padding:1rem 1.25rem; background:#faf8fff5; border-bottom:1px solid #e2e8f0; backdrop-filter:blur(16px); }
+.dark .session-header { background:#0f131cf5; border-color:#ffffff0d; }
+.session-icon { width:40px; height:40px; display:flex; align-items:center; justify-content:center; border-radius:14px; color:#475569; background:#64748b0a; border:1px solid #64748b15; cursor:pointer; flex-shrink:0; }
+.session-icon:hover { background:#06b6d415; color:#0891b2; }
+.dark .session-icon { color:#cbd5e1; background:#ffffff06; border-color:#ffffff0d; }
+.session-timer { display:flex; align-items:center; gap:.35rem; border-radius:999px; background:#06b6d410; color:#087e99; padding:.35rem .65rem; font-variant-numeric:tabular-nums; }
+.dark .session-timer { color:#67e8f9; }
+.session-progress { height:6px; overflow:hidden; border-radius:999px; background:#e2e8f0; }
+.dark .session-progress { background:#ffffff10; }
+.session-progress > div { height:100%; border-radius:inherit; background:linear-gradient(90deg,#06b6d4,#818cf8); transition:width .3s; }
+.session-content { padding:1.5rem 1rem 2rem; }
+.session-phase { display:flex; align-items:center; justify-content:center; gap:.5rem; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:#087e99; margin-bottom:1.25rem; }
+.dark .session-phase { color:#67e8f9; }
+.session-card { text-align:center; }
+.session-card h2 { font-size:1.25rem; }

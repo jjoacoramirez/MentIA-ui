@@ -45,6 +45,10 @@ describe("Recorridos de MentIA", () => {
     vi.useFakeTimers();
     enter();
     click("Comenzar evaluación de ejemplo");
+    expect(screen.getByRole("banner", { name: "Controles del ejercicio" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Ir al inicio" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Avance de sesión" })).toHaveAttribute("aria-valuenow", "0");
     playRound(false);
     expect(screen.getByText("Seguí practicando")).toBeInTheDocument();
     click("Siguiente secuencia");
@@ -71,6 +75,16 @@ describe("Recorridos de MentIA", () => {
     click("Salir");
     click("Abandonar sesión");
     expect(screen.getByText(/Entrenamiento · Abandonada/)).toBeInTheDocument();
+    expect(screen.getByRole("navigation", { name: "Secciones de progreso" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Historial" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("button", { name: "Progreso" })).toHaveAttribute("aria-current", "page");
+    fireEvent.change(screen.getByLabelText("Mostrar"), { target: { value: "COMPLETED" } });
+    expect(screen.queryByText(/Entrenamiento · Abandonada/)).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Mostrar"), { target: { value: "ALL" } });
+    click("Logros");
+    expect(screen.getByRole("heading", { name: "Tus logros" })).toBeInTheDocument();
+    click("Volver");
+    expect(screen.getByRole("heading", { name: "Tu progreso" })).toBeInTheDocument();
     click("Perfil");
     expect(screen.getByText("15 min / sesión")).toBeInTheDocument();
     click("Cerrar sesión en este dispositivo");

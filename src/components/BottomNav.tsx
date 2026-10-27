@@ -36,10 +36,11 @@ export const BottomNav: React.FC = () => {
       <div className="max-w-[420px] mx-auto px-4 pb-2.5">
         <div className="pointer-events-auto h-16 bg-white/90 dark:bg-[#0a0e16]/85 backdrop-blur-2xl rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.12)] dark:shadow-[0_-4px_20px_rgba(0,0,0,0.45)] border border-slate-200/60 dark:border-white/[0.08] flex items-center justify-around px-2">
           {navItems.map((item) => {
-            const isActive = currentTab === item.tab;
+            const isActive = currentTab === item.tab || (item.tab === "progreso" && ["historial", "logros", "resultado"].includes(currentTab));
             return (
               <button
                 key={item.tab}
+                aria-current={isActive ? "page" : undefined}
                 onClick={() => setCurrentTab(item.tab)}
                 className={`flex-1 flex flex-col items-center justify-center h-full transition-all duration-200 relative ${
                   isActive
