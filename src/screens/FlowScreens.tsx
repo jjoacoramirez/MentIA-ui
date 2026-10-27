@@ -1,3 +1,5 @@
+import { memoryProgress } from "../domain/training";
+import { Select } from "../components/Select";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { useJourney, categories } from "../context/JourneyContext";
@@ -112,11 +114,11 @@ export function AuthScreen({
         {mode === "registro" && (
           <label>
             Rango etario
-            <select value={age} onChange={(e) => setAge(e.target.value)}>
+            <Select value={age} onChange={(e) => setAge(e.target.value)}>
               {["18-24", "25-30", "31-40", "41+"].map((a) => (
                 <option key={a}>{a}</option>
               ))}
-            </select>
+            </Select>
           </label>
         )}
         {mode === "recuperacion" && (
@@ -211,7 +213,7 @@ export function ConfigurationScreen() {
       >
         <label>
           Duración preferida
-          <select
+          <Select
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
           >
@@ -220,7 +222,7 @@ export function ConfigurationScreen() {
                 {n} minutos
               </option>
             ))}
-          </select>
+          </Select>
         </label>
         <fieldset>
           <legend className="mb-3">Áreas de entrenamiento</legend>
@@ -258,7 +260,7 @@ export function ConfigurationScreen() {
   );
 }
 export function TrainingScreen() {
-  const { assessed, minutes, begin } = useJourney();
+  const { assessed, minutes, begin, history } = useJourney();
   return (
     <Panel title={assessed ? "Preparar entrenamiento" : "Evaluación inicial"}>
       <section className="flow-card">
@@ -274,6 +276,7 @@ export function TrainingScreen() {
           secuencias visuales breves; todavía no representan la evaluación
           completa ni las categorías definitivas.
         </p>
+        <p className="mt-4 text-sm text-cyan-700 dark:text-cyan-300">Memoria · Nivel {assessed ? memoryProgress(history).level : 1} · {assessed ? memoryProgress(history).objects : 4} objetos. La dificultad se asigna automáticamente.</p>
         <ol className="list-decimal pl-5 my-5 space-y-2">
           <li>Observá la secuencia de símbolos.</li>
           <li>Repetila en el mismo orden.</li>
@@ -307,7 +310,7 @@ export function ResultsScreen() {
     >
       <section className="flow-card">
         <p className="mb-4">
-          Resultado del ejercicio provisional de secuencias visuales.
+          Memoria · Nivel {selected.difficultyLevel} · {selected.difficultyLevel + 3} objetos.
         </p>
         <div className="grid grid-cols-2 gap-4">
           <Metric
@@ -359,11 +362,11 @@ export function HistoryScreen() {
     <Panel title="Historial">
       <label>
         Mostrar
-        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+        <Select value={filter} onChange={(e) => setFilter(e.target.value)}>
           <option value="ALL">Todas las sesiones</option>
           <option value="COMPLETED">Completadas</option>
           <option value="ABANDONED">Abandonadas</option>
-        </select>
+        </Select>
       </label>
       <div className="mt-4 space-y-3">
         {!history.filter((r) => filter === "ALL" || r.status === filter)

@@ -24,9 +24,8 @@ function enter() {
   ).toBeDisabled();
   fireEvent.click(screen.getByLabelText("Ya guardé el código"));
   click("Continuar");
-  fireEvent.change(screen.getByLabelText("Duración preferida"), {
-    target: { value: "15" },
-  });
+  fireEvent.click(screen.getByRole("combobox", { name: "Duración preferida" }));
+  fireEvent.click(screen.getByRole("option", { name: "15 minutos" }));
   click("Guardar y continuar");
 }
 function playRound(correct = true) {
@@ -78,9 +77,11 @@ describe("Recorridos de MentIA", () => {
     expect(screen.getByRole("navigation", { name: "Secciones de progreso" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Historial" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("button", { name: "Progreso" })).toHaveAttribute("aria-current", "page");
-    fireEvent.change(screen.getByLabelText("Mostrar"), { target: { value: "COMPLETED" } });
+    fireEvent.click(screen.getByRole("combobox", { name: "Mostrar" }));
+    fireEvent.click(screen.getByRole("option", { name: "Completadas" }));
     expect(screen.queryByText(/Entrenamiento · Abandonada/)).not.toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Mostrar"), { target: { value: "ALL" } });
+    fireEvent.click(screen.getByRole("combobox", { name: "Mostrar" }));
+    fireEvent.click(screen.getByRole("option", { name: "Todas las sesiones" }));
     click("Logros");
     expect(screen.getByRole("heading", { name: "Tus logros" })).toBeInTheDocument();
     click("Volver");
@@ -92,6 +93,27 @@ describe("Recorridos de MentIA", () => {
       screen.getByRole("button", { name: "Comenzar" }),
     ).toBeInTheDocument();
     expect(localStorage.getItem("password")).toBeNull();
+  });
+  it("la biblioteca asigna el nivel y el siguiente entrenamiento pasa de cuatro a cinco objetos", () => {
+    vi.useFakeTimers();
+    enter();
+    click("Comenzar evaluación de ejemplo");
+    for (let i = 0; i < 3; i++) { playRound(); click(i === 2 ? "Ver resultados" : "Siguiente secuencia"); }
+    click("Continuar");
+    click("Juegos");
+    expect(screen.getByText("Memoria · Nivel 1")).toBeInTheDocument();
+    for (let session = 0; session < 2; session++) {
+      click("Jugar en mi nivel");
+      expect(screen.getByLabelText("Secuencia para memorizar").children).toHaveLength(4);
+      for (let i = 0; i < 3; i++) { playRound(); click(i === 2 ? "Ver resultados" : "Siguiente secuencia"); }
+      click("Continuar");
+      click("Juegos");
+    }
+    expect(screen.getByText("Memoria · Nivel 2")).toBeInTheDocument();
+    click("Jugar en mi nivel");
+    expect(screen.getByLabelText("Secuencia para memorizar").children).toHaveLength(5);
+    playRound();
+    expect(screen.getByText("¡Secuencia correcta!")).toBeInTheDocument();
   });
   it("requiere alias válido y coincidencia de contraseñas", () => {
     render(<App />);

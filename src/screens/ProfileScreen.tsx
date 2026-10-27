@@ -85,7 +85,7 @@ export const ProfileScreen: React.FC = () => {
             <span className="font-space text-[18px] font-bold text-slate-900 dark:text-white block leading-none">
               {userStats.streakDays}
             </span>
-            <span className="font-space text-[10px] text-slate-500 uppercase mt-0.5 block">
+            <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 uppercase mt-0.5 block">
               Días racha
             </span>
           </div>
@@ -94,7 +94,7 @@ export const ProfileScreen: React.FC = () => {
             <span className="font-space text-[18px] font-bold text-slate-900 dark:text-white block leading-none">
               {userStats.accuracy}%
             </span>
-            <span className="font-space text-[10px] text-slate-500 uppercase mt-0.5 block">
+            <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 uppercase mt-0.5 block">
               Precisión
             </span>
           </div>
@@ -103,7 +103,7 @@ export const ProfileScreen: React.FC = () => {
             <span className="font-space text-[18px] font-bold text-cyan-600 dark:text-[#4cd7f6] block leading-none">
               {userStats.completedActivities}
             </span>
-            <span className="font-space text-[10px] text-slate-500 uppercase mt-0.5 block">
+            <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 uppercase mt-0.5 block">
               Actividades
             </span>
           </div>
@@ -181,7 +181,7 @@ export const ProfileScreen: React.FC = () => {
                 </span>
               )}
             </div>
-            <span className="font-space text-[10px] text-slate-500 leading-tight mt-0.5 w-full">
+            <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 leading-tight mt-0.5 w-full">
               Paper White
             </span>
           </button>
@@ -223,7 +223,7 @@ export const ProfileScreen: React.FC = () => {
                 </span>
               )}
             </div>
-            <span className="font-space text-[10px] text-slate-500 leading-tight mt-0.5 w-full">
+            <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 leading-tight mt-0.5 w-full">
               Modo noche
             </span>
           </button>
@@ -265,7 +265,7 @@ export const ProfileScreen: React.FC = () => {
                 </span>
               )}
             </div>
-            <span className="font-space text-[10px] text-slate-500 leading-tight mt-0.5 w-full">
+            <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 leading-tight mt-0.5 w-full">
               Auto sincronía
             </span>
           </button>

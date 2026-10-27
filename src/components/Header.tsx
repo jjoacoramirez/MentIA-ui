@@ -35,6 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
     switch (currentTab) {
       case "inicio":
         return "Inicio";
+      case "biblioteca": return "Biblioteca de juegos";
       case "entrenar":
         return "Entrenar";
       case "progreso":

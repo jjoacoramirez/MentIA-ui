@@ -1,3 +1,4 @@
+import { LibraryScreen } from "./screens/LibraryScreen";
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -52,6 +53,8 @@ const MainLayout: React.FC = () => {
         return <WelcomeScreen />;
       case "inicio":
         return <HomeScreen />;
+      case "biblioteca":
+        return <LibraryScreen />;
       case "entrenar":
       case "evaluacion":
         return <TrainingScreen />;

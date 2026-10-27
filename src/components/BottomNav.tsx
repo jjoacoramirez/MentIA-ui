@@ -15,6 +15,7 @@ export const BottomNav: React.FC = () => {
     ![
       "inicio",
       "entrenar",
+      "biblioteca",
       "progreso",
       "perfil",
       "historial",
@@ -27,6 +28,7 @@ export const BottomNav: React.FC = () => {
   const navItems: { tab: ScreenTab; label: string; icon: string }[] = [
     { tab: "inicio", label: "Inicio", icon: "space_dashboard" },
     { tab: "entrenar", label: "Entrenar", icon: "bolt" },
+    { tab: "biblioteca", label: "Juegos", icon: "extension" },
     { tab: "progreso", label: "Progreso", icon: "monitoring" },
     { tab: "perfil", label: "Perfil", icon: "person" },
   ];

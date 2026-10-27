@@ -6,6 +6,7 @@
 export type ScreenTab =
   | "landing"
   | "inicio"
+  | "biblioteca"
   | "entrenar"
   | "progreso"
   | "perfil"

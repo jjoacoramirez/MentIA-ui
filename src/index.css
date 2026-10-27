@@ -169,3 +169,29 @@ a:focus-visible {
 .dark .session-phase { color:#67e8f9; }
 .session-card { text-align:center; }
 .session-card h2 { font-size:1.25rem; }
+
+/* Theme tokens also cover open menus, metadata and system form controls. */
+[data-theme="dark"] { color-scheme:dark; }
+[data-theme="light"] { color-scheme:light; }
+.mentia-select { position:relative; margin-top:.5rem; width:100%; }
+.select-trigger { width:100%; min-height:48px; display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.8rem 1rem; border:1px solid #cbd5e1; border-radius:14px; background:#f8fafc; color:#0f172a; text-align:left; cursor:pointer; }
+.select-trigger svg { color:#0891b2; flex-shrink:0; }
+.select-trigger[aria-expanded="true"] { border-color:#06b6d4; box-shadow:0 0 0 3px #06b6d410; }
+.select-menu { position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:45; border-radius:16px; padding:6px; background:white; border:1px solid #cbd5e1; box-shadow:0 12px 35px #0f172a20; max-height:220px; overflow-y:auto; }
+.select-menu.above { top:auto; bottom:calc(100% + 6px); }
+.select-option { display:flex; justify-content:space-between; align-items:center; gap:.5rem; padding:.75rem; border-radius:10px; color:#334155; font-size:.875rem; cursor:pointer; }
+.select-option.focused { background:#ecfeff; color:#0e7490; }
+.select-option[aria-selected="true"] { font-weight:700; color:#0e7490; }
+.dark .select-trigger { background:#181c24; border-color:#475569; color:#e2e8f0; }
+.dark .select-menu { background:#1c2028; border-color:#475569; box-shadow:0 12px 35px #0006; }
+.dark .select-option { color:#e2e8f0; }
+.dark .select-option.focused { background:#06b6d41a; color:#67e8f9; }
+.dark .select-option[aria-selected="true"] { color:#67e8f9; }
+.dark .history-card .text-slate-500, .dark article.flow-card .text-slate-500 { color:#cbd5e1; }
+.level-path { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:.5rem; }
+.level-path li { display:flex; flex-direction:column; gap:.4rem; text-align:center; padding:.8rem .2rem; border-radius:14px; border:1px solid #e2e8f0; font-size:.75rem; color:#64748b; }
+.level-path li.current { border-color:#06b6d4; background:#06b6d410; color:#0e7490; }
+.dark .level-path li { border-color:#ffffff16; color:#cbd5e1; }
+.dark .level-path li.current { color:#67e8f9; border-color:#06b6d4; }
+.level-path li.locked { background:#64748b08; }
+.flow-page input[type="checkbox"] { accent-color:#0891b2; width:18px; height:18px; flex-shrink:0; cursor:pointer; }

@@ -1,3 +1,4 @@
+import { Select } from "../components/Select";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { useJourney, categories } from "../context/JourneyContext";
@@ -54,13 +55,13 @@ export const ProgressScreen: React.FC = () => {
         <h2 className="font-bold text-lg mb-3">Precisión por día</h2>
         <label>
           Período
-          <select
+          <Select
             value={range}
             onChange={(e) => setRange(Number(e.target.value))}
           >
             <option value={7}>Últimos 7 días</option>
             <option value={30}>Últimos 30 días</option>
-          </select>
+          </Select>
         </label>
         {!completed.length && (
           <p className="my-4">Completá una sesión para ver tu evolución.</p>

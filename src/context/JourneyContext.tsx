@@ -1,3 +1,4 @@
+import { memoryProgress, streakDays } from "../domain/training";
 import React, { createContext, useContext, useState } from "react";
 import { useApp } from "./AppContext";
 export const categories = [
@@ -15,6 +16,8 @@ export interface DemoResult {
   itemsCompleted: number;
   totalTimeMs: number;
   xpEarned: number;
+  category: string;
+  difficultyLevel: number;
 }
 interface Journey {
   username: string;
@@ -27,6 +30,7 @@ interface Journey {
   configured: boolean;
   assessed: boolean;
   assessment: boolean;
+  sessionLevel: number;
   begin: (assessment: boolean) => void;
   history: DemoResult[];
   selected: DemoResult | null;
@@ -52,6 +56,7 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
   const [configured, setConfigured] = useState(false);
   const [assessed, setAssessed] = useState(false);
   const [assessment, setAssessment] = useState(false);
+  const [sessionLevel, setSessionLevel] = useState(1);
   const [history, setHistory] = useState<DemoResult[]>([]);
   const [selected, setSelected] = useState<DemoResult | null>(null);
   function enter(alias: string, age = "18-24") {
@@ -89,6 +94,8 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
     setCurrentTab(assessed ? "perfil" : "evaluacion");
   }
   function begin(initial: boolean) {
+    if (!initial && !assessed) { setCurrentTab("evaluacion"); return; }
+    setSessionLevel(initial ? 1 : memoryProgress(history).level);
     setAssessment(initial);
     setCurrentTab("juego");
   }
@@ -103,6 +110,8 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
       type: assessment ? "INITIAL_ASSESSMENT" : "TRAINING",
       status: abandoned ? "ABANDONED" : "COMPLETED",
       finishedAt: new Date().toISOString(),
+      category: "MEMORIA",
+      difficultyLevel: sessionLevel,
       accuracy: count ? correct / count : 0,
       correctCount: correct,
       itemsCompleted: count,
@@ -128,7 +137,7 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
         : 0,
       weeklySessions: completed.length,
       totalPlayTime: `${Math.round(completed.reduce((s, r) => s + r.totalTimeMs, 0) / 60000)} min`,
-      streakDays: completed.length ? 1 : 0,
+      streakDays: streakDays(next),
     });
     setCurrentTab(abandoned ? "historial" : "resultado");
   }
@@ -145,6 +154,7 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
         configured,
         assessed,
         assessment,
+        sessionLevel,
         begin,
         history,
         selected,

@@ -2,17 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { useJourney } from "../context/JourneyContext";
 import { Pause, X, Timer, Brain, CheckCircle2 } from "lucide-react";
 const symbols = ["◆", "▲", "●", "■", "★", "⬡", "✚", "◎", "✦"];
-function sequence() {
+function sequence(length: number) {
   const pool = [...symbols];
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [pool[i], pool[j]] = [pool[j], pool[i]];
   }
-  return pool.slice(0, 4);
+  return pool.slice(0, length);
 }
 export const GameSessionScreen: React.FC = () => {
-  const { finish, assessment } = useJourney();
-  const [target, setTarget] = useState(sequence);
+  const { finish, assessment, sessionLevel } = useJourney();
+  const objectCount = sessionLevel + 3;
+  const [target, setTarget] = useState(() => sequence(objectCount));
   const [answer, setAnswer] = useState<string[]>([]);
   const [phase, setPhase] = useState<"memorize" | "answer" | "feedback">(
     "memorize",
@@ -58,7 +59,7 @@ export const GameSessionScreen: React.FC = () => {
     }
     submitted.current = false;
     setAnswer([]);
-    setTarget(sequence());
+    setTarget(sequence(objectCount));
     setPhase("memorize");
     setRemaining(6);
   }
@@ -70,6 +71,7 @@ export const GameSessionScreen: React.FC = () => {
           <div className="text-center min-w-0">
             <p className="text-[10px] uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-300 font-bold">{assessment ? "Evaluación inicial" : "Entrenamiento"} · demo</p>
             <h1 className="font-space font-bold text-lg">Secuencias visuales</h1>
+            <p className="text-xs text-slate-600 dark:text-slate-300">Memoria · Nivel {sessionLevel} · {objectCount} objetos</p>
           </div>
           <button className="session-icon" aria-label="Pausar" onClick={() => setPaused(true)}><Pause size={20} /></button>
         </div>
@@ -101,7 +103,8 @@ export const GameSessionScreen: React.FC = () => {
         </h2>
         {phase === "memorize" && (
           <div
-            className="grid grid-cols-4 gap-2 py-8"
+            className="grid gap-2 py-8"
+            style={{ gridTemplateColumns: `repeat(${objectCount}, minmax(0, 1fr))` }}
             aria-label="Secuencia para memorizar"
           >
             {target.map((s, i) => (
@@ -117,10 +120,11 @@ export const GameSessionScreen: React.FC = () => {
         {phase === "answer" && (
           <>
             <div
-              className="grid grid-cols-4 gap-2 mb-6"
+              className="grid gap-2 mb-6"
+              style={{ gridTemplateColumns: `repeat(${objectCount}, minmax(0, 1fr))` }}
               aria-label="Tu respuesta"
             >
-              {Array.from({ length: 4 }, (_, i) => (
+              {Array.from({ length: objectCount }, (_, i) => (
                 <span
                   className="rounded-xl bg-cyan-500/10 text-3xl text-center py-4"
                   key={i}
@@ -135,7 +139,7 @@ export const GameSessionScreen: React.FC = () => {
                   key={s}
                   aria-label={`Símbolo ${i + 1}: ${s}`}
                   className="rounded-2xl border border-cyan-500/30 text-3xl py-4 hover:bg-cyan-500/20 focus-visible:outline-2 focus-visible:outline-cyan-500"
-                  disabled={answer.length === 4 || paused || exit}
+                  disabled={answer.length === objectCount || paused || exit}
                   onClick={() => setAnswer((a) => [...a, s])}
                 >
                   {s}
@@ -150,7 +154,7 @@ export const GameSessionScreen: React.FC = () => {
             </button>
             <button
               className="flow-primary"
-              disabled={answer.length !== 4 || paused || exit}
+              disabled={answer.length !== objectCount || paused || exit}
               onClick={submit}
             >
               Confirmar respuesta
@@ -165,7 +169,7 @@ export const GameSessionScreen: React.FC = () => {
             </p>
             <p className="mb-5">
               {lastCorrect
-                ? "Reconociste el orden de los cuatro símbolos."
+                ? `Reconociste el orden de los ${objectCount} símbolos.`
                 : "Este intento se registró. Podés continuar con la próxima secuencia."}
             </p>
             <button className="flow-primary" onClick={next}>

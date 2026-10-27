@@ -1,3 +1,4 @@
+import { streakDays } from "../domain/training";
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -158,8 +159,8 @@ export const HomeScreen: React.FC = () => {
               <span className="font-space text-[11px] text-slate-500 dark:text-[#bcc9cd] uppercase tracking-wider font-bold">
                 Métricas de enfoque
               </span>
-              <span className="font-space text-[11px] font-bold text-cyan-600 dark:text-[#4cd7f6]">
-                Ritmo estable
+              <span className="font-space text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                Resumen de actividad
               </span>
             </div>
 
@@ -175,15 +176,15 @@ export const HomeScreen: React.FC = () => {
                     local_fire_department
                   </span>
                   <span className="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-[#262a33] text-amber-600 dark:text-[#ffb95f] font-space text-[10px] font-bold">
-                    Activo
+                    {streakDays(history) ? "En racha" : "Por empezar"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5 mt-3">
                   <span className="font-space text-[22px] font-bold text-slate-900 dark:text-[#dfe2ee]">
-                    {userStats.streakDays} días
+                    {streakDays(history)} días
                   </span>
                   <span className="font-dmsans text-[12px] text-slate-500 dark:text-[#bcc9cd] leading-tight">
-                    Días activos en la demo
+                    Racha de días consecutivos
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 mt-3">
