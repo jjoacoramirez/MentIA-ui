@@ -11,16 +11,9 @@ import { BrandLogo } from "./BrandLogo";
 interface HeaderProps {
   title?: string;
   subtitle?: string;
-  showBack?: boolean;
-  onBack?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({
-  title,
-  subtitle,
-  showBack = false,
-  onBack,
-}) => {
+export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
   const {
     currentTab,
     setCurrentTab,
@@ -57,21 +50,6 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="h-16 px-4 flex items-center justify-between w-full mx-auto">
         {/* Left: Back button or Logo + Title */}
         <div className="flex items-center gap-2.5">
-          {showBack ? (
-            <button
-              onClick={onBack || (() => setCurrentTab("inicio"))}
-              aria-label="Volver"
-              className="w-10 h-10 -ml-1 flex items-center justify-center rounded-full text-slate-700 dark:text-[#dfe2ee] hover:bg-black/5 dark:hover:bg-white/10 active:scale-95 transition-all"
-            >
-              <span
-                aria-hidden="true"
-                className="material-symbols-outlined text-[22px]"
-              >
-                arrow_back
-              </span>
-            </button>
-          ) : null}
-
           <button
             onClick={() => setCurrentTab("inicio")}
             aria-label="Ir al inicio"
@@ -79,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <BrandLogo size="sm" />
             <div className="flex flex-col">
-              <span className="font-space font-bold text-[18px] text-cyan-600 dark:text-[#4cd7f6] leading-none tracking-tight">
+              <span className="font-space font-bold text-[18px] text-accent leading-none tracking-tight">
                 {title || "MentIA"}
               </span>
               {getSubtext() && (
@@ -119,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({
               title="Organizar y personalizar widgets del dashboard"
               className={`w-9 h-9 flex items-center justify-center rounded-full transition-all ${
                 isCustomizingLayout
-                  ? "bg-cyan-500 text-white shadow-md shadow-cyan-500/30"
+                  ? "bg-brand text-brand-ink shadow-md shadow-brand/30"
                   : "text-slate-600 dark:text-[#dfe2ee] hover:bg-black/5 dark:hover:bg-white/10"
               }`}
             >
@@ -135,7 +113,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* User profile avatar */}
           <button
             onClick={() => setCurrentTab("perfil")}
-            className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-600 to-indigo-600 dark:from-[#4cd7f6] dark:to-[#06b6d4] flex items-center justify-center text-white dark:text-[#003640] shadow-sm ml-1 hover:ring-2 hover:ring-cyan-400 transition-all active:scale-95"
+            className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand to-indigo-600 dark:from-brand dark:to-brand flex items-center justify-center text-brand-ink shadow-sm ml-1 hover:ring-2 hover:ring-brand transition-all active:scale-95"
             title={`${userStats.name} (${userStats.username})`}
           >
             <span

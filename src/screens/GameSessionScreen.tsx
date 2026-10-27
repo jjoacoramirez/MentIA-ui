@@ -27,6 +27,12 @@ export const GameSessionScreen: React.FC = () => {
   const [elapsed, setElapsed] = useState(0);
   const submitted = useRef(false);
   useEffect(() => {
+    const requestExit = () => setExit(true);
+    window.addEventListener("mentia:leave-session", requestExit);
+    return () => window.removeEventListener("mentia:leave-session", requestExit);
+  }, []);
+
+  useEffect(() => {
     if (paused || exit || phase === "feedback") return;
     const timer = setInterval(() => {
       setElapsed((t) => t + 1000);
@@ -69,7 +75,7 @@ export const GameSessionScreen: React.FC = () => {
         <div className="flex items-center justify-between gap-3">
           <button className="session-icon" aria-label="Salir" onClick={() => setExit(true)}><X size={20} /></button>
           <div className="text-center min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-300 font-bold">{assessment ? "Evaluación inicial" : "Entrenamiento"} · demo</p>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-accent font-bold">{assessment ? "Evaluación inicial" : "Entrenamiento"} · demo</p>
             <h1 className="font-space font-bold text-lg">Secuencias visuales</h1>
             <p className="text-xs text-slate-600 dark:text-slate-300">Memoria · Nivel {sessionLevel} · {objectCount} objetos</p>
           </div>
@@ -110,7 +116,7 @@ export const GameSessionScreen: React.FC = () => {
             {target.map((s, i) => (
               <span
                 key={i}
-                className="text-4xl text-center text-cyan-600 dark:text-cyan-300"
+                className="text-4xl text-center text-accent"
               >
                 {s}
               </span>
@@ -126,7 +132,7 @@ export const GameSessionScreen: React.FC = () => {
             >
               {Array.from({ length: objectCount }, (_, i) => (
                 <span
-                  className="rounded-xl bg-cyan-500/10 text-3xl text-center py-4"
+                  className="rounded-xl bg-brand/10 text-3xl text-center py-4"
                   key={i}
                 >
                   {answer[i] || "·"}
@@ -138,7 +144,7 @@ export const GameSessionScreen: React.FC = () => {
                 <button
                   key={s}
                   aria-label={`Símbolo ${i + 1}: ${s}`}
-                  className="rounded-2xl border border-cyan-500/30 text-3xl py-4 hover:bg-cyan-500/20 focus-visible:outline-2 focus-visible:outline-cyan-500"
+                  className="rounded-2xl border border-brand/30 text-3xl py-4 hover:bg-brand/20 focus-visible:outline-2 focus-visible:outline-brand"
                   disabled={answer.length === objectCount || paused || exit}
                   onClick={() => setAnswer((a) => [...a, s])}
                 >

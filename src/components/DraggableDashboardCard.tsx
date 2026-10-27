@@ -68,17 +68,17 @@ export const DraggableDashboardCard: React.FC<DraggableDashboardCardProps> = ({
         isDragging ? "opacity-40 scale-[0.98]" : "opacity-100"
       } ${
         isDragOver
-          ? "ring-2 ring-cyan-500 ring-offset-2 dark:ring-offset-[#0f131c] shadow-lg shadow-cyan-500/20"
+          ? "ring-2 ring-brand ring-offset-2 dark:ring-offset-[#0f131c] shadow-lg shadow-brand/20"
           : ""
-      } ${isCustomizingLayout ? "cursor-grab active:cursor-grabbing hover:ring-1 hover:ring-cyan-500/50" : ""}`}
+      } ${isCustomizingLayout ? "cursor-grab active:cursor-grabbing hover:ring-1 hover:ring-brand/50" : ""}`}
     >
       {/* Layout Edit Toolbar overlay when customizer is active */}
       {isCustomizingLayout && (
-        <div className="mb-2 p-2 px-3 rounded-2xl bg-cyan-50/90 dark:bg-[#181c24]/90 border border-cyan-300 dark:border-cyan-500/30 flex items-center justify-between shadow-sm animate-fade-in backdrop-blur-md">
+        <div className="mb-2 p-2 px-3 rounded-2xl bg-brand/10 dark:bg-[#181c24]/90 border border-brand dark:border-brand/30 flex items-center justify-between shadow-sm animate-fade-in backdrop-blur-md">
           <div className="flex items-center gap-2">
             <span
               aria-hidden="true"
-              className="material-symbols-outlined text-cyan-600 dark:text-[#4cd7f6] text-[18px]"
+              className="material-symbols-outlined text-accent text-[18px]"
             >
               drag_indicator
             </span>

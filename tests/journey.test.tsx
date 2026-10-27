@@ -84,7 +84,8 @@ describe("Recorridos de MentIA", () => {
     fireEvent.click(screen.getByRole("option", { name: "Todas las sesiones" }));
     click("Logros");
     expect(screen.getByRole("heading", { name: "Tus logros" })).toBeInTheDocument();
-    click("Volver");
+    expect(screen.queryByRole("button", { name: "Volver" })).not.toBeInTheDocument();
+    act(() => window.dispatchEvent(new PopStateEvent("popstate", { state: { mentiaTab: "progreso" } })));
     expect(screen.getByRole("heading", { name: "Tu progreso" })).toBeInTheDocument();
     click("Perfil");
     expect(screen.getByText("15 min / sesión")).toBeInTheDocument();

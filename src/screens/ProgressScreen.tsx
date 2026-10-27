@@ -35,7 +35,7 @@ export const ProgressScreen: React.FC = () => {
               Nivel {userStats.level}
             </strong>
           </div>
-          <strong className="text-cyan-600 dark:text-cyan-300">
+          <strong className="text-accent">
             {userStats.xp} XP
           </strong>
         </div>
@@ -78,7 +78,7 @@ export const ProgressScreen: React.FC = () => {
               title={`${date.toLocaleDateString("es-AR")}: ${sessions.length ? accuracy + "%" : "sin sesiones"}`}
             >
               <div
-                className="rounded-t-md bg-cyan-500 min-h-1"
+                className="rounded-t-md bg-brand min-h-1"
                 style={{ height: `${accuracy}%` }}
               />
               <span className="text-[9px] text-center mt-2">

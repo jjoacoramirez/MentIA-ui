@@ -100,7 +100,7 @@ const MainLayout: React.FC = () => {
       >
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-brand animate-pulse" />
             <span className="font-space font-bold tracking-wide">
               MentIA · Prototipo
             </span>
@@ -116,8 +116,8 @@ const MainLayout: React.FC = () => {
             title={`Alternar tema (Activo: ${isDark ? "Oscuro" : "Claro"})`}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all font-space text-[11px] font-semibold cursor-pointer ${
               isDark
-                ? "bg-white/10 hover:bg-white/20 text-cyan-300 border border-white/10"
-                : "bg-slate-100 hover:bg-slate-200 text-cyan-700 border border-slate-300 shadow-xs"
+                ? "bg-white/10 hover:bg-white/20 text-accent border border-white/10"
+                : "bg-slate-100 hover:bg-slate-200 text-accent border border-slate-300 shadow-xs"
             }`}
           >
             <span
@@ -139,7 +139,7 @@ const MainLayout: React.FC = () => {
             title="Alternar entre marco iPhone 390px y vista fluida"
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-space text-[11px] font-semibold transition-colors cursor-pointer ${
               viewportMode === "mobile-frame"
-                ? "bg-cyan-500/20 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40"
+                ? "bg-brand/20 text-accent border border-brand/40"
                 : isDark
                   ? "bg-white/10 text-slate-300 hover:bg-white/20"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300"
@@ -203,11 +203,7 @@ const MainLayout: React.FC = () => {
 
           {/* Screen Top Header (except on landing onboarding screen) */}
           {!publicTabs.includes(currentTab) && currentTab !== "juego" && (
-            <Header
-              title="MentIA"
-              showBack={["historial", "logros", "resultado", "configuracion", "evaluacion"].includes(currentTab)}
-              onBack={() => setCurrentTab(["historial", "logros", "resultado"].includes(currentTab) ? "progreso" : "inicio")}
-            />
+            <Header title="MentIA" />
           )}
 
           {currentTab !== "juego" && (

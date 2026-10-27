@@ -58,13 +58,13 @@ export const HomeScreen: React.FC = () => {
         return (
           <div className="relative w-full rounded-3xl bg-white dark:bg-[#1c2028] p-5 overflow-hidden shadow-sm dark:shadow-xl border border-slate-200/70 dark:border-white/[0.04] transition-all">
             {/* Ambient background glows */}
-            <div className="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-cyan-400/10 dark:bg-[#4cd7f6]/10 blur-2xl pointer-events-none" />
+            <div className="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-brand/10 dark:bg-brand/10 blur-2xl pointer-events-none" />
             <div className="absolute -left-10 -bottom-10 w-36 h-36 rounded-full bg-indigo-500/10 dark:bg-[#3131c0]/20 blur-xl pointer-events-none" />
 
             <div className="relative flex flex-col gap-3.5 z-10">
               {/* Header tags */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-50 dark:bg-[#06b6d4]/15 text-cyan-700 dark:text-[#4cd7f6]">
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 dark:bg-brand/15 text-accent">
                   <span
                     aria-hidden="true"
                     className="material-symbols-outlined text-[15px]"
@@ -113,20 +113,20 @@ export const HomeScreen: React.FC = () => {
               </div>
 
               {/* Futuristic Cybernetic Visual */}
-              <div className="relative w-full h-36 rounded-2xl bg-slate-900 overflow-hidden shadow-inner group">
+              <div className="relative w-full h-36 rounded-2xl bg-brand/10 dark:bg-slate-900 overflow-hidden shadow-inner group">
                 <div
-                  className="w-full h-full bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full bg-cover bg-center opacity-25 dark:opacity-100 transition-transform duration-500 group-hover:scale-105"
                   style={{
                     backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvFUu_CWN5HWmAe59tUrhV37oArunIylT5gkjeiVwgGjCTvSejtuP96H3RkGzdQl_Bz3j6EC5NhtOmFNw4dT-PTxUR50UEpQGA1sHoZ-JfU_0efkKXrwkdjGwhEas43W4REx2fW1aEgFy5-xx2JnzKEiCTyTxWi3FiBTYFL_9fKypMK_7zIfggUO5scEQ7MjhjT1iQmlcdOb8JZwLUrOQlgYo2Gr9-fBt9_uI2ScFI7O9fciQxw_34Hw')`,
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex items-end p-3.5">
+                <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/40 dark:from-black/85 dark:via-black/40 to-transparent flex items-end p-3.5">
                   <div className="flex items-center gap-2">
                     <span className="flex h-2 w-2 relative">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400" />
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-brand" />
                     </span>
-                    <span className="font-space text-[11px] text-cyan-300 font-bold tracking-wider uppercase">
+                    <span className="font-space text-[11px] text-accent font-bold tracking-wider uppercase">
                       Secuencias visuales listas
                     </span>
                   </div>
@@ -136,7 +136,7 @@ export const HomeScreen: React.FC = () => {
               {/* Start CTA Button */}
               <button
                 onClick={() => setCurrentTab("entrenar")}
-                className="w-full h-14 rounded-full bg-cyan-500 hover:bg-cyan-400 dark:bg-[#4cd7f6] dark:hover:bg-[#acedff] text-white dark:text-[#003640] flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 active:scale-95 transition-all duration-150 cursor-pointer"
+                className="w-full h-14 rounded-full bg-brand hover:bg-brand dark:hover:bg-brand text-brand-ink flex items-center justify-center gap-2 shadow-lg shadow-brand/25 active:scale-95 transition-all duration-150 cursor-pointer"
               >
                 <span className="font-space text-[18px] font-bold tracking-tight">
                   Empezar
@@ -225,7 +225,7 @@ export const HomeScreen: React.FC = () => {
                 <div className="flex items-center gap-1.5 mt-3 text-slate-500 dark:text-[#bcc9cd]">
                   <span
                     aria-hidden="true"
-                    className="material-symbols-outlined text-[16px] text-emerald-500 dark:text-cyan-400"
+                    className="material-symbols-outlined text-[16px] text-emerald-500 dark:text-accent"
                   >
                     check_circle
                   </span>
@@ -250,7 +250,7 @@ export const HomeScreen: React.FC = () => {
                   Constancia de entrenamiento durante los últimos 7 días
                 </p>
               </div>
-              <div className="w-8 h-8 rounded-full bg-cyan-50 dark:bg-[#1c2028] flex items-center justify-center text-cyan-600 dark:text-[#4cd7f6] shrink-0">
+              <div className="w-8 h-8 rounded-full bg-brand/10 dark:bg-[#1c2028] flex items-center justify-center text-accent shrink-0">
                 <span
                   aria-hidden="true"
                   className="material-symbols-outlined text-[18px]"
@@ -275,7 +275,7 @@ export const HomeScreen: React.FC = () => {
                       <span
                         className={`font-space text-[9px] font-bold transition-all ${
                           d.isToday
-                            ? "text-cyan-600 dark:text-[#4cd7f6] opacity-100 font-extrabold"
+                            ? "text-accent opacity-100 font-extrabold"
                             : isSelected
                               ? "text-slate-800 dark:text-white opacity-100"
                               : "text-slate-400 dark:text-slate-500 opacity-0 group-hover:opacity-100"
@@ -290,11 +290,11 @@ export const HomeScreen: React.FC = () => {
                           style={{ height: `${d.heightPercent}%` }}
                           className={`w-3.5 rounded-full transition-all duration-300 ${
                             d.isToday
-                              ? "bg-cyan-500 dark:bg-[#4cd7f6] shadow-[0_0_12px_rgba(76,215,246,0.5)]"
+                              ? "bg-brand shadow-[0_0_12px_rgba(34,211,238,0.5)]"
                               : isSelected
-                                ? "bg-indigo-500 dark:bg-cyan-400"
+                                ? "bg-indigo-500 dark:bg-brand"
                                 : d.heightPercent > 30
-                                  ? "bg-cyan-400/70 dark:bg-[#4cd7f6]/70 group-hover:bg-cyan-500"
+                                  ? "bg-brand/70 dark:bg-brand/70 group-hover:bg-brand"
                                   : "bg-slate-200 dark:bg-[#31353e] group-hover:bg-slate-300"
                           }`}
                         />
@@ -303,7 +303,7 @@ export const HomeScreen: React.FC = () => {
                       <span
                         className={`font-space text-[11px] font-bold ${
                           d.isToday
-                            ? "text-cyan-600 dark:text-[#4cd7f6]"
+                            ? "text-accent"
                             : "text-slate-500 dark:text-[#bcc9cd]"
                         }`}
                       >
@@ -322,7 +322,7 @@ export const HomeScreen: React.FC = () => {
                     {daysData.find((d) => d.label === selectedDay)?.full}
                   </strong>
                 </span>
-                <span className="text-cyan-600 dark:text-[#4cd7f6] font-bold">
+                <span className="text-accent font-bold">
                   {daysData.find((d) => d.label === selectedDay)?.xp} XP
                   acumulados
                 </span>
@@ -337,7 +337,7 @@ export const HomeScreen: React.FC = () => {
               <span>Ver progreso completo</span>
               <span
                 aria-hidden="true"
-                className="material-symbols-outlined text-[18px] text-cyan-600 dark:text-[#4cd7f6]"
+                className="material-symbols-outlined text-[18px] text-accent"
               >
                 arrow_forward
               </span>
@@ -370,20 +370,20 @@ export const HomeScreen: React.FC = () => {
 
       case "flash_challenge":
         return (
-          <div className="w-full rounded-3xl bg-gradient-to-tr from-cyan-950 via-[#181c24] to-indigo-950 p-5 text-white shadow-md border border-cyan-500/20 flex flex-col gap-3">
+          <div className="w-full rounded-3xl bg-white dark:bg-[#181c24] p-5 text-ink shadow-md border border-brand/20 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span
                   aria-hidden="true"
-                  className="material-symbols-outlined text-cyan-400 text-[20px]"
+                  className="material-symbols-outlined text-accent text-[20px]"
                 >
                   electric_bolt
                 </span>
-                <span className="font-space text-[11px] uppercase tracking-wider text-cyan-300 font-bold">
+                <span className="font-space text-[11px] uppercase tracking-wider text-accent font-bold">
                   Secuencias de ejemplo
                 </span>
               </div>
-              <span className="font-space text-[10px] bg-cyan-500/30 text-cyan-300 px-2 py-0.5 rounded-full font-bold">
+              <span className="font-space text-[10px] bg-brand/30 text-accent px-2 py-0.5 rounded-full font-bold">
                 XP de ejemplo
               </span>
             </div>
@@ -392,7 +392,7 @@ export const HomeScreen: React.FC = () => {
             </p>
             <button
               onClick={() => setCurrentTab("entrenar")}
-              className="w-full h-11 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-slate-950 font-space font-bold text-[13px] flex items-center justify-center gap-1.5 transition-transform active:scale-95"
+              className="w-full h-11 rounded-xl bg-brand hover:bg-brand text-slate-950 font-space font-bold text-[13px] flex items-center justify-center gap-1.5 transition-transform active:scale-95"
             >
               <span>Comenzar Sprint</span>
               <span
@@ -411,7 +411,7 @@ export const HomeScreen: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen px-4 pt-2 pb-28 select-none bg-slate-50 dark:bg-[#0f131c] text-slate-800 dark:text-[#dfe2ee] transition-colors">
+    <div className="flex flex-col w-full min-h-screen px-4 pt-2 pb-28 select-none bg-canvas text-ink transition-colors">
       {/* Saludo & Nivel Usuario */}
       <div className="flex items-center justify-between gap-3 pt-2 mb-4">
         <div className="flex flex-col">
@@ -426,10 +426,10 @@ export const HomeScreen: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#262a33] border border-slate-200/80 dark:border-white/[0.04] text-cyan-600 dark:text-[#4cd7f6] shadow-sm shrink-0">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#262a33] border border-slate-200/80 dark:border-white/[0.04] text-accent shadow-sm shrink-0">
           <span
             aria-hidden="true"
-            className="material-symbols-outlined text-[16px] text-cyan-500 dark:text-[#4cd7f6]"
+            className="material-symbols-outlined text-[16px] text-accent"
             style={{ fontVariationSettings: "'FILL' 1" }}
           >
             bolt
@@ -444,22 +444,22 @@ export const HomeScreen: React.FC = () => {
 
       {/* Drag & Drop Customizer Banner */}
       {isCustomizingLayout && (
-        <div className="mb-4 p-3.5 rounded-2xl bg-cyan-500/10 dark:bg-cyan-950/40 border-2 border-cyan-500/40 flex flex-col gap-2.5 animate-fade-in shadow-md">
+        <div className="mb-4 p-3.5 rounded-2xl bg-brand/10 dark:bg-brand/40 border-2 border-brand/40 flex flex-col gap-2.5 animate-fade-in shadow-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
                 aria-hidden="true"
-                className="material-symbols-outlined text-cyan-600 dark:text-cyan-400 text-[20px]"
+                className="material-symbols-outlined text-accent text-[20px]"
               >
                 open_with
               </span>
-              <span className="font-space text-[13px] font-bold text-cyan-800 dark:text-cyan-300">
+              <span className="font-space text-[13px] font-bold text-accent">
                 Organizador Drag &amp; Drop Activo
               </span>
             </div>
             <button
               onClick={() => setIsCustomizingLayout(false)}
-              className="px-3 py-1 rounded-full bg-cyan-500 text-white font-space text-[11px] font-bold shadow-sm hover:bg-cyan-600 cursor-pointer"
+              className="px-3 py-1 rounded-full bg-brand text-brand-ink font-space text-[11px] font-bold shadow-sm hover:bg-brand cursor-pointer"
             >
               Listo
             </button>
@@ -473,7 +473,7 @@ export const HomeScreen: React.FC = () => {
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={() => setShowAddWidgetModal(true)}
-              className="flex-1 py-1.5 px-2.5 rounded-xl bg-white dark:bg-[#262a33] text-cyan-700 dark:text-cyan-300 border border-cyan-300 dark:border-cyan-500/30 font-space text-[11px] font-bold flex items-center justify-center gap-1 shadow-xs"
+              className="flex-1 py-1.5 px-2.5 rounded-xl bg-white dark:bg-[#262a33] text-accent border border-brand dark:border-brand/30 font-space text-[11px] font-bold flex items-center justify-center gap-1 shadow-xs"
             >
               <span
                 aria-hidden="true"
@@ -541,7 +541,7 @@ export const HomeScreen: React.FC = () => {
                   onClick={() => toggleWidget(w.id)}
                   className={`p-2.5 rounded-xl border flex items-center justify-between cursor-pointer transition-colors ${
                     w.enabled
-                      ? "bg-cyan-50 dark:bg-cyan-950/30 border-cyan-300 dark:border-cyan-500/40 text-cyan-900 dark:text-cyan-200"
+                      ? "bg-brand/10 dark:bg-brand/30 border-brand dark:border-brand/40 text-accent"
                       : "bg-slate-50 dark:bg-[#0a0e16] border-slate-200 dark:border-white/5 text-slate-500"
                   }`}
                 >
@@ -565,7 +565,7 @@ export const HomeScreen: React.FC = () => {
 
             <button
               onClick={() => setShowAddWidgetModal(false)}
-              className="mt-2 w-full h-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-white font-space font-bold text-[13px]"
+              className="mt-2 w-full h-11 rounded-xl bg-brand hover:bg-brand text-brand-ink font-space font-bold text-[13px]"
             >
               Guardar Selección
             </button>

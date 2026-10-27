@@ -22,7 +22,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     const saved = localStorage.getItem("mentia_theme") as AppTheme;
     return saved === "light" || saved === "dark" || saved === "system"
       ? saved
-      : "dark";
+      : "system";
   });
 
   const [isDark, setIsDark] = useState<boolean>(() => {
@@ -87,7 +87,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const toggleTheme = () => {
-    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
+    setThemeState(isDark ? "light" : "dark");
   };
 
   return (

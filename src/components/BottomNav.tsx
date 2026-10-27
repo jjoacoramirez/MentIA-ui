@@ -46,7 +46,7 @@ export const BottomNav: React.FC = () => {
                 onClick={() => setCurrentTab(item.tab)}
                 className={`flex-1 flex flex-col items-center justify-center h-full transition-all duration-200 relative ${
                   isActive
-                    ? "text-cyan-600 dark:text-[#4cd7f6] font-bold scale-105"
+                    ? "text-accent font-bold scale-105"
                     : "text-slate-500 dark:text-[#869397] hover:text-slate-800 dark:hover:text-[#dfe2ee]"
                 }`}
               >
@@ -63,7 +63,7 @@ export const BottomNav: React.FC = () => {
                   {item.label}
                 </span>
                 {isActive && (
-                  <span className="absolute bottom-1.5 w-1 h-1 rounded-full bg-cyan-600 dark:bg-[#4cd7f6] shadow-sm animate-pulse" />
+                  <span className="absolute bottom-1.5 w-1 h-1 rounded-full bg-brand shadow-sm animate-pulse" />
                 )}
               </button>
             );

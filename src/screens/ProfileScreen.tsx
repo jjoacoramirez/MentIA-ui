@@ -27,11 +27,11 @@ export const ProfileScreen: React.FC = () => {
     <div className="flex flex-col w-full min-h-screen px-4 pt-2 pb-28 select-none bg-slate-50 dark:bg-[#0f131c] text-slate-800 dark:text-[#dfe2ee] transition-colors">
       {/* User Card Header */}
       <section className="bg-white dark:bg-[#1c2028] rounded-3xl p-5 shadow-sm border border-slate-200/70 dark:border-white/[0.04] mb-4 relative overflow-hidden">
-        <div className="absolute -right-6 -top-6 w-32 h-32 bg-cyan-400/20 dark:bg-cyan-500/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -right-6 -top-6 w-32 h-32 bg-brand/20 dark:bg-brand/10 rounded-full blur-2xl pointer-events-none" />
 
         <div className="relative z-10 flex items-center gap-4">
           <div className="relative shrink-0">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 via-sky-600 to-indigo-600 flex items-center justify-center shadow-md text-white font-space font-bold text-2xl">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand via-sky-600 to-indigo-600 flex items-center justify-center shadow-md text-white font-space font-bold text-2xl">
               {userStats.name.charAt(0)}
             </div>
             <div className="absolute -bottom-1 -right-1 bg-emerald-500 w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-[#1c2028]">
@@ -49,7 +49,7 @@ export const ProfileScreen: React.FC = () => {
               <h2 className="font-space text-[20px] font-bold text-slate-900 dark:text-[#dfe2ee] truncate">
                 {userStats.name}
               </h2>
-              <span className="bg-cyan-50 dark:bg-[#262a33] text-cyan-700 dark:text-[#4cd7f6] font-space text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
+              <span className="bg-brand/10 dark:bg-[#262a33] text-accent font-space text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
                 Nivel {userStats.level}
               </span>
             </div>
@@ -57,7 +57,7 @@ export const ProfileScreen: React.FC = () => {
               {userStats.username}
             </p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="font-space text-[12px] font-semibold text-cyan-600 dark:text-[#4cd7f6]">
+              <span className="font-space text-[12px] font-semibold text-accent">
                 {userStats.title}
               </span>
               <span className="text-slate-300 dark:text-white/20 text-[10px]">
@@ -100,7 +100,7 @@ export const ProfileScreen: React.FC = () => {
           </div>
           <div className="w-px h-6 bg-slate-200 dark:bg-white/10" />
           <div>
-            <span className="font-space text-[18px] font-bold text-cyan-600 dark:text-[#4cd7f6] block leading-none">
+            <span className="font-space text-[18px] font-bold text-accent block leading-none">
               {userStats.completedActivities}
             </span>
             <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 uppercase mt-0.5 block">
@@ -114,7 +114,7 @@ export const ProfileScreen: React.FC = () => {
       <section className="bg-white dark:bg-[#1c2028] rounded-3xl p-5 shadow-sm border border-slate-200/70 dark:border-white/[0.04] mb-4">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-cyan-50 dark:bg-cyan-950/40 flex items-center justify-center text-cyan-600 dark:text-[#4cd7f6]">
+            <div className="w-8 h-8 rounded-full bg-brand/10 dark:bg-brand/40 flex items-center justify-center text-accent">
               <span
                 aria-hidden="true"
                 className="material-symbols-outlined text-[18px]"
@@ -126,7 +126,7 @@ export const ProfileScreen: React.FC = () => {
               Apariencia y tema
             </h3>
           </div>
-          <span className="font-space text-[10px] bg-cyan-100/70 dark:bg-[#262a33] text-cyan-800 dark:text-[#4cd7f6] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+          <span className="font-space text-[10px] bg-brand/10 dark:bg-[#262a33] text-accent px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
             Activo:{" "}
             {theme === "light"
               ? "Claro"
@@ -148,13 +148,13 @@ export const ProfileScreen: React.FC = () => {
             onClick={() => setTheme("light")}
             className={`flex flex-col items-center p-2 rounded-2xl transition-all cursor-pointer text-left border ${
               theme === "light"
-                ? "bg-sky-50/60 dark:bg-white/10 ring-2 ring-cyan-500 border-cyan-400 shadow-md"
+                ? "bg-sky-50/60 dark:bg-white/10 ring-2 ring-brand border-brand shadow-md"
                 : "bg-slate-50 dark:bg-[#0a0e16] border-slate-200 dark:border-white/5 hover:border-slate-300"
             }`}
           >
             <div className="w-full h-16 rounded-xl bg-white border border-slate-200 p-1.5 flex flex-col justify-between mb-2 shadow-inner overflow-hidden">
               <div className="flex items-center justify-between">
-                <div className="w-4 h-1.5 rounded-full bg-cyan-500" />
+                <div className="w-4 h-1.5 rounded-full bg-brand" />
                 <span
                   aria-hidden="true"
                   className="material-symbols-outlined text-amber-500 text-[13px]"
@@ -165,7 +165,7 @@ export const ProfileScreen: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <div className="w-8 h-1 rounded-full bg-slate-200" />
-                <div className="w-12 h-1.5 rounded-full bg-cyan-100" />
+                <div className="w-12 h-1.5 rounded-full bg-brand/10" />
               </div>
             </div>
             <div className="w-full flex items-center justify-between px-0.5">
@@ -175,7 +175,7 @@ export const ProfileScreen: React.FC = () => {
               {theme === "light" && (
                 <span
                   aria-hidden="true"
-                  className="material-symbols-outlined text-cyan-600 dark:text-[#4cd7f6] text-[15px]"
+                  className="material-symbols-outlined text-accent text-[15px]"
                 >
                   check_circle
                 </span>
@@ -191,7 +191,7 @@ export const ProfileScreen: React.FC = () => {
             onClick={() => setTheme("dark")}
             className={`flex flex-col items-center p-2 rounded-2xl transition-all cursor-pointer text-left border ${
               theme === "dark"
-                ? "bg-sky-50/60 dark:bg-cyan-950/40 ring-2 ring-cyan-500 border-cyan-400 shadow-md"
+                ? "bg-sky-50/60 dark:bg-brand/40 ring-2 ring-brand border-brand shadow-md"
                 : "bg-slate-50 dark:bg-[#0a0e16] border-slate-200 dark:border-white/5 hover:border-slate-300"
             }`}
           >
@@ -200,14 +200,14 @@ export const ProfileScreen: React.FC = () => {
                 <div className="w-4 h-1.5 rounded-full bg-indigo-500" />
                 <span
                   aria-hidden="true"
-                  className="material-symbols-outlined text-cyan-400 text-[13px]"
+                  className="material-symbols-outlined text-accent text-[13px]"
                 >
                   dark_mode
                 </span>
               </div>
               <div className="space-y-1">
                 <div className="w-8 h-1 rounded-full bg-slate-700" />
-                <div className="w-12 h-1.5 rounded-full bg-cyan-900/60" />
+                <div className="w-12 h-1.5 rounded-full bg-brand/60" />
               </div>
             </div>
             <div className="w-full flex items-center justify-between px-0.5">
@@ -217,7 +217,7 @@ export const ProfileScreen: React.FC = () => {
               {theme === "dark" && (
                 <span
                   aria-hidden="true"
-                  className="material-symbols-outlined text-cyan-600 dark:text-[#4cd7f6] text-[15px]"
+                  className="material-symbols-outlined text-accent text-[15px]"
                 >
                   check_circle
                 </span>
@@ -233,7 +233,7 @@ export const ProfileScreen: React.FC = () => {
             onClick={() => setTheme("system")}
             className={`flex flex-col items-center p-2 rounded-2xl transition-all cursor-pointer text-left border ${
               theme === "system"
-                ? "bg-sky-50/60 dark:bg-cyan-950/40 ring-2 ring-cyan-500 border-cyan-400 shadow-md"
+                ? "bg-sky-50/60 dark:bg-brand/40 ring-2 ring-brand border-brand shadow-md"
                 : "bg-slate-50 dark:bg-[#0a0e16] border-slate-200 dark:border-white/5 hover:border-slate-300"
             }`}
           >
@@ -249,7 +249,7 @@ export const ProfileScreen: React.FC = () => {
               </div>
               <div className="space-y-1">
                 <div className="w-10 h-1 rounded-full bg-white/70" />
-                <div className="w-6 h-1.5 rounded-full bg-cyan-600/70" />
+                <div className="w-6 h-1.5 rounded-full bg-brand/70" />
               </div>
             </div>
             <div className="w-full flex items-center justify-between px-0.5">
@@ -259,7 +259,7 @@ export const ProfileScreen: React.FC = () => {
               {theme === "system" && (
                 <span
                   aria-hidden="true"
-                  className="material-symbols-outlined text-cyan-600 dark:text-[#4cd7f6] text-[15px]"
+                  className="material-symbols-outlined text-accent text-[15px]"
                 >
                   check_circle
                 </span>
@@ -275,7 +275,7 @@ export const ProfileScreen: React.FC = () => {
         <div className="bg-slate-50 dark:bg-[#0a0e16] rounded-2xl p-3 flex items-center gap-2.5 border border-slate-200/60 dark:border-white/[0.04]">
           <span
             aria-hidden="true"
-            className="material-symbols-outlined text-cyan-600 dark:text-[#4cd7f6] text-[18px] shrink-0"
+            className="material-symbols-outlined text-accent text-[18px] shrink-0"
           >
             wb_incandescent
           </span>
@@ -312,7 +312,7 @@ export const ProfileScreen: React.FC = () => {
           {/* Frecuencia */}
           <div className="bg-slate-50 dark:bg-[#0a0e16] rounded-2xl p-3 flex items-center justify-between border border-slate-200/60 dark:border-white/[0.04]">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-white dark:bg-[#262a33] flex items-center justify-center text-cyan-600 dark:text-[#4cd7f6] shadow-xs">
+              <div className="w-9 h-9 rounded-full bg-white dark:bg-[#262a33] flex items-center justify-center text-accent shadow-xs">
                 <span
                   aria-hidden="true"
                   className="material-symbols-outlined text-[18px]"
@@ -353,7 +353,7 @@ export const ProfileScreen: React.FC = () => {
                 >
                   <span
                     className={`w-2 h-2 rounded-full ${
-                      idx === 0 ? "bg-cyan-500" : "bg-indigo-500"
+                      idx === 0 ? "bg-brand" : "bg-indigo-500"
                     }`}
                   />
                   <span>{item}</span>
@@ -362,7 +362,7 @@ export const ProfileScreen: React.FC = () => {
 
               <button
                 onClick={() => setCurrentTab("configuracion")}
-                className="flex items-center gap-1 text-cyan-600 dark:text-[#4cd7f6] hover:underline font-space text-[11px] font-bold px-2 py-1 cursor-pointer"
+                className="flex items-center gap-1 text-accent hover:underline font-space text-[11px] font-bold px-2 py-1 cursor-pointer"
               >
                 <span
                   aria-hidden="true"

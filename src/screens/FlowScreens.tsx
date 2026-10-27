@@ -276,7 +276,7 @@ export function TrainingScreen() {
           secuencias visuales breves; todavía no representan la evaluación
           completa ni las categorías definitivas.
         </p>
-        <p className="mt-4 text-sm text-cyan-700 dark:text-cyan-300">Memoria · Nivel {assessed ? memoryProgress(history).level : 1} · {assessed ? memoryProgress(history).objects : 4} objetos. La dificultad se asigna automáticamente.</p>
+        <p className="mt-4 text-sm text-accent">Memoria · Nivel {assessed ? memoryProgress(history).level : 1} · {assessed ? memoryProgress(history).objects : 4} objetos. La dificultad se asigna automáticamente.</p>
         <ol className="list-decimal pl-5 my-5 space-y-2">
           <li>Observá la secuencia de símbolos.</li>
           <li>Repetila en el mismo orden.</li>
@@ -431,7 +431,7 @@ export function AchievementsScreen() {
               {unlocked ? "★" : "☆"} {title}
             </strong>
             <p className="text-sm mt-2">{description}</p>
-            <span className="text-cyan-700 dark:text-cyan-300 text-sm">
+            <span className="text-accent text-sm">
               {unlocked ? "Obtenido" : "Por descubrir"}
             </span>
           </section>

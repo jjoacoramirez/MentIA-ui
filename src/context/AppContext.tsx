@@ -1,3 +1,4 @@
+import { useScreenNavigation } from "./useScreenNavigation";
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -72,7 +73,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [currentTab, setCurrentTab] = useState<ScreenTab>("landing");
+  const { currentTab, setCurrentTab } = useScreenNavigation();
   const [hasSeenOnboarding, setHasSeenOnboarding] = useState<boolean>(false);
   const [userStats, setUserStats] = useState<UserStats>(initialStats);
   const [widgets, setWidgets] = useState<DashboardWidget[]>(() => {
