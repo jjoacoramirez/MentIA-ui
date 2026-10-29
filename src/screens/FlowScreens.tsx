@@ -77,7 +77,7 @@ export function AuthScreen({
             disabled={!saved}
             onClick={() =>
               mode === "registro"
-                ? enter(alias.trim().toLowerCase(), age)
+                ? enter(alias.trim().toLowerCase(), age, true)
                 : setCurrentTab("ingreso")
             }
           >
@@ -98,7 +98,7 @@ export function AuthScreen({
     >
       <p className="mb-4 text-sm">
         Demo sin cuentas reales. Las credenciales no se guardan ni se validan
-        contra un servidor. Al recargar se reinicia el recorrido.
+        contra un servidor. El perfil y el progreso de la demo se guardan en este navegador.
       </p>
       <form onSubmit={submit} className="flow-card flex flex-col gap-4">
         <label>
@@ -194,7 +194,7 @@ export function AuthScreen({
   );
 }
 export function ConfigurationScreen() {
-  const { minutes, goals, configure, assessed } = useJourney();
+  const { minutes, goals, configure, assessmentRequired } = useJourney();
   const { setCurrentTab } = useApp();
   const [duration, setDuration] = useState(minutes);
   const [selected, setSelected] = useState(goals);
@@ -246,7 +246,7 @@ export function ConfigurationScreen() {
         <button className="flow-primary" disabled={!selected.length}>
           Guardar y continuar
         </button>
-        {assessed && (
+        {!assessmentRequired && (
           <button
             type="button"
             className="flow-link"
@@ -260,33 +260,38 @@ export function ConfigurationScreen() {
   );
 }
 export function TrainingScreen() {
-  const { assessed, minutes, begin, history } = useJourney();
+  const { minutes, begin, history, skipAssessment } = useJourney();
+  const { currentTab } = useApp();
+  const initial = currentTab === "evaluacion";
   return (
-    <Panel title={assessed ? "Preparar entrenamiento" : "Evaluación inicial"}>
+    <Panel title={!initial ? "Preparar entrenamiento" : "Evaluación inicial"}>
       <section className="flow-card">
         <p className="text-lg font-bold mb-3">
-          {assessed ? "Una sesión a tu ritmo" : "Tu punto de partida"}
+          {!initial ? "Una sesión a tu ritmo" : "Tu punto de partida"}
         </p>
         <p>
-          La evaluación inicial sirve para configurar el entrenamiento dentro de
-          MentIA. Los resultados describen tu desempeño en la plataforma.
+          {initial ? "La evaluación inicial sirve para establecer tu punto de partida en MentIA. Los resultados describen tu desempeño en la plataforma." : "Practicá con la dificultad que corresponde a tu progreso. No necesitás repetir la evaluación inicial para entrenar."}
         </p>
         <p className="mt-4">
           Preferencia: {minutes} minutos. En esta demo vas a probar tres
           secuencias visuales breves; todavía no representan la evaluación
           completa ni las categorías definitivas.
         </p>
-        <p className="mt-4 text-sm text-accent">Memoria · Nivel {assessed ? memoryProgress(history).level : 1} · {assessed ? memoryProgress(history).objects : 4} objetos. La dificultad se asigna automáticamente.</p>
+        <p className="mt-4 text-sm text-accent">Memoria · Nivel {!initial ? memoryProgress(history).level : 1} · {!initial ? memoryProgress(history).objects : 4} objetos. La dificultad se asigna automáticamente.</p>
         <ol className="list-decimal pl-5 my-5 space-y-2">
           <li>Observá la secuencia de símbolos.</li>
           <li>Repetila en el mismo orden.</li>
           <li>Al terminar, revisá tus aciertos y tiempos.</li>
         </ol>
-        <button className="flow-primary" onClick={() => begin(!assessed)}>
-          {assessed
+        <button className="flow-primary" onClick={() => begin(initial)}>
+          {!initial
             ? "Comenzar sesión de ejemplo"
             : "Comenzar evaluación de ejemplo"}
         </button>
+        {initial && <>
+          <button className="flow-secondary mt-3" onClick={skipAssessment}>Saltear por ahora</button>
+          <p className="text-sm text-slate-600 dark:text-slate-300 mt-3">Podés hacerla después desde Perfil. Mientras tanto, empezás en nivel 1, sin resultados de evaluación ni XP extra.</p>
+        </>}
       </section>
     </Panel>
   );

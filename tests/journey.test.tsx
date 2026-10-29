@@ -94,6 +94,14 @@ describe("Recorridos de MentIA", () => {
       screen.getByRole("button", { name: "Comenzar" }),
     ).toBeInTheDocument();
     expect(localStorage.getItem("password")).toBeNull();
+    click("Ya tengo una cuenta");
+    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "explorador_01" } });
+    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
+    click("Entrar a la demo");
+    expect(screen.getByText("Hola, explorador_01")).toBeInTheDocument();
+    click("Historial");
+    expect(screen.getByRole("button", { name: /Evaluación inicial · Completada/ })).toBeInTheDocument();
+    expect(screen.getByText(/Entrenamiento · Abandonada/)).toBeInTheDocument();
   });
   it("la biblioteca asigna el nivel y el siguiente entrenamiento pasa de cuatro a cinco objetos", () => {
     vi.useFakeTimers();
@@ -115,6 +123,58 @@ describe("Recorridos de MentIA", () => {
     expect(screen.getByLabelText("Secuencia para memorizar").children).toHaveLength(5);
     playRound();
     expect(screen.getByText("¡Secuencia correcta!")).toBeInTheDocument();
+  });
+  it("permite saltear sin inventar evaluación y conserva el perfil al recargar e ingresar nuevamente", () => {
+    enter();
+    click("Saltear por ahora");
+    expect(screen.getByText("Hola, explorador_01")).toBeInTheDocument();
+    const saved = JSON.parse(localStorage.getItem("mentia_demo_profiles_v1")!)["explorador_01"];
+    expect(saved.assessmentStatus).toBe("skipped");
+    expect(saved.history).toEqual([]);
+    expect(saved).not.toHaveProperty("password");
+    expect(saved).not.toHaveProperty("recoveryCode");
+    click("Juegos");
+    expect(screen.getByRole("button", { name: "Jugar en mi nivel" })).toBeEnabled();
+    click("Perfil");
+    expect(screen.getByRole("button", { name: "Hacer evaluación inicial" })).toBeInTheDocument();
+    click("Cerrar sesión en este dispositivo");
+    expect(localStorage.getItem("mentia_demo_active_v1")).toBeNull();
+    click("Ya tengo una cuenta");
+    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "explorador_01" } });
+    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
+    click("Entrar a la demo");
+    expect(screen.getByText("Hola, explorador_01")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Evaluación inicial" })).not.toBeInTheDocument();
+    click("Perfil");
+    expect(screen.getByText("15 min / sesión")).toBeInTheDocument();
+  });
+  it("restaura una demo guardada al recargar, permite evaluarse después y mantiene separados los alias", () => {
+    const first = render(<App />);
+    click("Ya tengo una cuenta");
+    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "demo_existente" } });
+    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
+    click("Entrar a la demo");
+    expect(screen.getByText("Hola, demo_existente")).toBeInTheDocument();
+    first.unmount();
+    render(<App />);
+    expect(screen.getByText("Hola, demo_existente")).toBeInTheDocument();
+    expect(window.history.state.mentiaTab).toBe("inicio");
+    click("Perfil");
+    click("Hacer evaluación inicial");
+    expect(screen.getByRole("heading", { name: "Evaluación inicial" })).toBeInTheDocument();
+    click("Saltear por ahora");
+    click("Perfil");
+    click("Cerrar sesión en este dispositivo");
+    click("Comenzar");
+    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "nuevo_alias" } });
+    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
+    fireEvent.change(screen.getByLabelText("Repetir contraseña"), { target: { value: "solo-demo-12345" } });
+    click("Crear cuenta de ejemplo");
+    fireEvent.click(screen.getByLabelText("Ya guardé el código"));
+    click("Continuar");
+    click("Guardar y continuar");
+    expect(screen.getByRole("heading", { name: "Evaluación inicial" })).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem("mentia_demo_profiles_v1")!).nuevo_alias.history).toEqual([]);
   });
   it("requiere alias válido y coincidencia de contraseñas", () => {
     render(<App />);

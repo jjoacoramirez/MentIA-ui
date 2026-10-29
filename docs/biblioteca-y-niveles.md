@@ -11,7 +11,7 @@ El nivel general por XP no determina la dificultad. Al empezar una sesión se ca
 - Un entrenamiento completado por debajo del umbral reinicia la serie. Abandonar no suma avance ni XP. Repetir sesiones del mismo día cuenta para progresión, pero no agrega días a la racha.
 - El nivel se asigna al comenzar y no cambia durante la partida. No hay selector manual ni acceso a dificultades superiores.
 
-Reglas de prueba, pendientes de validar con el equipo. El historial y el progreso existen en memoria y se reinician al recargar o cambiar de usuario. El backend deberá persistirlos y validar la dificultad permitida; el control del frontend no es una autorización de seguridad.
+Reglas de prueba, pendientes de validar con el equipo. El historial y el progreso de cada alias se guardan localmente en este navegador y se restauran al recargar o volver a ingresar. El backend deberá persistirlos y validar la dificultad permitida; el control del frontend no es una autorización de seguridad.
 
 La racha cuenta días consecutivos con sesiones completadas en el calendario de Argentina. Si todavía no se entrenó hoy, se conserva la racha hasta ayer. “Ritmo estable” era texto fijo y se reemplaza por “Resumen de actividad”, sin apariencia de enlace.
 

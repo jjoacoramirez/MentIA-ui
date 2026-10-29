@@ -5,12 +5,12 @@ import { useJourney } from "../context/JourneyContext";
 import { memoryProgress, SESSIONS_TO_ADVANCE } from "../domain/training";
 import { Panel } from "./FlowScreens";
 export function LibraryScreen() {
-  const { history, assessed, begin } = useJourney();
+  const { history, canTrain, begin } = useJourney();
   const { setCurrentTab } = useApp();
   const progress = memoryProgress(history);
   return <Panel title="Biblioteca de juegos">
     <p className="text-sm text-slate-600 dark:text-slate-300 mb-5">Elegí qué practicar. MentIA asigna la dificultad según tu progreso en cada área, independientemente de tu nivel general de XP.</p>
-    {!assessed && <section className="flow-card mb-4"><h2 className="font-bold mb-2">Primero, tu punto de partida</h2><p className="text-sm mb-4">Completá la evaluación inicial para comenzar a entrenar.</p><button className="flow-primary" onClick={() => setCurrentTab("evaluacion")}>Ir a evaluación inicial</button></section>}
+    {!canTrain && <section className="flow-card mb-4"><h2 className="font-bold mb-2">Primero, tu punto de partida</h2><p className="text-sm mb-4">Completá la evaluación inicial para comenzar a entrenar.</p><button className="flow-primary" onClick={() => setCurrentTab("evaluacion")}>Ir a evaluación inicial</button></section>}
     <div className="library-grid">
     <section className="flow-card library-feature mb-4">
       <div className="flex items-center justify-between mb-4"><Brain className="text-accent"/><span className="status-badge completed">Memoria · Nivel {progress.level}</span></div>
@@ -24,7 +24,7 @@ export function LibraryScreen() {
         </li>)}
       </ol>
       <p className="text-xs text-slate-600 dark:text-slate-300 my-4">{progress.level < 3 ? `${progress.successes}/${SESSIONS_TO_ADVANCE} sesiones consecutivas con al menos 80 % de precisión para avanzar al siguiente nivel.` : "Alcanzaste el último nivel de esta demo. Podés seguir practicando con 6 objetos."} La dificultad cambia entre sesiones, nunca en medio de una partida.</p>
-      <button className="flow-primary flex! items-center justify-center gap-2" disabled={!assessed} onClick={() => begin(false)}><Play size={16} aria-hidden="true"/>Jugar en mi nivel</button>
+      <button className="flow-primary flex! items-center justify-center gap-2" disabled={!canTrain} onClick={() => begin(false)}><Play size={16} aria-hidden="true"/>Jugar en mi nivel</button>
     </section>
     {[{name:"Atención",game:"Búsqueda de estímulos",Icon:Focus},{name:"Memoria de trabajo",game:"Actualización de secuencias",Icon:Layers}].map(({name,game,Icon}) => <section className="flow-card mb-4" key={name}>
       <div className="flex items-center justify-between mb-3"><Icon className="text-slate-500 dark:text-slate-300"/><span className="status-badge abandoned">Próximamente</span></div>

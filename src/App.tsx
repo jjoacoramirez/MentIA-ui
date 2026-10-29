@@ -39,12 +39,13 @@ const MainLayout: React.FC = () => {
       setCurrentTab("configuracion");
     else if (
       journey.username &&
-      !journey.assessed &&
+      journey.assessmentRequired &&
       currentTab === "juego" &&
       !journey.assessment
     )
       setCurrentTab("evaluacion");
-  }, [currentTab, journey.username, journey.configured, journey.assessed]);
+    else if (journey.assessed && currentTab === "evaluacion") setCurrentTab("inicio");
+  }, [currentTab, journey.username, journey.configured, journey.assessmentRequired, journey.assessed]);
   const { isDark, toggleTheme } = useTheme();
 
   const renderActiveScreen = () => {
@@ -204,9 +205,10 @@ const MainLayout: React.FC = () => {
 
           {currentTab !== "juego" && (
             <div className="demo-notice" role="status">
-              <span className="demo-dot" /> Vista de demostración · datos temporales
+              <span className="demo-dot" /> Demo · perfil guardado en este navegador
             </div>
           )}
+          {!journey.storageAvailable && <p role="alert" className="px-4 py-2 text-sm text-amber-800 dark:text-amber-200">No se pudo guardar el perfil en este navegador. Podés continuar, pero el recorrido se perderá al recargar.</p>}
           {journey.username && ["progreso", "historial", "logros"].includes(currentTab) && (
             <nav aria-label="Secciones de progreso" className="section-nav">
               {([

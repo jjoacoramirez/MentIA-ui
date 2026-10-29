@@ -1,5 +1,6 @@
+import { loadDemoProfile, restoreDemoSession, saveDemoProfile, endDemoSession, type AssessmentStatus } from "./demoStorage";
 import { memoryProgress, streakDays } from "../domain/training";
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useApp } from "./AppContext";
 export const categories = [
   { code: "MEMORIA", name: "Memoria" },
@@ -21,7 +22,12 @@ export interface DemoResult {
 }
 interface Journey {
   username: string;
-  enter: (alias: string, age?: string) => void;
+  enter: (alias: string, age?: string, registration?: boolean) => void;
+  assessmentStatus: AssessmentStatus;
+  assessmentRequired: boolean;
+  canTrain: boolean;
+  skipAssessment: () => void;
+  storageAvailable: boolean;
   ageRange: string;
   logout: () => void;
   minutes: number;
@@ -45,45 +51,60 @@ interface Journey {
 const Context = createContext<Journey | null>(null);
 export function JourneyProvider({ children }: { children: React.ReactNode }) {
   const { setCurrentTab, updateUser } = useApp();
-  const [username, setUsername] = useState("");
-  const [ageRange, setAgeRange] = useState("18-24");
-  const [minutes, setMinutes] = useState(10);
-  const [goals, setGoals] = useState([
+  const [restored] = useState(restoreDemoSession);
+  const [username, setUsername] = useState(restored?.username || "");
+  const [ageRange, setAgeRange] = useState(restored?.ageRange || "18-24");
+  const [minutes, setMinutes] = useState(restored?.minutes || 10);
+  const [goals, setGoals] = useState(restored?.goals || [
     "MEMORIA",
     "ATENCION",
     "MEMORIA_TRABAJO",
   ]);
-  const [configured, setConfigured] = useState(false);
-  const [assessed, setAssessed] = useState(false);
+  const [configured, setConfigured] = useState(restored?.configured || false);
+  const [assessmentStatus, setAssessmentStatus] = useState<AssessmentStatus>(restored?.assessmentStatus || "pending");
+  const [assessmentRequired, setAssessmentRequired] = useState(restored?.assessmentRequired || false);
+  const assessed = assessmentStatus === "completed";
+  const canTrain = configured && !assessmentRequired;
+  const [storageAvailable, setStorageAvailable] = useState(true);
   const [assessment, setAssessment] = useState(false);
   const [sessionLevel, setSessionLevel] = useState(1);
-  const [history, setHistory] = useState<DemoResult[]>([]);
+  const [history, setHistory] = useState<DemoResult[]>(restored?.history || []);
   const [selected, setSelected] = useState<DemoResult | null>(null);
-  function enter(alias: string, age = "18-24") {
-    setAgeRange(age);
+  useEffect(() => {
+    if (!username) return;
+    setStorageAvailable(saveDemoProfile({ username, ageRange, minutes, goals, configured, assessmentStatus, assessmentRequired, history }));
+  }, [username, ageRange, minutes, goals, configured, assessmentStatus, assessmentRequired, history]);
+  useEffect(() => {
+    if (!restored) return;
+    setCurrentTab(!restored.configured ? "configuracion" : restored.assessmentRequired ? "evaluacion" : "inicio");
+  }, []);
+  function enter(alias: string, age = "18-24", registration = false) {
+    const saved = registration ? null : loadDemoProfile(alias);
+    setAgeRange(saved?.ageRange || age);
     setUsername(alias);
-    setMinutes(10);
-    setGoals(categories.map((c) => c.code));
-    setConfigured(false);
-    setAssessed(false);
-    setHistory([]);
+    setMinutes(saved?.minutes || 10);
+    setGoals(saved?.goals || categories.map(c => c.code));
+    setConfigured(registration ? false : true);
+    setAssessmentStatus(saved?.assessmentStatus || "pending");
+    setAssessmentRequired(registration);
+    setHistory(saved?.history || []);
+    setAssessment(false);
     setSelected(null);
-    updateUser({
-      name: alias,
-      username: alias,
-      xp: 0,
-      level: 1,
-      completedActivities: 0,
-      accuracy: 0,
-      streakDays: 0,
-    });
-    setCurrentTab("configuracion");
+    setCurrentTab(registration ? "configuracion" : "inicio");
+  }
+  function skipAssessment() {
+    if (assessmentStatus !== "completed") setAssessmentStatus("skipped");
+    setAssessmentRequired(false);
+    setAssessment(false);
+    setCurrentTab("inicio");
   }
   function logout() {
+    endDemoSession();
     setUsername("");
     setHistory([]);
     setSelected(null);
-    setAssessed(false);
+    setAssessmentStatus("pending");
+    setAssessmentRequired(false);
     setConfigured(false);
     setCurrentTab("landing");
   }
@@ -91,10 +112,10 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
     setMinutes(duration);
     setGoals(selectedGoals);
     setConfigured(true);
-    setCurrentTab(assessed ? "perfil" : "evaluacion");
+    setCurrentTab(assessmentRequired ? "evaluacion" : "perfil");
   }
   function begin(initial: boolean) {
-    if (!initial && !assessed) { setCurrentTab("evaluacion"); return; }
+    if (!initial && assessmentRequired) { setCurrentTab("evaluacion"); return; }
     setSessionLevel(initial ? 1 : memoryProgress(history).level);
     setAssessment(initial);
     setCurrentTab("juego");
@@ -121,11 +142,17 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
     const next = [result, ...history];
     setHistory(next);
     setSelected(result);
-    if (assessment && !abandoned) setAssessed(true);
-    const completed = next.filter((r) => r.status === "COMPLETED");
+    if (assessment && !abandoned) { setAssessmentStatus("completed"); setAssessmentRequired(false); }
+    setCurrentTab(abandoned ? "historial" : "resultado");
+  }
+  useEffect(() => {
+    if (!username) return;
+    const completed = history.filter((r) => r.status === "COMPLETED");
     const xp = completed.reduce((sum, r) => sum + r.xpEarned, 0);
     const attempts = completed.reduce((sum, r) => sum + r.itemsCompleted, 0);
     updateUser({
+      name: username,
+      username,
       xp,
       level: Math.floor(xp / 200) + 1,
       completedActivities: attempts,
@@ -137,10 +164,9 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
         : 0,
       weeklySessions: completed.length,
       totalPlayTime: `${Math.round(completed.reduce((s, r) => s + r.totalTimeMs, 0) / 60000)} min`,
-      streakDays: streakDays(next),
+      streakDays: streakDays(history),
     });
-    setCurrentTab(abandoned ? "historial" : "resultado");
-  }
+  }, [username, history]);
   return (
     <Context.Provider
       value={{
@@ -153,6 +179,11 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
         configure,
         configured,
         assessed,
+        assessmentStatus,
+        assessmentRequired,
+        canTrain,
+        skipAssessment,
+        storageAvailable,
         assessment,
         sessionLevel,
         begin,

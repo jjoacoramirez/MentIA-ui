@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import type { ScreenTab } from "../types";
 const tabs: ScreenTab[] = ["landing","inicio","entrenar","biblioteca","progreso","perfil","registro","ingreso","recuperacion","configuracion","evaluacion","juego","resultado","historial","logros"];
 export function useScreenNavigation() {
   const [currentTab, updateTab] = useState<ScreenTab>("landing");
   const current = useRef<ScreenTab>("landing");
   const restoring = useRef(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     // A reload starts a fresh demo; history entries contain no credentials.
     window.history.replaceState({ mentiaTab: "landing" }, "");
     function onPop(event: PopStateEvent) {

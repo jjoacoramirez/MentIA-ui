@@ -5,7 +5,7 @@ Referencias: backlog técnico de Drive (`MentIA_Funcionalidades_Backend_Backlog`
 | Backlog | Recorrido actual | Integración posterior |
 | --- | --- | --- |
 | BACK-01, 03, 03B | Formularios de alias, contraseña, rango etario y recuperación. Código mostrado una vez en la simulación. | Registro, JWT, logout, rotación de recuperación y validación del servidor. |
-| BACK-02 | Duración y categorías en memoria; edición desde Perfil. | GET/PUT `/profile`, categorías reales. |
+| BACK-02 | Duración y categorías guardadas localmente por alias; edición desde Perfil. | GET/PUT `/profile`, categorías reales. |
 | BACK-04, 05, 06 | Un ejercicio provisional de secuencias visuales. | Catálogo, variantes, tipos y modalidades definitivos. |
 | BACK-07, 08 | Evaluación de ejemplo antes de entrenar; resultados propios de la demo. | Nivel inicial y perfil de desempeño del servidor. |
 | BACK-09, 10, 11 | Preparación de entrenamiento y tres secuencias locales. | Generación, adaptación determinística y rotación del backend. |

@@ -303,3 +303,6 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
   .app-frame[data-preview="false"] .profile-page > button { grid-column:1/-1; }
   .app-frame[data-preview="false"] .session-header { padding-inline:max(2rem,calc((100% - 640px)/2)); }
 }
+
+.flow-secondary { display:block; width:100%; min-height:48px; padding:.85rem 1rem; border:1px solid var(--accent); color:var(--accent); border-radius:999px; background:transparent; font-weight:700; cursor:pointer; }
+.flow-secondary:hover { background:color-mix(in srgb,var(--brand) 10%,transparent); }

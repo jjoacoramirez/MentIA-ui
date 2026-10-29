@@ -10,7 +10,7 @@ import { useJourney } from "../context/JourneyContext";
 import { AppTheme } from "../types";
 
 export const ProfileScreen: React.FC = () => {
-  const { logout, minutes } = useJourney();
+  const { logout, minutes, assessmentStatus } = useJourney();
   const { userStats, setCurrentTab } = useApp();
   const { theme, setTheme, isDark } = useTheme();
 
@@ -375,6 +375,12 @@ export const ProfileScreen: React.FC = () => {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="flow-card mb-4">
+        <h3 className="font-space font-bold mb-3">Evaluación inicial</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">{assessmentStatus === "completed" ? "Ya completaste tu evaluación inicial." : assessmentStatus === "skipped" ? "La salteaste por ahora. Podés hacerla cuando quieras." : "Todavía no realizaste la evaluación inicial."}</p>
+        {assessmentStatus !== "completed" && <button className="flow-secondary" onClick={() => setCurrentTab("evaluacion")}>Hacer evaluación inicial</button>}
       </section>
 
       <section className="flow-card mb-4">

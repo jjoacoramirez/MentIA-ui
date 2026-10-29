@@ -23,7 +23,7 @@ Abrir http://localhost:3000. `npm run build` genera `dist/`; `npm run lint` comp
 6. Entrenar para repetir una sesión; pausar o abandonar para probar esos estados.
 7. Desde Perfil cambiar tema, preferencias y cerrar sesión.
 
-El ingreso y la recuperación son simulados; aceptan entradas válidas para recorrer las pantallas. **No se crean cuentas reales ni se verifican credenciales**. No se guardan contraseñas, códigos, sesiones ni resultados en almacenamiento persistente. La recarga y el cierre de sesión reinician la demo. Solo tema y disposición de tarjetas se guardan en localStorage. No usar contraseñas reales.
+El ingreso y la recuperación son simulados; aceptan entradas válidas para recorrer las pantallas. **No se crean cuentas reales ni se verifican credenciales**. No se guardan contraseñas, códigos ni tokens. El alias, las preferencias, el estado de evaluación y los resultados de cada perfil de demostración se guardan en este navegador (localStorage), junto con el tema y la disposición de tarjetas. Al cerrar sesión se elimina la selección activa; al volver a ingresar con el mismo alias se recupera su progreso. La evaluación se ofrece al registrarse y puede saltearse sin sumar XP ni simular resultados. No usar contraseñas reales.
 
 ## Alcance y límites
 
@@ -32,7 +32,7 @@ El ingreso y la recuperación son simulados; aceptan entradas válidas para reco
 - La duración elegida se conserva como preferencia, pero la demo siempre tiene tres secuencias.
 - XP y niveles de ejemplo se calculan localmente: 10 XP por intento y 10 adicionales por acierto; 200 XP por nivel. Abandonar no concede XP.
 - No hay rankings, percentiles, inferencias clínicas ni modelos de IA. La adaptación y rotación definitivas pertenecen al backend.
-- La navegación actual usa estado React; no hay rutas con enlaces profundos ni persistencia del historial.
+- La navegación integra el historial del navegador; no hay enlaces profundos. Los resultados de la demo se guardan localmente por alias.
 - Se conserva el tema y la personalización del dashboard. El marco de teléfono es una vista opcional de presentación, no el modo inicial.
 - Fuentes e iconos de Google y la ilustración remota del inicio requieren conexión; el logo es un SVG local. Las imágenes de referencia de AI Studio están en `docs/design-reference/`.
 
