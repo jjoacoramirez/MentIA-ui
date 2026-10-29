@@ -15,7 +15,7 @@ export const WelcomeScreen: React.FC = () => {
   const handleLogin = () => setCurrentTab("ingreso");
 
   return (
-    <div className="flex flex-col w-full min-h-screen px-5 pb-10 pt-6 select-none bg-canvas text-ink transition-colors relative overflow-hidden">
+    <div className="welcome-page flex flex-col w-full px-5 pb-10 pt-6 select-none bg-canvas text-ink transition-colors relative overflow-hidden">
       {/* Dynamic Ambient Glow & Sparks */}
       <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-72 h-72 bg-brand/15 dark:bg-brand/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute top-36 -right-10 w-52 h-52 bg-indigo-500/10 dark:bg-[#3131c0]/20 rounded-full blur-2xl pointer-events-none" />
@@ -59,7 +59,7 @@ export const WelcomeScreen: React.FC = () => {
       </div>
 
       {/* Pillars Section */}
-      <div className="mt-6 flex flex-col gap-3 z-10">
+      <div className="welcome-actions mt-6 flex flex-col gap-3 z-10">
         <div className="flex items-center justify-between px-1">
           <span className="font-space text-[12px] font-semibold text-slate-500 dark:text-[#869397] tracking-wider uppercase">
             Pilares de Agilidad
@@ -206,7 +206,7 @@ export const WelcomeScreen: React.FC = () => {
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-6 flex flex-col gap-3 z-10">
+      <div className="welcome-actions mt-6 flex flex-col gap-3 z-10">
         <button
           onClick={handleStart}
           className="group relative w-full h-14 rounded-xl bg-brand hover:bg-brand dark:hover:bg-brand text-brand-ink font-space font-bold text-[16px] flex items-center justify-center gap-2 shadow-lg shadow-brand/25 active:scale-[0.98] transition-all cursor-pointer"

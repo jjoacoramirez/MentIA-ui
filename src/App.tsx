@@ -84,7 +84,8 @@ const MainLayout: React.FC = () => {
   return (
     <div
       data-theme={isDark ? "dark" : "light"}
-      className={`min-h-screen w-full transition-colors duration-200 flex flex-col items-center justify-start ${
+      data-public={publicTabs.includes(currentTab)}
+      className={`app-root min-h-screen w-full transition-colors duration-200 flex flex-col items-center justify-start ${
         isDark
           ? "dark bg-[#06090f] text-[#dfe2ee]"
           : "light bg-slate-200/90 text-slate-800"
@@ -92,7 +93,7 @@ const MainLayout: React.FC = () => {
     >
       {/* Top Desktop Presentation Bar for toggling preview modes and quick test controls */}
       <div
-        className={`w-full backdrop-blur-md border-b px-4 py-2 flex items-center justify-between text-xs transition-colors z-50 ${
+        className={`prototype-toolbar w-full backdrop-blur-md border-b px-4 py-2 flex items-center justify-between text-xs transition-colors z-50 ${
           isDark
             ? "bg-slate-950/80 border-white/10 text-slate-300"
             : "bg-white/95 border-slate-300/80 text-slate-700 shadow-xs"
@@ -136,8 +137,8 @@ const MainLayout: React.FC = () => {
                 viewportMode === "mobile-frame" ? "responsive" : "mobile-frame",
               )
             }
-            title="Alternar entre marco iPhone 390px y vista fluida"
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-space text-[11px] font-semibold transition-colors cursor-pointer ${
+            title="Alternar entre vista previa de celular y diseño automático"
+            className={`preview-toggle flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-space text-[11px] font-semibold transition-colors cursor-pointer ${
               viewportMode === "mobile-frame"
                 ? "bg-brand/20 text-accent border border-brand/40"
                 : isDark
@@ -152,26 +153,21 @@ const MainLayout: React.FC = () => {
               {viewportMode === "mobile-frame" ? "smartphone" : "devices"}
             </span>
             <span>
-              {viewportMode === "mobile-frame" ? "Marco 390px" : "Vista Fluida"}
+              {viewportMode === "mobile-frame" ? "Marco 390px" : "Diseño automático"}
             </span>
           </button>
         </div>
       </div>
 
       {/* Main Container */}
-      <div className="w-full flex-1 flex justify-center items-start p-0 md:p-6 lg:p-8">
+      <div className="app-workspace">
         <div
           id="phone-frame-container"
+          data-preview={viewportMode === "mobile-frame"}
+          data-screen={currentTab}
+          data-navigation={["inicio", "entrenar", "biblioteca", "progreso", "perfil", "historial", "logros", "resultado"].includes(currentTab)}
           data-theme={isDark ? "dark" : "light"}
-          className={`w-full transition-all duration-300 [transform:translateZ(0)] isolate relative overflow-hidden flex flex-col ${
-            viewportMode === "mobile-frame"
-              ? "max-w-[390px] h-[844px] min-h-[844px] max-h-[844px] rounded-none md:rounded-[44px] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] border-0 md:border-[10px] border-slate-800 dark:border-slate-800/80 ring-1 ring-black/10 dark:ring-white/10"
-              : "max-w-2xl min-h-screen md:min-h-[90vh] rounded-none md:rounded-3xl shadow-2xl border-0 md:border border-slate-200 dark:border-white/10"
-          } ${
-            isDark
-              ? "dark bg-[#0f131c] text-[#dfe2ee]"
-              : "light bg-[#faf8ff] text-[#131b2e]"
-          }`}
+          className={`app-frame ${isDark ? "dark" : "light"}`}
         >
           {/* Simulated iPhone Dynamic Island & Speaker (Only in mobile-frame mode on desktop) */}
           {viewportMode === "mobile-frame" && (
@@ -226,7 +222,7 @@ const MainLayout: React.FC = () => {
             </nav>
           )}
           {/* Screen View */}
-          <main className="flex-1 w-full flex flex-col overflow-y-auto relative">
+          <main className="app-content" key={currentTab} id="app-content" tabIndex={-1}>
             {(journey.username || publicTabs.includes(currentTab)) &&
               renderActiveScreen()}
           </main>

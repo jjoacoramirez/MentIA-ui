@@ -411,9 +411,9 @@ export const HomeScreen: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen px-4 pt-2 pb-28 select-none bg-canvas text-ink transition-colors">
+    <div className="home-page flex flex-col w-full px-4 pt-2 pb-6 select-none bg-canvas text-ink transition-colors">
       {/* Saludo & Nivel Usuario */}
-      <div className="flex items-center justify-between gap-3 pt-2 mb-4">
+      <div className="home-greeting flex items-center justify-between gap-3 pt-2 mb-4">
         <div className="flex flex-col">
           <div className="flex items-center gap-1.5">
             <h1 className="font-space font-bold text-[22px] md:text-[24px] text-slate-900 dark:text-[#dfe2ee] tracking-tight">
@@ -495,7 +495,7 @@ export const HomeScreen: React.FC = () => {
       )}
 
       {/* Dynamic List of Draggable Dashboard Widgets */}
-      <div className="flex flex-col gap-4">
+      <div className="dashboard-grid">
         {enabledWidgets.map((widget, index) => (
           <DraggableDashboardCard
             key={widget.id}

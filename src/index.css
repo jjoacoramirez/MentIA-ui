@@ -220,3 +220,86 @@ a:focus-visible {
 }
 .flow-primary { background:var(--brand); color:var(--brand-ink); }
 .session-progress > div { background:var(--brand); }
+
+/* Full-height app: content scrolls between the header and navigation. */
+html, body, #root { width:100%; min-height:100%; margin:0; }
+* { box-sizing:border-box; }
+.app-root { height:100dvh; min-height:0; overflow:hidden; }
+.prototype-toolbar { flex-shrink:0; min-height:44px; }
+.preview-toggle { display:none; }
+.app-workspace { width:100%; flex:1; min-height:0; display:flex; justify-content:center; }
+.app-frame { width:100%; height:100%; min-width:0; min-height:0; display:flex; flex-direction:column; position:relative; isolation:isolate; overflow:hidden; background:var(--canvas); color:var(--ink); }
+.app-frame > header { flex-shrink:0; }
+.app-content { flex:1; min-width:0; min-height:0; overflow:auto; position:relative; display:flex; flex-direction:column; overscroll-behavior-y:contain; scroll-padding-block:1rem; }
+.app-content:focus { outline:none; }
+.app-content > * { min-width:0; }
+.app-root[data-public="false"] .prototype-toolbar { display:none; }
+.app-frame .flow-page, .home-page, .profile-page { width:100%; min-height:0; padding:1.25rem 1rem 1.75rem; }
+.flow-page > h1 { overflow-wrap:anywhere; }
+.flow-card { min-width:0; }
+.home-greeting { flex-wrap:wrap; }
+.home-greeting h1 { overflow-wrap:anywhere; }
+.dashboard-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:1rem; }
+.dashboard-grid > * { min-width:0; }
+.session-header { flex-shrink:0; }
+.session-content { width:100%; max-width:640px; margin-inline:auto; }
+.session-screen > [role="dialog"] { position:fixed; }
+.app-frame:has([role="dialog"]) { transform:translateZ(0); }
+.app-navigation { padding-top:.5rem; background:var(--canvas); }
+.navigation-item { min-width:0; min-height:48px; }
+.welcome-page { max-width:900px; margin-inline:auto; min-height:100%; }
+[data-screen="registro"] .flow-page, [data-screen="ingreso"] .flow-page,
+[data-screen="recuperacion"] .flow-page, [data-screen="configuracion"] .flow-page,
+[data-screen="evaluacion"] .flow-page, [data-screen="entrenar"] .flow-page,
+[data-screen="resultado"] .flow-page { max-width:680px; margin-inline:auto; }
+.library-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:1rem; }
+.library-grid > .flow-card { margin-bottom:0; }
+.library-grid + p { margin-top:1rem; }
+@media (max-width:767px) {
+  .app-frame[data-preview="true"] { border:0; border-radius:0; }
+  .app-frame > header { padding-top:env(safe-area-inset-top,0px); }
+  .app-navigation .navigation-container { padding-inline:.75rem; }
+  .navigation-item { transform:none; }
+  .app-content .text-4xl { font-size:clamp(1.4rem,8vw,2.25rem); }
+}
+@media (min-width:768px) {
+  .prototype-toolbar { display:flex !important; }
+  .preview-toggle { display:flex; }
+  .app-workspace { padding:1rem; }
+  .app-frame { max-width:1440px; border:1px solid #94a3b826; border-radius:24px; box-shadow:0 16px 50px #00000012; }
+  .app-frame[data-preview="true"] { width:390px; flex:none; max-height:844px; border:9px solid #1e293b; border-radius:40px; transform:translateZ(0); }
+  .app-frame[data-preview="false"] .flow-page,
+  .app-frame[data-preview="false"] .home-page,
+  .app-frame[data-preview="false"] .profile-page { padding:1.75rem 2rem 2rem; }
+  .app-frame[data-preview="false"] .history-grid,
+  .app-frame[data-preview="false"] .achievements-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; align-items:start; }
+  .app-frame[data-preview="false"] .history-grid > *,
+  .app-frame[data-preview="false"] .achievements-grid > * { margin:0; }
+  .app-frame[data-preview="false"] .library-grid { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
+  .app-frame[data-preview="false"] .library-feature { grid-row:span 2; }
+  .app-frame[data-preview="false"] .welcome-page { padding:2rem 3rem; }
+  .app-frame[data-preview="false"] .welcome-actions { flex-direction:row; }
+  .app-frame[data-preview="false"] .welcome-actions > button { flex:1; }
+  .app-frame[data-preview="true"] .welcome-page { min-height:0; }
+  .app-frame[data-preview="false"] .section-nav { max-width:540px; }
+}
+@media (min-width:1100px) {
+  .app-frame[data-preview="false"][data-navigation="true"] .app-content { margin-left:208px; }
+  .app-frame[data-preview="false"][data-navigation="true"] .section-nav { margin-left:240px; }
+  .app-frame[data-preview="false"] .app-navigation { position:absolute; left:0; top:92px; bottom:0; width:208px; border-right:1px solid #94a3b826; padding:1.25rem .75rem; pointer-events:auto; }
+  .app-frame[data-preview="false"] .navigation-container { padding:0; margin:0; max-width:none; }
+  .app-frame[data-preview="false"] .navigation-dock { display:flex; flex-direction:column; height:auto; align-items:stretch; padding:.35rem; gap:.5rem; border:0; border-radius:0; box-shadow:none; background:none; }
+  .app-frame[data-preview="false"] .navigation-item { flex:none; flex-direction:row; justify-content:flex-start; gap:.75rem; height:50px; border-radius:14px; padding:.75rem 1rem; transform:none; }
+  .app-frame[data-preview="false"] .navigation-item[aria-current="page"] { background:color-mix(in srgb,var(--brand) 12%,transparent); }
+  .app-frame[data-preview="false"] .navigation-item > span:not(.material-symbols-outlined) { font-size:.85rem; margin:0; }
+  .app-frame[data-preview="false"] .navigation-active-dot { display:none; }
+  .app-frame[data-preview="false"] .dashboard-grid { grid-template-columns:repeat(12,minmax(0,1fr)); align-items:start; gap:1.25rem; }
+  .app-frame[data-preview="false"] [data-widget] { grid-column:span 5; }
+  .app-frame[data-preview="false"] [data-widget="next_training"],
+  .app-frame[data-preview="false"] [data-widget="evolution_chart"] { grid-column:span 7; }
+  .app-frame[data-preview="false"] .profile-page { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.25rem; align-items:start; }
+  .app-frame[data-preview="false"] .profile-page > section { margin:0; }
+  .app-frame[data-preview="false"] .profile-page > section:first-child { grid-column:1/-1; }
+  .app-frame[data-preview="false"] .profile-page > button { grid-column:1/-1; }
+  .app-frame[data-preview="false"] .session-header { padding-inline:max(2rem,calc((100% - 640px)/2)); }
+}

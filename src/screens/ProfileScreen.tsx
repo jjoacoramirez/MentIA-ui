@@ -24,7 +24,7 @@ export const ProfileScreen: React.FC = () => {
       })[code] || code,
   );
   return (
-    <div className="flex flex-col w-full min-h-screen px-4 pt-2 pb-28 select-none bg-slate-50 dark:bg-[#0f131c] text-slate-800 dark:text-[#dfe2ee] transition-colors">
+    <div className="profile-page flex flex-col w-full px-4 pt-2 pb-6 select-none bg-slate-50 dark:bg-[#0f131c] text-slate-800 dark:text-[#dfe2ee] transition-colors">
       {/* User Card Header */}
       <section className="bg-white dark:bg-[#1c2028] rounded-3xl p-5 shadow-sm border border-slate-200/70 dark:border-white/[0.04] mb-4 relative overflow-hidden">
         <div className="absolute -right-6 -top-6 w-32 h-32 bg-brand/20 dark:bg-brand/10 rounded-full blur-2xl pointer-events-none" />

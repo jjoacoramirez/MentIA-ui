@@ -58,6 +58,7 @@ export const DraggableDashboardCard: React.FC<DraggableDashboardCardProps> = ({
 
   return (
     <div
+      data-widget={widget.id}
       draggable={isCustomizingLayout}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}

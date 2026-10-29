@@ -368,7 +368,7 @@ export function HistoryScreen() {
           <option value="ABANDONED">Abandonadas</option>
         </Select>
       </label>
-      <div className="mt-4 space-y-3">
+      <div className="history-grid mt-4 space-y-3">
         {!history.filter((r) => filter === "ALL" || r.status === filter)
           .length && (
           <p className="flow-card">
@@ -424,7 +424,7 @@ export function AchievementsScreen() {
       <p className="mb-4">
         Condiciones de demostración; las reglas definitivas vendrán del backend.
       </p>
-      <div className="space-y-3">
+      <div className="achievements-grid space-y-3">
         {achievements.map(([title, description, unlocked]) => (
           <section className="flow-card" key={String(title)}>
             <strong>
