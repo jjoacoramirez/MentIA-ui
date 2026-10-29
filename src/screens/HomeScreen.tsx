@@ -1,3 +1,4 @@
+import { Zap } from "lucide-react";
 import { streakDays } from "../domain/training";
 /**
  * @license
@@ -22,7 +23,8 @@ export const HomeScreen: React.FC = () => {
   } = useApp();
 
   const { history, minutes } = useJourney();
-  const [selectedDay, setSelectedDay] = useState<string>("V");
+  const [selectedDay, setSelectedDay] = useState<string>(() => ["D", "L", "M", "X", "J", "V", "S"][new Date().getDay()]);
+  const lastSession = history.find(r => r.status === "COMPLETED");
   const [showAddWidgetModal, setShowAddWidgetModal] = useState(false);
 
   // Active enabled widgets sorted by order
@@ -56,12 +58,12 @@ export const HomeScreen: React.FC = () => {
     switch (widget.id) {
       case "next_training":
         return (
-          <div className="relative w-full rounded-3xl bg-white dark:bg-[#1c2028] p-5 overflow-hidden shadow-sm dark:shadow-xl border border-slate-200/70 dark:border-white/[0.04] transition-all">
+          <div className="dashboard-surface training-card relative w-full rounded-3xl bg-white dark:bg-[#1c2028] p-5 overflow-hidden shadow-sm dark:shadow-xl border border-slate-200/70 dark:border-white/[0.04] transition-all">
             {/* Ambient background glows */}
             <div className="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-brand/10 dark:bg-brand/10 blur-2xl pointer-events-none" />
             <div className="absolute -left-10 -bottom-10 w-36 h-36 rounded-full bg-indigo-500/10 dark:bg-[#3131c0]/20 blur-xl pointer-events-none" />
 
-            <div className="relative flex flex-col gap-3.5 z-10">
+            <div className="training-content relative flex flex-col gap-3.5 z-10">
               {/* Header tags */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand/10 dark:bg-brand/15 text-accent">
@@ -113,7 +115,7 @@ export const HomeScreen: React.FC = () => {
               </div>
 
               {/* Futuristic Cybernetic Visual */}
-              <div className="relative w-full h-36 rounded-2xl bg-brand/10 dark:bg-slate-900 overflow-hidden shadow-inner group">
+              <div className="training-visual relative w-full h-36 rounded-2xl bg-brand/10 dark:bg-slate-900 overflow-hidden shadow-inner group">
                 <div
                   className="w-full h-full bg-cover bg-center opacity-25 dark:opacity-100 transition-transform duration-500 group-hover:scale-105"
                   style={{
@@ -136,7 +138,7 @@ export const HomeScreen: React.FC = () => {
               {/* Start CTA Button */}
               <button
                 onClick={() => setCurrentTab("entrenar")}
-                className="w-full h-14 rounded-full bg-brand hover:bg-brand dark:hover:bg-brand text-brand-ink flex items-center justify-center gap-2 shadow-lg shadow-brand/25 active:scale-95 transition-all duration-150 cursor-pointer"
+                className="dashboard-action w-full h-14 rounded-full bg-brand hover:bg-brand dark:hover:bg-brand text-brand-ink flex items-center justify-center gap-2 shadow-lg shadow-brand/25 active:scale-95 transition-all duration-150 cursor-pointer"
               >
                 <span className="font-space text-[18px] font-bold tracking-tight">
                   Empezar
@@ -154,7 +156,7 @@ export const HomeScreen: React.FC = () => {
 
       case "focus_metrics":
         return (
-          <div className="flex flex-col gap-2.5">
+          <div className="focus-metrics flex flex-col gap-2.5">
             <div className="flex items-center justify-between px-1">
               <span className="font-space text-[11px] text-slate-500 dark:text-[#bcc9cd] uppercase tracking-wider font-bold">
                 Métricas de enfoque
@@ -164,9 +166,9 @@ export const HomeScreen: React.FC = () => {
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="metrics-grid grid grid-cols-2 gap-3">
               {/* Card Racha */}
-              <div className="flex flex-col justify-between p-4 rounded-3xl bg-white dark:bg-[#181c24] border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
+              <div className="metric-card flex flex-col justify-between p-4 rounded-3xl bg-white dark:bg-[#181c24] border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
                 <div className="flex items-center justify-between">
                   <span
                     aria-hidden="true"
@@ -199,7 +201,7 @@ export const HomeScreen: React.FC = () => {
               </div>
 
               {/* Card Sesión Previa */}
-              <div className="flex flex-col justify-between p-4 rounded-3xl bg-white dark:bg-[#181c24] border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
+              <div className="metric-card flex flex-col justify-between p-4 rounded-3xl bg-white dark:bg-[#181c24] border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
                 <div className="flex items-center justify-between">
                   <span
                     aria-hidden="true"
@@ -208,7 +210,7 @@ export const HomeScreen: React.FC = () => {
                     history_toggle_off
                   </span>
                   <span className="font-space text-[10px] text-slate-500 dark:text-[#869397] font-semibold uppercase">
-                    Completado
+                    {lastSession ? "Completada" : "Sin sesiones"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5 mt-3">
@@ -216,10 +218,7 @@ export const HomeScreen: React.FC = () => {
                     Última sesión
                   </span>
                   <span className="font-dmsans text-[12px] text-indigo-600 dark:text-[#c0c1ff] font-semibold">
-                    +
-                    {history.find((r) => r.status === "COMPLETED")?.xpEarned ||
-                      0}{" "}
-                    XP de ejemplo
+                    {lastSession ? `+${lastSession.xpEarned} XP de ejemplo` : "Tu primera sesión te espera"}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 mt-3 text-slate-500 dark:text-[#bcc9cd]">
@@ -227,10 +226,10 @@ export const HomeScreen: React.FC = () => {
                     aria-hidden="true"
                     className="material-symbols-outlined text-[16px] text-emerald-500 dark:text-accent"
                   >
-                    check_circle
+                    {lastSession ? "check_circle" : "schedule"}
                   </span>
                   <span className="font-space text-[10px] font-bold">
-                    Bloque 3/3 superado
+                    {lastSession ? `${lastSession.itemsCompleted}/3 intentos · ${Math.round(lastSession.accuracy * 100)} % de precisión` : "Todavía no completaste una sesión"}
                   </span>
                 </div>
               </div>
@@ -240,7 +239,7 @@ export const HomeScreen: React.FC = () => {
 
       case "evolution_chart":
         return (
-          <div className="w-full rounded-3xl bg-white dark:bg-[#181c24] p-5 flex flex-col gap-4 border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
+          <div className="dashboard-surface evolution-card w-full rounded-3xl bg-white dark:bg-[#181c24] p-5 flex flex-col gap-4 border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
             <div className="flex items-start justify-between">
               <div className="flex flex-col gap-0.5">
                 <h3 className="font-space text-[18px] font-bold text-slate-900 dark:text-[#dfe2ee]">
@@ -261,8 +260,8 @@ export const HomeScreen: React.FC = () => {
             </div>
 
             {/* 7-Day Interactive Bar Visualizer */}
-            <div className="flex flex-col gap-2 pt-1">
-              <div className="w-full h-28 flex items-end justify-between px-2 pt-2">
+            <div className="evolution-visual flex flex-col gap-2 pt-1">
+              <div className="evolution-chart w-full h-28 flex items-end justify-between px-2 pt-2">
                 {daysData.map((d) => {
                   const isSelected = selectedDay === d.label;
                   return (
@@ -332,7 +331,7 @@ export const HomeScreen: React.FC = () => {
             {/* Link to full progress */}
             <button
               onClick={() => setCurrentTab("progreso")}
-              className="w-full h-12 rounded-full bg-slate-100 dark:bg-[#262a33] hover:bg-slate-200 dark:hover:bg-[#31353e] text-slate-800 dark:text-[#dfe2ee] flex items-center justify-between px-4 transition-colors font-space text-[13px] font-bold cursor-pointer"
+              className="dashboard-action w-full h-12 rounded-full bg-slate-100 dark:bg-[#262a33] hover:bg-slate-200 dark:hover:bg-[#31353e] text-slate-800 dark:text-[#dfe2ee] flex items-center justify-between px-4 transition-colors font-space text-[13px] font-bold cursor-pointer"
             >
               <span>Ver progreso completo</span>
               <span
@@ -347,7 +346,7 @@ export const HomeScreen: React.FC = () => {
 
       case "agility_tip":
         return (
-          <div className="w-full rounded-2xl bg-white dark:bg-[#0a0e16] p-4 flex items-center gap-3.5 border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
+          <div className="dashboard-surface advice-card w-full rounded-2xl bg-white dark:bg-[#0a0e16] p-4 flex items-center gap-3.5 border border-slate-200/70 dark:border-white/[0.04] shadow-sm">
             <div className="w-10 h-10 rounded-full bg-amber-50 dark:bg-amber-950/40 text-amber-500 dark:text-[#ffb95f] flex items-center justify-center shrink-0">
               <span
                 aria-hidden="true"
@@ -426,14 +425,8 @@ export const HomeScreen: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#262a33] border border-slate-200/80 dark:border-white/[0.04] text-accent shadow-sm shrink-0">
-          <span
-            aria-hidden="true"
-            className="material-symbols-outlined text-[16px] text-accent"
-            style={{ fontVariationSettings: "'FILL' 1" }}
-          >
-            bolt
-          </span>
+        <div className="xp-summary flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#262a33] border border-slate-200/80 dark:border-white/[0.04] text-accent shadow-sm shrink-0">
+          <Zap size={18} className="xp-bolt" aria-hidden="true" />
           <span className="font-space text-[11px] font-bold text-slate-800 dark:text-[#dfe2ee]">
             Nivel {userStats.level}{" "}
             <span className="text-slate-400 dark:text-white/30">•</span>{" "}

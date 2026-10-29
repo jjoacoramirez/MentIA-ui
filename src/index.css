@@ -38,7 +38,6 @@
   font-family: "Material Symbols Outlined";
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
   line-height: 1;
   letter-spacing: normal;
   text-transform: none;
@@ -300,9 +299,9 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
 .app-content > .welcome-page,
 .app-content > .profile-page { flex:0 0 auto; }
 .home-page { display:block; }
-.home-page .dashboard-grid { grid-auto-rows:auto; align-items:start; }
-.home-page .dashboard-grid > [data-widget] { min-width:0; align-self:start; }
-.home-page .dashboard-grid > [data-widget] > :last-child { height:auto; }
+.home-page .dashboard-grid { grid-auto-rows:auto; align-items:stretch; }
+.home-page .dashboard-grid > [data-widget] { min-width:0; align-self:stretch; display:flex; flex-direction:column; }
+.home-page .dashboard-grid > [data-widget] > :last-child { flex:1; }
 /* Use actual content width: a sidebar or a narrow window must not squeeze cards. */
 @container app-content (min-width:960px) {
   .home-page .dashboard-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem; }
@@ -310,4 +309,52 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
 }
 @media (max-width:479px) {
   .home-greeting > :first-child { min-width:0; flex:1 1 100%; }
+}
+
+/* Shared dimensions keep paired cards and profile details aligned. */
+.home-page .dashboard-surface { border-radius:24px; padding:24px; }
+.training-card, .training-content { display:flex; flex-direction:column; }
+.training-content { flex:1; }
+.home-page .dashboard-action { height:48px; min-height:48px; flex-shrink:0; font-size:14px; }
+.home-page .dashboard-action > span { font-size:14px; }
+.home-page .dashboard-action > .material-symbols-outlined { font-size:20px; }
+.evolution-visual { flex:1; justify-content:center; }
+.metrics-grid { flex:1; align-items:stretch; }
+.metric-card { min-height:180px; border-radius:24px; gap:8px; }
+.focus-metrics > :first-child { min-height:24px; gap:12px; flex-wrap:wrap; }
+.advice-card { min-height:180px; }
+.xp-summary { min-height:36px; gap:8px; padding:8px 12px; }
+.xp-bolt { width:18px; height:18px; flex-shrink:0; color:var(--accent); fill:currentColor; stroke-width:1.5px; }
+.profile-avatar { width:64px; height:64px; }
+.profile-avatar-disc { width:64px; height:64px; font-size:24px; line-height:1; }
+.profile-energy-badge { position:absolute; right:-1px; bottom:-1px; width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:50%; border:3px solid white; background:var(--brand); color:var(--brand-ink); }
+.dark .profile-energy-badge { border-color:#1c2028; }
+.profile-energy-badge svg { width:12px; height:12px; flex-shrink:0; fill:currentColor; stroke-width:1.5px; }
+.profile-details { flex-wrap:wrap; row-gap:4px; }
+.profile-statbar { display:grid; grid-template-columns:1fr 1px 1fr 1px 1fr; gap:12px; padding:16px; min-height:80px; }
+.profile-statbar > div:not(.w-px) { min-width:0; }
+.profile-statbar > .w-px { width:1px; height:32px; align-self:center; }
+.profile-statbar .font-bold { font-size:20px; line-height:1.2; }
+.profile-statbar .uppercase { font-size:10px; line-height:1.4; margin-top:4px; }
+@container app-content (min-width:960px) {
+  .training-card, .evolution-card { min-height:440px; }
+  .training-visual { flex:1; min-height:160px; }
+  .evolution-chart { min-height:180px; }
+  .advice-card { align-items:center; }
+}
+@media (max-width:479px) {
+  .home-page .dashboard-surface { padding:20px; }
+  .metric-card { padding:16px; min-height:184px; }
+  .metrics-grid { gap:12px; }
+  .profile-identity { gap:12px; }
+  .profile-statbar { gap:8px; padding:14px 8px; }
+}
+@media (max-width:359px) {
+  .metrics-grid { grid-template-columns:minmax(0,1fr); }
+  .metric-card { min-height:160px; }
+}
+
+/* Set the icon default in the base layer so explicit size utilities can win. */
+@layer base {
+  .material-symbols-outlined { font-size:24px; }
 }

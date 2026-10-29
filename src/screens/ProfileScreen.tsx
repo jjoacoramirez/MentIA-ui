@@ -1,3 +1,4 @@
+import { Zap } from "lucide-react";
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -29,19 +30,12 @@ export const ProfileScreen: React.FC = () => {
       <section className="bg-white dark:bg-[#1c2028] rounded-3xl p-5 shadow-sm border border-slate-200/70 dark:border-white/[0.04] mb-4 relative overflow-hidden">
         <div className="absolute -right-6 -top-6 w-32 h-32 bg-brand/20 dark:bg-brand/10 rounded-full blur-2xl pointer-events-none" />
 
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="relative shrink-0">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-brand via-sky-600 to-indigo-600 flex items-center justify-center shadow-md text-white font-space font-bold text-2xl">
+        <div className="profile-identity relative z-10 flex items-center gap-4">
+          <div className="profile-avatar relative shrink-0">
+            <div className="profile-avatar-disc w-16 h-16 rounded-full bg-gradient-to-br from-brand via-sky-600 to-indigo-600 flex items-center justify-center shadow-md text-white font-space font-bold text-2xl">
               {userStats.name.charAt(0)}
             </div>
-            <div className="absolute -bottom-1 -right-1 bg-emerald-500 w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-white dark:ring-[#1c2028]">
-              <span
-                aria-hidden="true"
-                className="material-symbols-outlined text-white text-[12px]"
-              >
-                bolt
-              </span>
-            </div>
+            <span className="profile-energy-badge" aria-hidden="true"><Zap size={12} /></span>
           </div>
 
           <div className="flex-1 min-w-0">
@@ -56,7 +50,7 @@ export const ProfileScreen: React.FC = () => {
             <p className="font-dmsans text-[13px] text-slate-500 dark:text-[#bcc9cd] truncate">
               {userStats.username}
             </p>
-            <div className="flex items-center gap-2 mt-1">
+            <div className="profile-details flex items-center gap-2 mt-1">
               <span className="font-space text-[12px] font-semibold text-accent">
                 {userStats.title}
               </span>
@@ -80,7 +74,7 @@ export const ProfileScreen: React.FC = () => {
         </div>
 
         {/* Quick Mental Stat Bar */}
-        <div className="mt-4 pt-3 bg-slate-50 dark:bg-[#0a0e16] rounded-2xl p-3 flex items-center justify-around text-center border border-slate-200/60 dark:border-white/[0.03]">
+        <div className="profile-statbar mt-4 pt-3 bg-slate-50 dark:bg-[#0a0e16] rounded-2xl p-3 flex items-center justify-around text-center border border-slate-200/60 dark:border-white/[0.03]">
           <div>
             <span className="font-space text-[18px] font-bold text-slate-900 dark:text-white block leading-none">
               {userStats.streakDays}
