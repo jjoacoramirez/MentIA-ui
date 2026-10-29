@@ -33,7 +33,7 @@ El ingreso y la recuperación son simulados; aceptan entradas válidas para reco
 - XP y niveles de ejemplo se calculan localmente: 10 XP por intento y 10 adicionales por acierto; 200 XP por nivel. Abandonar no concede XP.
 - No hay rankings, percentiles, inferencias clínicas ni modelos de IA. La adaptación y rotación definitivas pertenecen al backend.
 - La navegación integra el historial del navegador; no hay enlaces profundos. Los resultados de la demo se guardan localmente por alias.
-- Se conserva el tema y la personalización del dashboard. El marco de teléfono es una vista opcional de presentación, no el modo inicial.
+- Se conserva el tema y la personalización del dashboard. El diseño se adapta automáticamente al ancho disponible, con navegación lateral en computadora e inferior en celular.
 - Fuentes e iconos de Google y la ilustración remota del inicio requieren conexión; el logo es un SVG local. Los recursos de referencia visual están en `docs/design-reference/`.
 
 ## Integración posterior

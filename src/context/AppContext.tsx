@@ -19,8 +19,6 @@ interface AppContextType {
   resetWidgets: () => void;
   isCustomizingLayout: boolean;
   setIsCustomizingLayout: (active: boolean) => void;
-  viewportMode: "mobile-frame" | "responsive";
-  setViewportMode: (mode: "mobile-frame" | "responsive") => void;
   hasSeenOnboarding: boolean;
   setHasSeenOnboarding: (seen: boolean) => void;
 }
@@ -101,10 +99,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [isCustomizingLayout, setIsCustomizingLayout] =
     useState<boolean>(false);
-  const [viewportMode, setViewportMode] = useState<
-    "mobile-frame" | "responsive"
-  >("responsive");
-
   const addXp = (amount: number) => {
     setUserStats((prev) => {
       const newXp = prev.xp + amount;
@@ -169,8 +163,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         resetWidgets,
         isCustomizingLayout,
         setIsCustomizingLayout,
-        viewportMode,
-        setViewportMode,
         hasSeenOnboarding,
         setHasSeenOnboarding,
       }}

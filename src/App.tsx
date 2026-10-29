@@ -25,7 +25,7 @@ import {
 import { ProfileScreen } from "./screens/ProfileScreen";
 
 const MainLayout: React.FC = () => {
-  const { currentTab, setCurrentTab, viewportMode, setViewportMode } = useApp();
+  const { currentTab, setCurrentTab } = useApp();
   const journey = useJourney();
   const publicTabs = ["landing", "registro", "ingreso", "recuperacion"];
   React.useEffect(() => {
@@ -46,7 +46,7 @@ const MainLayout: React.FC = () => {
       setCurrentTab("evaluacion");
     else if (journey.assessed && currentTab === "evaluacion") setCurrentTab("inicio");
   }, [currentTab, journey.username, journey.configured, journey.assessmentRequired, journey.assessed]);
-  const { isDark, toggleTheme } = useTheme();
+  const { isDark } = useTheme();
 
   const renderActiveScreen = () => {
     switch (currentTab) {
@@ -85,119 +85,21 @@ const MainLayout: React.FC = () => {
   return (
     <div
       data-theme={isDark ? "dark" : "light"}
-      data-public={publicTabs.includes(currentTab)}
       className={`app-root min-h-screen w-full transition-colors duration-200 flex flex-col items-center justify-start ${
         isDark
           ? "dark bg-[#06090f] text-[#dfe2ee]"
           : "light bg-slate-200/90 text-slate-800"
       }`}
     >
-      {/* Top Desktop Presentation Bar for toggling preview modes and quick test controls */}
-      <div
-        className={`prototype-toolbar w-full backdrop-blur-md border-b px-4 py-2 flex items-center justify-between text-xs transition-colors z-50 ${
-          isDark
-            ? "bg-slate-950/80 border-white/10 text-slate-300"
-            : "bg-white/95 border-slate-300/80 text-slate-700 shadow-xs"
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-brand animate-pulse" />
-            <span className="font-space font-bold tracking-wide">
-              MentIA · Prototipo
-            </span>
-          </div>
-
-          <span className="hidden sm:inline-block opacity-40">|</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Quick theme toggler */}
-          <button
-            onClick={toggleTheme}
-            title={`Alternar tema (Activo: ${isDark ? "Oscuro" : "Claro"})`}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all font-space text-[11px] font-semibold cursor-pointer ${
-              isDark
-                ? "bg-white/10 hover:bg-white/20 text-accent border border-white/10"
-                : "bg-slate-100 hover:bg-slate-200 text-accent border border-slate-300 shadow-xs"
-            }`}
-          >
-            <span
-              aria-hidden="true"
-              className="material-symbols-outlined text-[16px]"
-            >
-              {isDark ? "light_mode" : "dark_mode"}
-            </span>
-            <span>{isDark ? "Modo Claro" : "Modo Oscuro"}</span>
-          </button>
-
-          {/* Viewport switch: 390px iPhone vs Fluid */}
-          <button
-            onClick={() =>
-              setViewportMode(
-                viewportMode === "mobile-frame" ? "responsive" : "mobile-frame",
-              )
-            }
-            title="Alternar entre vista previa de celular y diseño automático"
-            className={`preview-toggle flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg font-space text-[11px] font-semibold transition-colors cursor-pointer ${
-              viewportMode === "mobile-frame"
-                ? "bg-brand/20 text-accent border border-brand/40"
-                : isDark
-                  ? "bg-white/10 text-slate-300 hover:bg-white/20"
-                  : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300"
-            }`}
-          >
-            <span
-              aria-hidden="true"
-              className="material-symbols-outlined text-[15px]"
-            >
-              {viewportMode === "mobile-frame" ? "smartphone" : "devices"}
-            </span>
-            <span>
-              {viewportMode === "mobile-frame" ? "Marco 390px" : "Diseño automático"}
-            </span>
-          </button>
-        </div>
-      </div>
-
       {/* Main Container */}
       <div className="app-workspace">
         <div
           id="phone-frame-container"
-          data-preview={viewportMode === "mobile-frame"}
           data-screen={currentTab}
           data-navigation={["inicio", "entrenar", "biblioteca", "progreso", "perfil", "historial", "logros", "resultado"].includes(currentTab)}
           data-theme={isDark ? "dark" : "light"}
           className={`app-frame ${isDark ? "dark" : "light"}`}
         >
-          {/* Simulated iPhone Dynamic Island & Speaker (Only in mobile-frame mode on desktop) */}
-          {viewportMode === "mobile-frame" && (
-            <div className="hidden md:flex w-full h-7 items-center justify-between px-6 pt-1 text-[11px] font-space font-semibold select-none bg-inherit shrink-0">
-              <span className="text-slate-800 dark:text-slate-300">9:41</span>
-              <div className="w-20 h-4 bg-black rounded-full shadow-inner" />
-              <div className="flex items-center gap-1 text-[13px] text-slate-800 dark:text-slate-300">
-                <span
-                  aria-hidden="true"
-                  className="material-symbols-outlined text-[14px]"
-                >
-                  signal_cellular_alt
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="material-symbols-outlined text-[14px]"
-                >
-                  wifi
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="material-symbols-outlined text-[14px]"
-                >
-                  battery_full
-                </span>
-              </div>
-            </div>
-          )}
-
           {/* Screen Top Header (except on landing onboarding screen) */}
           {!publicTabs.includes(currentTab) && currentTab !== "juego" && (
             <Header title="MentIA" />
@@ -232,10 +134,6 @@ const MainLayout: React.FC = () => {
           {/* Bottom Dock Navigation */}
           <BottomNav />
 
-          {/* Home indicator bar (iPhone frame) */}
-          {viewportMode === "mobile-frame" && (
-            <div className="hidden md:block w-32 h-1 bg-slate-300 dark:bg-white/20 rounded-full mx-auto my-1.5 shrink-0" />
-          )}
         </div>
       </div>
     </div>
