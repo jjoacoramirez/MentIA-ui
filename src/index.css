@@ -259,8 +259,8 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
   .app-content .text-4xl { font-size:clamp(1.4rem,8vw,2.25rem); }
 }
 @media (min-width:768px) {
-  .app-workspace { padding:1rem; }
-  .app-frame { max-width:1440px; border:1px solid #94a3b826; border-radius:24px; box-shadow:0 16px 50px #00000012; }
+  .app-workspace { padding:0; }
+  .app-frame { max-width:none; border:0; border-radius:0; box-shadow:none; }
   .app-frame .flow-page,
   .app-frame .home-page,
   .app-frame .profile-page { padding:1.75rem 2rem 2rem; }
