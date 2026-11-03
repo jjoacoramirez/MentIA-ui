@@ -24,8 +24,8 @@ export const WelcomeScreen: React.FC = () => {
         {/* Brand Header */}
         <div className="welcome-brand flex flex-col items-center text-center pt-2">
           {/* Glow Ring Logo Container */}
-          <div className="relative group cursor-pointer transition-transform duration-300 active:scale-95">
-            <div className="absolute -inset-2 bg-gradient-to-tr from-brand via-sky-500 to-indigo-500 rounded-full blur-md opacity-40 group-hover:opacity-75 transition-opacity" />
+          <div className="relative">
+            <div className="absolute -inset-2 bg-gradient-to-tr from-brand via-sky-500 to-indigo-500 rounded-full blur-md opacity-40" />
             <div className="relative w-24 h-24 rounded-full bg-white dark:bg-[#0a0e16] p-1 shadow-2xl flex items-center justify-center border border-white/20 dark:border-white/10">
               <BrandLogo size="lg" className="w-full h-full" />
             </div>
@@ -77,7 +77,7 @@ export const WelcomeScreen: React.FC = () => {
           </div>
 
           {/* Pillar 1: Memoria */}
-          <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c2028] p-4 transition-all duration-300 hover:bg-slate-50 dark:hover:bg-[#262a33] active:scale-[0.99] shadow-sm border border-slate-200/60 dark:border-white/[0.04]">
+          <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c2028] p-4 shadow-sm border border-slate-200/60 dark:border-white/[0.04]">
             <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-brand/10 rounded-full blur-xl pointer-events-none" />
             <div className="flex items-start gap-3.5 relative z-10">
               <div className="shrink-0 w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#0a0e16] flex items-center justify-center text-accent shadow-inner">
@@ -106,7 +106,7 @@ export const WelcomeScreen: React.FC = () => {
           </div>
 
           {/* Pillar 2: Atención y concentración */}
-          <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c2028] p-4 transition-all duration-300 hover:bg-slate-50 dark:hover:bg-[#262a33] active:scale-[0.99] shadow-sm border border-slate-200/60 dark:border-white/[0.04]">
+          <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c2028] p-4 shadow-sm border border-slate-200/60 dark:border-white/[0.04]">
             <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-500/10 rounded-full blur-xl pointer-events-none" />
             <div className="flex items-start gap-3.5 relative z-10">
               <div className="shrink-0 w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#0a0e16] flex items-center justify-center text-amber-500 dark:text-[#ffb95f] shadow-inner">
@@ -135,7 +135,7 @@ export const WelcomeScreen: React.FC = () => {
           </div>
 
           {/* Pillar 3: Memoria de trabajo */}
-          <div className="group relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c2028] p-4 transition-all duration-300 hover:bg-slate-50 dark:hover:bg-[#262a33] active:scale-[0.99] shadow-sm border border-slate-200/60 dark:border-white/[0.04]">
+          <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#1c2028] p-4 shadow-sm border border-slate-200/60 dark:border-white/[0.04]">
             <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl pointer-events-none" />
             <div className="flex items-start gap-3.5 relative z-10">
               <div className="shrink-0 w-11 h-11 rounded-xl bg-slate-100 dark:bg-[#0a0e16] flex items-center justify-center text-indigo-500 dark:text-[#c0c1ff] shadow-inner">
