@@ -18,7 +18,7 @@ Abrir http://localhost:3000. En desarrollo, Vite reenvía `/api` a `http://local
 1. **Crear cuenta**: alias, contraseña y rango etario. El servidor devuelve el código de recuperación, que se muestra una sola vez.
 2. **Configurar**: duración de sesión y áreas (las categorías vienen de `/categories`).
 3. **Evaluación inicial**: 2 actividades por área, en el mismo nivel para todos. Al cerrarla, el servidor fija el nivel de partida por área. Se puede dejar para más tarde, pero sin ella no se puede entrenar. **Saltearla es solo para admins** (herramienta de debug; el rol viene del login).
-4. **Entrenar**: el servidor arma la sesión según el nivel de cada área, con rotación de ejercicios y variantes. Al cerrarla ajusta el nivel por área y suma XP.
+4. **Entrenar**: desde Juegos se juega un área sola o una sesión combinada de todas. El servidor arma la sesión según el nivel de cada área, con rotación de ejercicios y variantes. Al cerrarla ajusta el nivel de las áreas jugadas y suma XP.
 5. **Resultado, historial, progreso y logros**: todo sale del servidor.
 6. **Perfil**: tema, preferencias, evaluación y regenerar el código de recuperación (pide la contraseña actual).
 

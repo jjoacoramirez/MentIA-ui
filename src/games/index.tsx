@@ -1,6 +1,6 @@
 import React from "react";
-import type { ExerciseType } from "../services/api";
-import type { GameProps } from "./common";
+import type { ExerciseType, SessionItem } from "../services/api";
+import { num, type GameProps } from "./common";
 import { GridGame } from "./GridGame";
 import { NBackGame } from "./NBackGame";
 import { OddOneOutGame } from "./OddOneOutGame";
@@ -32,6 +32,13 @@ export const exerciseNames: Record<ExerciseType, string> = {
 export function Game(props: GameProps) {
   const Component = games[props.item.exerciseType] ?? SequenceGame;
   return <Component {...props} />;
+}
+
+/** Dato del nivel que completa la consigna del servidor, o null si la consigna alcanza sola. */
+export function levelHint(item: SessionItem): string | null {
+  if (item.exerciseType !== "N_BACK") return null;
+  const n = Math.max(1, num(item.params.n, 1));
+  return n === 1 ? "En este nivel comparás cada símbolo con el anterior." : `En este nivel comparás cada símbolo con el de ${n} lugares atrás.`;
 }
 
 export type { GameOutcome, GameProps } from "./common";

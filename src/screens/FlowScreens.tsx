@@ -311,7 +311,7 @@ export function TrainingScreen() {
         {initial && assessed && (
           <p className="text-sm mb-4">Ya completaste la evaluación. Si la repetís, se reemplaza tu punto de partida.</p>
         )}
-        <button className="flow-primary" disabled={busy} onClick={() => begin(initial ? "assessment" : "training", initial && assessed)}>
+        <button className="flow-primary" disabled={busy} onClick={() => begin(initial ? "assessment" : "training", { restart: initial && assessed })}>
           {!initial ? "Comenzar sesión" : assessed ? "Repetir evaluación" : "Comenzar evaluación"}
         </button>
         {initial && !assessed && (

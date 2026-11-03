@@ -120,6 +120,27 @@ describe("Recorrido contra la API", () => {
     expect(api.calls.some((c) => c.path === "/assessment/skip")).toBe(true);
   });
 
+  it("desde Juegos se entrena un área sola o todas juntas", async () => {
+    api.users.set("por_area", {
+      password: PASSWORD, role: "USER", hasLevels: true,
+      profile: { ageRange: "25-30", sessionMinutes: 10, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: true },
+    });
+    await login("por_area");
+    await screen.findByText("Hola, por_area");
+    click("Juegos");
+    await clickWhenReady("Jugar Atención");
+    await clickWhenReady("Comenzar actividad");
+    expect(api.calls.find((c) => c.method === "POST" && c.path === "/sessions")?.body).toEqual({ category: "ATENCION" });
+
+    await clickWhenReady("Salir");
+    click("Abandonar sesión");
+    await screen.findByText(/Entrenamiento · Abandonada/);
+    click("Juegos");
+    await clickWhenReady("Jugar en mi nivel");
+    await clickWhenReady("Comenzar actividad");
+    expect(api.calls.filter((c) => c.method === "POST" && c.path === "/sessions").at(-1)?.body).toBeUndefined();
+  });
+
   it("abandonar una sesión la deja en el historial sin resultado", async () => {
     api.users.set("entrena", {
       password: PASSWORD, role: "USER", hasLevels: true,

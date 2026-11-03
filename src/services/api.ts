@@ -198,10 +198,11 @@ export const mentiaApi = {
     apiRequest<Session>(`/assessment/start${restart ? "?restart=true" : ""}`, { method: "POST" }, token),
   skipAssessment: (token: string) => apiRequest<void>("/assessment/skip", { method: "POST" }, token),
 
-  createSession: (token: string, durationMinutes?: number) =>
+  /** Sin `category`, la sesión mezcla todas las áreas; con `category`, solo trae actividades de esa área. */
+  createSession: (token: string, options: { durationMinutes?: number; category?: string } = {}) =>
     apiRequest<Session>(
       "/sessions",
-      durationMinutes ? { method: "POST", body: json({ durationMinutes }) } : { method: "POST" },
+      options.durationMinutes || options.category ? { method: "POST", body: json(options) } : { method: "POST" },
       token,
     ),
   session: (token: string, id: string) => apiRequest<Session>(`/sessions/${id}`, {}, token),

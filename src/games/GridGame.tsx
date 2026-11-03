@@ -31,7 +31,9 @@ export function GridGame({ item, paused, onDone }: GameProps) {
 
   return (
     <>
-      <p className="mb-3 text-sm">{answering ? `Marcá las ${count} casillas que se iluminaron.` : "Memorizá las casillas iluminadas."}</p>
+      <p className="mb-3 text-sm">
+        {answering ? `Tocá las ${count} casillas que se encendieron (${marked.length} de ${count}).` : "Mirá bien qué casillas se encienden."}
+      </p>
       <div className="grid gap-2 mb-5 mx-auto max-w-xs" style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
         aria-label={answering ? "Cuadrícula para responder" : "Cuadrícula para memorizar"}>
         {Array.from({ length: size * size }, (_, i) => {
@@ -39,7 +41,7 @@ export function GridGame({ item, paused, onDone }: GameProps) {
           return (
             <button key={i} aria-label={`Casilla ${i + 1}`} aria-pressed={answering ? lit : undefined}
               disabled={!answering || paused || (!lit && marked.length >= count)}
-              className="aspect-square border border-brand/30"
+              className="game-tile aspect-square"
               style={{ borderRadius: radius, background: lit ? color : "transparent" }}
               onClick={() => setMarked((m) => (m.includes(i) ? m.filter((x) => x !== i) : [...m, i]))} />
           );
