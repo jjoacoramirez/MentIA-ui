@@ -4,14 +4,14 @@ import { useScreenNavigation } from "./useScreenNavigation";
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useState } from "react";
 import { ScreenTab, UserStats, DashboardWidget, WidgetId } from "../types";
 
 interface AppContextType {
   currentTab: ScreenTab;
   setCurrentTab: (tab: ScreenTab) => void;
+  /** Resumen para Inicio y Perfil; lo completa JourneyContext con datos del servidor. */
   userStats: UserStats;
-  addXp: (amount: number) => void;
   updateUser: (stats: Partial<UserStats>) => void;
   widgets: DashboardWidget[];
   reorderWidgets: (startIndex: number, endIndex: number) => void;
@@ -45,25 +45,23 @@ const defaultWidgets: DashboardWidget[] = [
   { id: "agility_tip", title: "Consejo de agilidad", enabled: true, order: 3 },
   {
     id: "flash_challenge",
-    title: "Sesión rápida de ejemplo",
+    title: "Sesión rápida",
     enabled: false,
     order: 4,
   },
 ];
 
 const initialStats: UserStats = {
-  name: "explorador",
-  username: "explorador",
-  title: "Exploradora Ágil",
-  level: 3,
-  xp: 420,
-  streakDays: 4,
-  accuracy: 96,
-  topPercent: 8,
-  completedActivities: 28,
-  weeklySessions: 5,
-  totalPlayTime: "2h 45m",
-  recoveryCode: "MTIA-9482-XK",
+  name: "",
+  username: "",
+  title: "En entrenamiento",
+  level: 1,
+  xp: 0,
+  streakDays: 0,
+  accuracy: 0,
+  completedActivities: 0,
+  weeklySessions: 0,
+  totalPlayTime: "0 min",
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -99,18 +97,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [isCustomizingLayout, setIsCustomizingLayout] =
     useState<boolean>(false);
-  const addXp = (amount: number) => {
-    setUserStats((prev) => {
-      const newXp = prev.xp + amount;
-      const newLevel = Math.floor(newXp / 200) + 1;
-      return {
-        ...prev,
-        xp: newXp,
-        level: Math.max(prev.level, newLevel),
-        completedActivities: prev.completedActivities + 1,
-      };
-    });
-  };
+  // Estable: JourneyContext lo usa como dependencia de un efecto.
+  const updateUser = useCallback(
+    (stats: Partial<UserStats>) => setUserStats((prev) => ({ ...prev, ...stats })),
+    [],
+  );
 
   const reorderWidgets = (startIndex: number, endIndex: number) => {
     setWidgets((prev) => {
@@ -155,8 +146,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         currentTab,
         setCurrentTab,
         userStats,
-        addXp,
-        updateUser: (stats) => setUserStats((prev) => ({ ...prev, ...stats })),
+        updateUser,
         widgets,
         reorderWidgets,
         toggleWidget,

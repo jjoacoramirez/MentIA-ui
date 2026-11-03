@@ -6,7 +6,7 @@ export function useScreenNavigation() {
   const current = useRef<ScreenTab>("landing");
   const restoring = useRef(false);
   useLayoutEffect(() => {
-    // A reload starts a fresh demo; history entries contain no credentials.
+    // Al recargar, la navegación arranca de nuevo; el historial del navegador no guarda credenciales.
     window.history.replaceState({ mentiaTab: "landing" }, "");
     function onPop(event: PopStateEvent) {
       if (restoring.current) { restoring.current = false; return; }

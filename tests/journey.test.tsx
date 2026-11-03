@@ -1,242 +1,183 @@
 import React from "react";
-import { act, fireEvent, render, screen, within } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it } from "vitest";
 import App from "../src/App";
+import { installFakeApi } from "./fakeApi";
+
+const PASSWORD = "una-clave-larga";
+let api: ReturnType<typeof installFakeApi>;
+
+beforeEach(() => {
+  api = installFakeApi();
+  sessionStorage.clear();
+});
+
 function click(name: string | RegExp) {
   fireEvent.click(screen.getByRole("button", { name }));
 }
-function enter() {
+async function clickWhenReady(name: string | RegExp) {
+  fireEvent.click(await screen.findByRole("button", { name }, { timeout: 4000 }));
+}
+function fill(label: string, value: string) {
+  fireEvent.change(screen.getByLabelText(label), { target: { value } });
+}
+
+async function register(alias = "explorador_01") {
   render(<App />);
   click("Comenzar");
-  fireEvent.change(screen.getByLabelText("Alias"), {
-    target: { value: "explorador_01" },
-  });
-  fireEvent.change(screen.getByLabelText("Contraseña"), {
-    target: { value: "solo-demo-12345" },
-  });
-  fireEvent.change(screen.getByLabelText("Repetir contraseña"), {
-    target: { value: "solo-demo-12345" },
-  });
-  click("Crear cuenta de ejemplo");
-  expect(screen.getByText(/^DEMO-/)).toBeInTheDocument();
-  expect(
-    screen.getByRole("button", { name: "Continuar" }),
-  ).toBeDisabled();
+  fill("Alias", alias);
+  fill("Contraseña", PASSWORD);
+  fill("Repetir contraseña", PASSWORD);
+  click("Crear cuenta");
+  expect(await screen.findByText("7KQ2M-X9PTD-4HBWE-RC6ZN")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Continuar" })).toBeDisabled();
   fireEvent.click(screen.getByLabelText("Ya guardé el código"));
   click("Continuar");
-  fireEvent.click(screen.getByRole("combobox", { name: "Duración preferida" }));
-  fireEvent.click(screen.getByRole("option", { name: "15 minutos" }));
-  click("Guardar y continuar");
+  expect(await screen.findByRole("heading", { name: "Tu entrenamiento" })).toBeInTheDocument();
 }
-function playRound(correct = true) {
-  const target = screen
-    .getByLabelText("Secuencia para memorizar")
-    .textContent!.split("");
-  act(() => vi.advanceTimersByTime(6000));
-  for (const s of correct ? target : Array(4).fill(target[0]))
-    fireEvent.click(
-      screen.getByRole("button", { name: new RegExp(`^Símbolo \\d: ${s}$`) }),
-    );
-  click("Confirmar respuesta");
+
+async function login(alias: string, password = PASSWORD) {
+  render(<App />);
+  click("Ya tengo una cuenta");
+  fill("Alias", alias);
+  fill("Contraseña", password);
+  click("Ingresar");
 }
-describe("Recorridos de MentIA", () => {
-  it("completa evaluación con aciertos y errores, resultados, historial y cierre de sesión", () => {
-    vi.useFakeTimers();
-    enter();
-    click("Comenzar evaluación de ejemplo");
-    expect(screen.getByRole("banner", { name: "Controles del ejercicio" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Ir al inicio" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
-    expect(screen.getByRole("progressbar", { name: "Avance de sesión" })).toHaveAttribute("aria-valuenow", "0");
-    playRound(false);
-    expect(screen.getByText("Seguí practicando")).toBeInTheDocument();
-    click("Siguiente secuencia");
-    playRound();
-    click("Siguiente secuencia");
-    playRound();
-    click("Ver resultados");
-    expect(screen.getByText("2/3")).toBeInTheDocument();
-    expect(screen.getByText("67%")).toBeInTheDocument();
-    expect(screen.getByText("+50")).toBeInTheDocument();
+
+/** Las actividades simuladas son "Secuencia inversa" de dos elementos iguales ("A"). */
+async function playSession() {
+  for (let i = 0; i < 2; i++) {
+    await clickWhenReady("Comenzar actividad");
+    await clickWhenReady("Elegir A");
+    click("Elegir A");
+    click("Confirmar respuesta");
+    if (i === 0) await clickWhenReady("Siguiente actividad");
+  }
+  await clickWhenReady("Ver resultados");
+}
+
+describe("Recorrido contra la API", () => {
+  it("registra, configura, hace la evaluación y muestra resultado, historial y logros", async () => {
+    await register();
+    fireEvent.click(screen.getByRole("combobox", { name: "Duración preferida" }));
+    fireEvent.click(screen.getByRole("option", { name: "15 minutos" }));
+    click("Guardar y continuar");
+    await clickWhenReady("Comenzar evaluación");
+    expect(await screen.findByRole("banner", { name: "Controles del ejercicio" })).toBeInTheDocument();
+    await playSession();
+
+    expect(await screen.findByRole("heading", { name: "Evaluación completada" })).toBeInTheDocument();
+    expect(screen.getByText("2/2")).toBeInTheDocument();
+    expect(screen.getByText("+25")).toBeInTheDocument();
+    expect(screen.getByText(/nivel 3 ↑ 5/)).toBeInTheDocument();
+    expect(screen.getByText("★ Primer paso")).toBeInTheDocument();
+    expect(api.calls.filter((c) => c.path.endsWith("/attempts"))).toHaveLength(2);
+    expect(api.calls.find((c) => c.method === "PUT" && c.path === "/profile")?.body).toEqual({
+      sessionMinutes: 15, goals: ["ATENCION", "MEMORIA_TRABAJO", "MEMORIA_VISUAL"], onboardingCompleted: true,
+    });
+
     click("Continuar");
-    expect(screen.getByText("Hola, explorador_01")).toBeInTheDocument();
+    expect(await screen.findByText("Hola, explorador_01")).toBeInTheDocument();
     click("Historial");
-    expect(
-      screen.getByRole("button", { name: /Evaluación inicial · Completada/ }),
-    ).toBeInTheDocument();
-    click("Entrenar");
-    click("Comenzar sesión de ejemplo");
-    click("Pausar");
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-    act(() => vi.advanceTimersByTime(20000));
-    click("Continuar sesión");
-    expect(screen.getByText("6 s")).toBeInTheDocument();
-    click("Salir");
-    click("Abandonar sesión");
-    expect(screen.getByText(/Entrenamiento · Abandonada/)).toBeInTheDocument();
-    expect(screen.getByRole("navigation", { name: "Secciones de progreso" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Historial" })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("button", { name: "Progreso" })).toHaveAttribute("aria-current", "page");
-    fireEvent.click(screen.getByRole("combobox", { name: "Mostrar" }));
-    fireEvent.click(screen.getByRole("option", { name: "Completadas" }));
-    expect(screen.queryByText(/Entrenamiento · Abandonada/)).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("combobox", { name: "Mostrar" }));
-    fireEvent.click(screen.getByRole("option", { name: "Todas las sesiones" }));
+    await clickWhenReady(/Evaluación inicial · Completada/);
+    expect(await screen.findByRole("heading", { name: "Evaluación completada" })).toBeInTheDocument();
+    click("Progreso");
     click("Logros");
-    expect(screen.getByRole("heading", { name: "Tus logros" })).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Volver" })).not.toBeInTheDocument();
-    act(() => window.dispatchEvent(new PopStateEvent("popstate", { state: { mentiaTab: "progreso" } })));
-    expect(screen.getByRole("heading", { name: "Tu progreso" })).toBeInTheDocument();
+    expect(await screen.findByText(/Obtenido/)).toBeInTheDocument();
+
     click("Perfil");
     expect(screen.getByText("15 min / sesión")).toBeInTheDocument();
     click("Cerrar sesión en este dispositivo");
-    expect(
-      screen.getByRole("button", { name: "Comenzar" }),
-    ).toBeInTheDocument();
-    expect(localStorage.getItem("password")).toBeNull();
-    click("Ya tengo una cuenta");
-    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "explorador_01" } });
-    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
-    click("Entrar a la demo");
-    expect(screen.getByText("Hola, explorador_01")).toBeInTheDocument();
-    click("Historial");
-    expect(screen.getByRole("button", { name: /Evaluación inicial · Completada/ })).toBeInTheDocument();
-    expect(screen.getByText(/Entrenamiento · Abandonada/)).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: "Comenzar" })).toBeInTheDocument();
+    expect(sessionStorage.getItem("mentia_auth_v1")).toBeNull();
+    expect(JSON.stringify({ ...localStorage, ...sessionStorage })).not.toContain(PASSWORD);
+    expect(api.calls.some((c) => c.path === "/auth/logout")).toBe(true);
   });
-  it("la biblioteca asigna el nivel y el siguiente entrenamiento pasa de cuatro a cinco objetos", () => {
-    vi.useFakeTimers();
-    enter();
-    click("Comenzar evaluación de ejemplo");
-    for (let i = 0; i < 3; i++) { playRound(); click(i === 2 ? "Ver resultados" : "Siguiente secuencia"); }
-    click("Continuar");
-    click("Juegos");
-    expect(screen.getByText("Memoria · Nivel 1")).toBeInTheDocument();
-    for (let session = 0; session < 2; session++) {
-      click("Jugar en mi nivel");
-      expect(screen.getByLabelText("Secuencia para memorizar").children).toHaveLength(4);
-      for (let i = 0; i < 3; i++) { playRound(); click(i === 2 ? "Ver resultados" : "Siguiente secuencia"); }
-      click("Continuar");
-      click("Juegos");
-    }
-    expect(screen.getByText("Memoria · Nivel 2")).toBeInTheDocument();
-    click("Jugar en mi nivel");
-    expect(screen.getByLabelText("Secuencia para memorizar").children).toHaveLength(5);
-    playRound();
-    expect(screen.getByText("¡Secuencia correcta!")).toBeInTheDocument();
+
+  it("sin evaluación el servidor pide hacerla antes de entrenar", async () => {
+    await register("sin_evaluar");
+    click("Guardar y continuar");
+    await clickWhenReady("Hacerla más tarde");
+    expect(await screen.findByText("Hola, sin_evaluar")).toBeInTheDocument();
+    click("Entrenar");
+    await clickWhenReady("Comenzar sesión");
+    expect(await screen.findByText("Antes de entrenar necesitás completar la evaluación inicial.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Evaluación inicial" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Saltear (admin)" })).not.toBeInTheDocument();
   });
-  it("permite saltear sin inventar evaluación y conserva el perfil al recargar e ingresar nuevamente", () => {
-    enter();
-    click("Saltear por ahora");
-    expect(screen.getByText("Hola, explorador_01")).toBeInTheDocument();
-    const saved = JSON.parse(localStorage.getItem("mentia_demo_profiles_v1")!)["explorador_01"];
-    expect(saved.assessmentStatus).toBe("skipped");
-    expect(saved.history).toEqual([]);
-    expect(saved).not.toHaveProperty("password");
-    expect(saved).not.toHaveProperty("recoveryCode");
-    click("Juegos");
-    expect(screen.getByRole("button", { name: "Jugar en mi nivel" })).toBeEnabled();
-    click("Perfil");
-    expect(screen.getByRole("button", { name: "Hacer evaluación inicial" })).toBeInTheDocument();
-    click("Cerrar sesión en este dispositivo");
-    expect(localStorage.getItem("mentia_demo_active_v1")).toBeNull();
-    click("Ya tengo una cuenta");
-    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "explorador_01" } });
-    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
-    click("Entrar a la demo");
-    expect(screen.getByText("Hola, explorador_01")).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Evaluación inicial" })).not.toBeInTheDocument();
-    click("Perfil");
-    expect(screen.getByText("15 min / sesión")).toBeInTheDocument();
-  });
-  it("restaura una demo guardada al recargar, permite evaluarse después y mantiene separados los alias", () => {
-    const first = render(<App />);
-    click("Ya tengo una cuenta");
-    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "demo_existente" } });
-    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
-    click("Entrar a la demo");
-    expect(screen.getByText("Hola, demo_existente")).toBeInTheDocument();
-    first.unmount();
-    render(<App />);
-    expect(screen.getByText("Hola, demo_existente")).toBeInTheDocument();
-    expect(window.history.state.mentiaTab).toBe("inicio");
+
+  it("solo un admin puede saltear la evaluación", async () => {
+    api.users.set("admin_01", {
+      password: PASSWORD, role: "ADMIN", hasLevels: false,
+      profile: { ageRange: "18-24", sessionMinutes: 10, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: false },
+    });
+    await login("admin_01");
+    expect(await screen.findByText("Hola, admin_01")).toBeInTheDocument();
     click("Perfil");
     click("Hacer evaluación inicial");
-    expect(screen.getByRole("heading", { name: "Evaluación inicial" })).toBeInTheDocument();
-    click("Saltear por ahora");
-    click("Perfil");
-    click("Cerrar sesión en este dispositivo");
-    click("Comenzar");
-    fireEvent.change(screen.getByLabelText("Alias"), { target: { value: "nuevo_alias" } });
-    fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "solo-demo-12345" } });
-    fireEvent.change(screen.getByLabelText("Repetir contraseña"), { target: { value: "solo-demo-12345" } });
-    click("Crear cuenta de ejemplo");
-    fireEvent.click(screen.getByLabelText("Ya guardé el código"));
-    click("Continuar");
-    click("Guardar y continuar");
-    expect(screen.getByRole("heading", { name: "Evaluación inicial" })).toBeInTheDocument();
-    expect(JSON.parse(localStorage.getItem("mentia_demo_profiles_v1")!).nuevo_alias.history).toEqual([]);
+    await clickWhenReady("Saltear (admin)");
+    expect(await screen.findByText("Hola, admin_01")).toBeInTheDocument();
+    expect(api.calls.some((c) => c.path === "/assessment/skip")).toBe(true);
   });
-  it("requiere alias válido y coincidencia de contraseñas", () => {
-    render(<App />);
-    click("Comenzar");
-    fireEvent.change(screen.getByLabelText("Alias"), {
-      target: { value: "x" },
+
+  it("abandonar una sesión la deja en el historial sin resultado", async () => {
+    api.users.set("entrena", {
+      password: PASSWORD, role: "USER", hasLevels: true,
+      profile: { ageRange: "25-30", sessionMinutes: 10, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: true },
     });
-    fireEvent.change(screen.getByLabelText("Contraseña"), {
-      target: { value: "solo-demo-12345" },
-    });
-    fireEvent.change(screen.getByLabelText("Repetir contraseña"), {
-      target: { value: "solo-demo-12345" },
-    });
-    click("Crear cuenta de ejemplo");
-    expect(screen.getByRole("alert")).toHaveTextContent("alias de 3 a 30");
-    fireEvent.change(screen.getByLabelText("Alias"), {
-      target: { value: "demo" },
-    });
-    fireEvent.change(screen.getByLabelText("Repetir contraseña"), {
-      target: { value: "otra-clave-12345" },
-    });
-    click("Crear cuenta de ejemplo");
-    expect(screen.getByRole("alert")).toHaveTextContent("no coinciden");
+    await login("entrena");
+    await screen.findByText("Hola, entrena");
+    click("Entrenar");
+    await clickWhenReady("Comenzar sesión");
+    await clickWhenReady("Salir");
+    click("Abandonar sesión");
+    expect(await screen.findByText(/Entrenamiento · Abandonada/)).toBeInTheDocument();
+    expect(api.calls.some((c) => c.method === "POST" && /\/sessions\/.+\/abandon$/.test(c.path))).toBe(true);
   });
-  it("simula recuperación sin email y muestra el nuevo código una sola vez", () => {
+
+  it("muestra el error del servidor con credenciales inválidas", async () => {
+    await login("nadie", "otra-clave-larga");
+    expect(await screen.findByRole("alert")).toHaveTextContent("El nombre de usuario o la contraseña no son correctos.");
+  });
+
+  it("recupera el acceso con el código y muestra el nuevo una sola vez", async () => {
+    api.users.set("olvido", {
+      password: "clave-vieja-123", role: "USER", hasLevels: true,
+      profile: { ageRange: "18-24", sessionMinutes: 10, goals: [], onboardingCompleted: true, assessmentCompleted: true },
+    });
     render(<App />);
     click("Ya tengo una cuenta");
     click("Olvidé mi contraseña");
-    fireEvent.change(screen.getByLabelText("Alias"), {
-      target: { value: "demo" },
-    });
-    fireEvent.change(screen.getByLabelText("Código de recuperación"), {
-      target: { value: "DEMO-EJEMPLO" },
-    });
-    fireEvent.change(screen.getByLabelText("Nueva contraseña"), {
-      target: { value: "solo-demo-12345" },
-    });
-    fireEvent.change(screen.getByLabelText("Repetir contraseña"), {
-      target: { value: "solo-demo-12345" },
-    });
-    click("Simular restablecimiento");
-    expect(screen.getByText(/^DEMO-/)).toBeInTheDocument();
+    fill("Alias", "olvido");
+    fill("Código de recuperación", "7KQ2M-X9PTD-4HBWE-RC6ZN");
+    fill("Nueva contraseña", PASSWORD);
+    fill("Repetir contraseña", PASSWORD);
+    click("Restablecer contraseña");
+    expect(await screen.findByText("ABCDE-FGHJK-LMNPQ-RSTUV")).toBeInTheDocument();
     fireEvent.click(screen.getByLabelText("Ya guardé el código"));
     click("Continuar");
-    expect(screen.queryByText(/^DEMO-/)).not.toBeInTheDocument();
-    expect(screen.getByLabelText("Contraseña")).toHaveValue("");
+    expect(await screen.findByText("Hola, olvido")).toBeInTheDocument();
   });
-  it("cambia el tema global y no inventa datos por categoría", () => {
-    enter();
-    click("Comenzar evaluación de ejemplo");
-    click("Salir");
-    click("Abandonar sesión");
-    click("Perfil");
-    const light = screen.getByText("Claro").closest("button")!;
-    fireEvent.click(light);
-    expect(document.documentElement).toHaveAttribute("data-theme", "light");
-    fireEvent.click(screen.getByText("Oscuro").closest("button")!);
-    expect(document.documentElement).toHaveAttribute("data-theme", "dark");
+
+  it("al recargar restaura la sesión de la pestaña, y si el token venció vuelve al ingreso", async () => {
+    api.users.set("recarga", {
+      password: PASSWORD, role: "USER", hasLevels: true,
+      profile: { ageRange: "18-24", sessionMinutes: 20, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: true },
+    });
+    await login("recarga");
+    await screen.findByText("Hola, recarga");
+
+    // Recargar: se desmonta y se vuelve a montar con lo guardado en sessionStorage.
+    expect(sessionStorage.getItem("mentia_auth_v1")).not.toBeNull();
+    cleanup();
+    render(<App />);
+    expect(await screen.findByText("Hola, recarga")).toBeInTheDocument();
+
+    // El token deja de valer (por ejemplo, venció): la próxima request devuelve 401.
+    api.fetchMock.mockImplementationOnce(async () =>
+      new Response(JSON.stringify({ status: 401, code: "UNAUTHORIZED", title: "No autenticado" }), { status: 401 }));
     click("Progreso");
-    expect(screen.getAllByText("Sin datos aún")).toHaveLength(3);
-    expect(
-      screen.getByText("Completá una sesión para ver tu evolución."),
-    ).toBeInTheDocument();
+    expect(await screen.findByText(/Tu sesión se cerró o venció/)).toBeInTheDocument();
+    await waitFor(() => expect(sessionStorage.getItem("mentia_auth_v1")).toBeNull());
   });
 });

@@ -1,189 +1,121 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useJourney } from "../context/JourneyContext";
-import { Pause, X, Timer, Brain, CheckCircle2 } from "lucide-react";
-const symbols = ["◆", "▲", "●", "■", "★", "⬡", "✚", "◎", "✦"];
-function sequence(length: number) {
-  const pool = [...symbols];
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
-  }
-  return pool.slice(0, length);
-}
+import React, { useEffect, useState } from "react";
+import { categoryName, useJourney } from "../context/JourneyContext";
+import { useApp } from "../context/AppContext";
+import { Pause, X, Brain, CheckCircle2 } from "lucide-react";
+import { exerciseNames, Game, type GameOutcome } from "../games";
+import { ApiError } from "../services/api";
+
+/**
+ * Ejecuta una sesión del servidor: muestra cada ítem con su mecánica, registra el intento y al final la cierra.
+ * Al retomar una sesión (por ejemplo, después de recargar) saltea los ítems ya respondidos.
+ */
 export const GameSessionScreen: React.FC = () => {
-  const { finish, assessment, sessionLevel } = useJourney();
-  const objectCount = sessionLevel + 3;
-  const [target, setTarget] = useState(() => sequence(objectCount));
-  const [answer, setAnswer] = useState<string[]>([]);
-  const [phase, setPhase] = useState<"memorize" | "answer" | "feedback">(
-    "memorize",
-  );
-  const [remaining, setRemaining] = useState(6);
+  const { session, doneItems, recordAttempt, finish, abandon, assessment, categories, busy } = useJourney();
+  const { setCurrentTab } = useApp();
+  const pending = session ? session.items.filter((i) => !doneItems.includes(i.sessionItemId)) : [];
+  const item = pending[0];
+  const total = session?.items.length ?? 0;
+  const done = total - pending.length;
+  const [phase, setPhase] = useState<"intro" | "play" | "saving" | "feedback">("intro");
+  const [last, setLast] = useState<GameOutcome | null>(null);
   const [paused, setPaused] = useState(false);
   const [exit, setExit] = useState(false);
-  const [round, setRound] = useState(0);
-  const [correct, setCorrect] = useState(0);
-  const [lastCorrect, setLastCorrect] = useState(false);
-  const [elapsed, setElapsed] = useState(0);
-  const submitted = useRef(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
     const requestExit = () => setExit(true);
     window.addEventListener("mentia:leave-session", requestExit);
     return () => window.removeEventListener("mentia:leave-session", requestExit);
   }, []);
 
-  useEffect(() => {
-    if (paused || exit || phase === "feedback") return;
-    const timer = setInterval(() => {
-      setElapsed((t) => t + 1000);
-      setRemaining((t) => Math.max(0, t - 1));
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [phase, paused, exit]);
-  useEffect(() => {
-    if (remaining > 0 || paused || exit) return;
-    if (phase === "memorize") {
-      setPhase("answer");
-      setRemaining(30);
-    } else if (phase === "answer") submit();
-  }, [remaining, phase, paused, exit]);
-  function submit() {
-    if (submitted.current) return;
-    submitted.current = true;
-    const match =
-      answer.length === target.length &&
-      answer.every((s, i) => s === target[i]);
-    setLastCorrect(match);
-    if (match) setCorrect((c) => c + 1);
-    setRound((r) => r + 1);
-    setPhase("feedback");
-  }
-  function next() {
-    if (round === 3) {
-      finish(correct, round, elapsed);
-      return;
+  if (!session)
+    return (
+      <div className="flow-page">
+        <p className="mb-4">No hay una sesión en curso.</p>
+        <button className="flow-primary" onClick={() => setCurrentTab("entrenar")}>Preparar una sesión</button>
+      </div>
+    );
+
+  async function onDone(outcome: GameOutcome) {
+    if (!item) return;
+    setPhase("saving");
+    setError("");
+    try {
+      await recordAttempt(item, outcome);
+      setLast(outcome);
+      setPhase("feedback");
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : "No pudimos guardar el resultado. Probá de nuevo.");
+      setLast(outcome);
+      setPhase("feedback");
     }
-    submitted.current = false;
-    setAnswer([]);
-    setTarget(sequence(objectCount));
-    setPhase("memorize");
-    setRemaining(6);
   }
+
+  async function retrySave() {
+    if (last) await onDone(last);
+  }
+
+  // `item` ya avanzó al siguiente pendiente cuando el intento se guardó; el feedback es del anterior.
+  const finished = !item && phase !== "saving";
   return (
     <div className="session-screen">
       <header className="session-header" aria-label="Controles del ejercicio">
         <div className="flex items-center justify-between gap-3">
           <button className="session-icon" aria-label="Salir" onClick={() => setExit(true)}><X size={20} /></button>
           <div className="text-center min-w-0">
-            <p className="text-[10px] uppercase tracking-[0.16em] text-accent font-bold">{assessment ? "Evaluación inicial" : "Entrenamiento"} · demo</p>
-            <h1 className="font-space font-bold text-lg">Secuencias visuales</h1>
-            <p className="text-xs text-slate-600 dark:text-slate-300">Memoria · Nivel {sessionLevel} · {objectCount} objetos</p>
+            <p className="text-[10px] uppercase tracking-[0.16em] text-accent font-bold">{assessment ? "Evaluación inicial" : "Entrenamiento"}</p>
+            <h1 className="font-space font-bold text-lg">{item ? exerciseNames[item.exerciseType] : "Sesión completa"}</h1>
+            {item && <p className="text-xs text-slate-600 dark:text-slate-300">{categoryName(categories, item.category)} · Nivel {item.difficultyLevel}</p>}
           </div>
           <button className="session-icon" aria-label="Pausar" onClick={() => setPaused(true)}><Pause size={20} /></button>
         </div>
         <div className="flex justify-between items-center mt-5 mb-3 text-xs font-semibold">
-          <span>Secuencia {Math.min(round + (phase === "feedback" ? 0 : 1), 3)} de 3</span>
-          <span className="session-timer"><Timer size={14} aria-hidden="true" /><span aria-live="off">{remaining} s</span></span>
+          <span>Actividad {Math.min(done + 1, total)} de {total}</span>
         </div>
-        <div className="session-progress" role="progressbar" aria-label="Avance de sesión" aria-valuenow={round} aria-valuemin={0} aria-valuemax={3}>
-          <div style={{ width: `${round / 3 * 100}%` }} />
+        <div className="session-progress" role="progressbar" aria-label="Avance de sesión" aria-valuenow={done} aria-valuemin={0} aria-valuemax={total}>
+          <div style={{ width: `${total ? (done / total) * 100 : 0}%` }} />
         </div>
       </header>
       <div className="session-content">
         <div className="session-phase">
           {phase === "feedback" ? <CheckCircle2 size={16} /> : <Brain size={16} />}
-          {phase === "memorize" ? "Fase de memorización" : phase === "answer" ? "Tu turno" : "Resultado del intento"}
+          {phase === "intro" ? "Instrucciones" : phase === "play" ? "En juego" : phase === "saving" ? "Guardando" : "Resultado de la actividad"}
         </div>
-      <section
-        className="flow-card session-card"
-        style={{ visibility: paused || exit ? "hidden" : "visible" }}
-      >
-        <h2 className="text-lg font-bold mb-3">
-          {phase === "memorize"
-            ? "Memorizá el orden"
-            : phase === "answer"
-              ? "Repetí la secuencia"
-              : lastCorrect
-                ? "¡Secuencia correcta!"
-                : "Seguí practicando"}
-        </h2>
-        {phase === "memorize" && (
-          <div
-            className="grid gap-2 py-8"
-            style={{ gridTemplateColumns: `repeat(${objectCount}, minmax(0, 1fr))` }}
-            aria-label="Secuencia para memorizar"
-          >
-            {target.map((s, i) => (
-              <span
-                key={i}
-                className="text-4xl text-center text-accent"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
-        )}
-        {phase === "answer" && (
-          <>
-            <div
-              className="grid gap-2 mb-6"
-              style={{ gridTemplateColumns: `repeat(${objectCount}, minmax(0, 1fr))` }}
-              aria-label="Tu respuesta"
-            >
-              {Array.from({ length: objectCount }, (_, i) => (
-                <span
-                  className="rounded-xl bg-brand/10 text-3xl text-center py-4"
-                  key={i}
-                >
-                  {answer[i] || "·"}
-                </span>
-              ))}
+        <section className="flow-card session-card" style={{ visibility: paused || exit ? "hidden" : "visible" }}>
+          {phase === "intro" && item && (
+            <>
+              <h2 className="text-lg font-bold mb-3">{exerciseNames[item.exerciseType]}</h2>
+              <p className="mb-5">{item.instructions}</p>
+              <button className="flow-primary" onClick={() => setPhase("play")}>Comenzar actividad</button>
+            </>
+          )}
+          {phase === "play" && item && (
+            <Game key={item.sessionItemId} item={item} paused={paused || exit} onDone={onDone} />
+          )}
+          {phase === "saving" && <p aria-live="polite">Guardando tu resultado…</p>}
+          {phase === "feedback" && last && (
+            <div aria-live="polite">
+              <h2 className="text-lg font-bold mb-3">{last.isCorrect ? "¡Muy bien!" : "Seguí practicando"}</h2>
+              <p className="mb-5">Precisión de esta actividad: {Math.round(last.accuracy * 100)}%.</p>
+              {error ? (
+                <>
+                  <p role="alert" className="text-rose-600 dark:text-rose-300 mb-4">{error}</p>
+                  <button className="flow-primary" onClick={retrySave}>Reintentar</button>
+                </>
+              ) : finished ? (
+                <button className="flow-primary" disabled={busy} onClick={finish}>Ver resultados</button>
+              ) : (
+                <button className="flow-primary" onClick={() => setPhase("intro")}>Siguiente actividad</button>
+              )}
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              {symbols.map((s, i) => (
-                <button
-                  key={s}
-                  aria-label={`Símbolo ${i + 1}: ${s}`}
-                  className="rounded-2xl border border-brand/30 text-3xl py-4 hover:bg-brand/20 focus-visible:outline-2 focus-visible:outline-brand"
-                  disabled={answer.length === objectCount || paused || exit}
-                  onClick={() => setAnswer((a) => [...a, s])}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-            <button
-              className="flow-link my-4"
-              onClick={() => setAnswer((a) => a.slice(0, -1))}
-            >
-              Deshacer último símbolo
-            </button>
-            <button
-              className="flow-primary"
-              disabled={answer.length !== objectCount || paused || exit}
-              onClick={submit}
-            >
-              Confirmar respuesta
-            </button>
-          </>
-        )}
-        {phase === "feedback" && (
-          <div aria-live="polite">
-            <p className="mb-3">
-              Respuesta esperada:{" "}
-              <span className="text-2xl">{target.join(" ")}</span>
-            </p>
-            <p className="mb-5">
-              {lastCorrect
-                ? `Reconociste el orden de los ${objectCount} símbolos.`
-                : "Este intento se registró. Podés continuar con la próxima secuencia."}
-            </p>
-            <button className="flow-primary" onClick={next}>
-              {round === 3 ? "Ver resultados" : "Siguiente secuencia"}
-            </button>
-          </div>
-        )}
-      </section>
+          )}
+          {phase === "intro" && !item && (
+            <>
+              <p className="mb-5">Ya respondiste todas las actividades de esta sesión.</p>
+              <button className="flow-primary" disabled={busy} onClick={finish}>Ver resultados</button>
+            </>
+          )}
+        </section>
       </div>
       {(paused || exit) && (
         <div
@@ -198,8 +130,8 @@ export const GameSessionScreen: React.FC = () => {
             </h2>
             <p className="mb-5">
               {exit
-                ? "Los intentos realizados quedarán en el historial de esta demo. No se sumará XP."
-                : "La secuencia permanece oculta y el tiempo está detenido."}
+                ? "Las actividades que ya respondiste quedan en tu historial, pero la sesión no suma XP ni cambia tu nivel."
+                : "La actividad permanece oculta y el tiempo está detenido."}
             </p>
             <button
               autoFocus
@@ -212,10 +144,7 @@ export const GameSessionScreen: React.FC = () => {
               Continuar sesión
             </button>
             {exit && (
-              <button
-                className="flow-link mt-4"
-                onClick={() => finish(correct, round, elapsed, true)}
-              >
+              <button className="flow-link mt-4" disabled={busy} onClick={abandon}>
                 Abandonar sesión
               </button>
             )}
