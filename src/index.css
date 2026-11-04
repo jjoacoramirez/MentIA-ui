@@ -382,3 +382,7 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
 .nback-dots > span[data-state="done"] { background:var(--accent); }
 .nback-dots > span[data-state="current"] { background:var(--brand); transform:scale(1.4); }
 @media (prefers-reduced-motion: reduce) { .nback-symbol { animation:none; } .game-tile, .game-tile[aria-pressed="true"] { transition:none; transform:none; } }
+
+/* Progreso dentro del nivel. */
+.level-progress { height:6px; border-radius:9999px; background:color-mix(in srgb,var(--brand) 18%,transparent); overflow:hidden; }
+.level-progress > span { display:block; height:100%; border-radius:inherit; background:var(--accent); transition:width .4s ease; }

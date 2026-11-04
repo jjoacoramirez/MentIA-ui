@@ -1,4 +1,5 @@
 import { Select } from "../components/Select";
+import { LevelProgress, progressChange } from "../components/LevelProgress";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { categoryName, useJourney } from "../context/JourneyContext";
@@ -375,10 +376,22 @@ export function ResultsScreen() {
           <h2 className="font-bold mb-3">{result.type === "INITIAL_ASSESSMENT" ? "Tu punto de partida por área" : "Por área"}</h2>
           {result.categories.map((c) => {
             const arrow = c.difficultyLevelAfter > c.difficultyLevelBefore ? "↑" : c.difficultyLevelAfter < c.difficultyLevelBefore ? "↓" : "→";
+            const name = categoryName(categories, c.category);
+            const change = result.type === "TRAINING"
+              ? progressChange(c.difficultyLevelBefore, c.difficultyLevelAfter, c.levelProgressBefore, c.levelProgressAfter)
+              : null;
             return (
-              <div key={c.category} className="flex justify-between py-2 border-b border-slate-300/20 text-sm">
-                <span>{categoryName(categories, c.category)}</span>
-                <span>{Math.round(c.accuracy * 100)}% · nivel {c.difficultyLevelBefore} {arrow} {c.difficultyLevelAfter}</span>
+              <div key={c.category} className="py-2 border-b border-slate-300/20 text-sm">
+                <div className="flex justify-between">
+                  <span>{name}</span>
+                  <span>{Math.round(c.accuracy * 100)}% · nivel {c.difficultyLevelBefore} {arrow} {c.difficultyLevelAfter}</span>
+                </div>
+                {c.levelProgressAfter != null && (
+                  <div className="mt-2">
+                    <LevelProgress value={c.levelProgressAfter} label={`Progreso en el nivel de ${name}`} />
+                    {change && <p className="text-xs mt-1 text-slate-600 dark:text-slate-300">{change}</p>}
+                  </div>
+                )}
               </div>
             );
           })}

@@ -90,7 +90,7 @@ export function installFakeApi() {
       { code: "MEMORIA_TRABAJO", name: "Memoria de trabajo", description: "Retener y reorganizar.", mvp: true },
       { code: "MEMORIA_VISUAL", name: "Memoria visual", description: "Imágenes y posiciones.", mvp: true },
     ]);
-    if (path === "/profile/performance") return ok({ categories: user.hasLevels ? [{ category: "ATENCION", score: 70, level: 3 }] : [] });
+    if (path === "/profile/performance") return ok({ categories: user.hasLevels ? [{ category: "ATENCION", score: 70, level: 3, progress: 35 }] : [] });
     if (path === "/gamification/me") return ok({ xp: user.hasLevels ? 25 : 0, level: 1, xpIntoLevel: user.hasLevels ? 25 : 0, xpForNextLevel: 100 });
     if (path === "/progress/summary") return ok({ sessionsCompleted: history.filter((h) => h.status === "COMPLETED").length, sessionsAbandoned: history.filter((h) => h.status === "ABANDONED").length, activeDaysLast30: 1, currentStreakDays: 1, dailyGoal: null });
     if (path === "/progress/categories") return ok([]);
@@ -122,7 +122,7 @@ export function installFakeApi() {
       const result = {
         sessionId: session.id, type: session.type, status: "COMPLETED", itemsTotal: 2, itemsCompleted: session.attempts,
         correctCount: session.attempts, errorCount: 0, accuracy: 1, totalTimeMs: 2000,
-        categories: [{ category: "ATENCION", itemsCompleted: 1, accuracy: 1, avgResponseTimeMs: 1000, difficultyLevelBefore: 3, difficultyLevelAfter: 5 }],
+        categories: [{ category: "ATENCION", itemsCompleted: 1, accuracy: 1, avgResponseTimeMs: 1000, difficultyLevelBefore: 3, difficultyLevelAfter: 5, levelProgressBefore: 80, levelProgressAfter: 50 }],
         adaptations: [{ category: "ATENCION", from: 3, to: 5, direction: "UP" }],
         comparison: null,
         gamification: { xpEarned: 25, xpTotal: 25, level: 1, leveledUp: false, unlockedAchievements: [{ code: "FIRST_SESSION", name: "Primer paso" }] },

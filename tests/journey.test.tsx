@@ -128,6 +128,8 @@ describe("Recorrido contra la API", () => {
     await login("por_area");
     await screen.findByText("Hola, por_area");
     click("Juegos");
+    expect(await screen.findByText("35/100 puntos en este nivel")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Progreso en el nivel de Atención" })).toHaveAttribute("aria-valuenow", "35");
     await clickWhenReady("Jugar Atención");
     await clickWhenReady("Comenzar actividad");
     expect(api.calls.find((c) => c.method === "POST" && c.path === "/sessions")?.body).toEqual({ category: "ATENCION" });

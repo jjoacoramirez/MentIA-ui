@@ -89,6 +89,8 @@ describe("MentIA-api real", () => {
     expect(summary).toMatchObject({ sessionsCompleted: 2, sessionsAbandoned: 1, currentStreakDays: 1 });
     expect(history.totalElements).toBe(3);
     expect(performance.categories).toHaveLength(3);
+    expect(performance.categories.every((c) => c.progress >= 0 && c.progress <= 100)).toBe(true);
+    expect(trainingResult.categories.every((c) => c.levelProgressAfter != null)).toBe(true);
     expect(evolution.length).toBeGreaterThan(0);
     expect(gamification.xp).toBe(summary.gamification?.xp);
     expect(achievements.filter((a) => a.unlocked).map((a) => a.code)).toEqual(expect.arrayContaining(["FIRST_SESSION"]));

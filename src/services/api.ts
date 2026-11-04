@@ -76,7 +76,8 @@ export interface ProfileUpdate {
 }
 export interface Category { code: string; name: string; description?: string; mvp: boolean }
 export interface PerformanceProfile {
-  categories: { category: string; score: number; level: number; updatedAt?: string }[];
+  /** `progress`: puntos dentro del nivel, de 0 (piso) a 100 (techo). */
+  categories: { category: string; score: number; level: number; progress: number; updatedAt?: string }[];
 }
 export interface SessionItem {
   sessionItemId: string;
@@ -119,6 +120,9 @@ export interface CategoryResult {
   avgResponseTimeMs?: number | null;
   difficultyLevelBefore: number;
   difficultyLevelAfter: number;
+  /** Puntos dentro del nivel antes y después (0 a 100). En la evaluación inicial no hay "antes". */
+  levelProgressBefore?: number | null;
+  levelProgressAfter?: number | null;
 }
 export interface SessionResult {
   sessionId: string;
