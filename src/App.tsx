@@ -1,3 +1,4 @@
+import { AdminMetricsScreen } from "./screens/AdminMetricsScreen";
 import { LibraryScreen } from "./screens/LibraryScreen";
 /**
  * @license
@@ -141,6 +142,9 @@ const MainLayout: React.FC = () => {
 };
 
 export default function App() {
+  if (window.location.pathname.replace(/\/$/, "") === "/admin") {
+    return <ThemeProvider><AdminMetricsScreen /></ThemeProvider>;
+  }
   return (
     <ThemeProvider>
       <AppProvider>

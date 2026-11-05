@@ -379,6 +379,7 @@ export const ProfileScreen: React.FC = () => {
 
       <section className="flow-card mb-4">
         <h3 className="font-space font-bold mb-3">Preferencias y acceso</h3>
+        <a href="/admin" className="flow-link block mb-3">Panel de administración</a>
         <p className="text-sm mb-3">Duración preferida: {minutes} minutos.</p>
         <button
           className="flow-link"
