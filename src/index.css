@@ -127,9 +127,6 @@ a:focus-visible {
 }
 
 /* Shared navigation and controls match the original MentIA surfaces. */
-.demo-notice { display:flex; align-items:center; justify-content:center; gap:.4rem; padding:.45rem 1rem; font-size:.65rem; color:#64748b; background:#f1f5f980; }
-.dark .demo-notice { color:#94a3b8; background:#ffffff04; }
-.demo-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); flex-shrink:0; }
 .section-nav { display:flex; gap:.25rem; margin:1rem 1rem 0; padding:.3rem; border-radius:1rem; background:#e2e8f080; flex-shrink:0; }
 .section-nav button { flex:1; display:flex; align-items:center; justify-content:center; gap:.35rem; padding:.65rem .25rem; border-radius:.75rem; font-size:.75rem; font-weight:600; color:#64748b; cursor:pointer; }
 .section-nav .material-symbols-outlined { font-size:18px; }

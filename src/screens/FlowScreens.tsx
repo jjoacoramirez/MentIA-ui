@@ -1,8 +1,9 @@
-import { memoryProgress } from "../domain/training";
 import { Select } from "../components/Select";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
-import { useJourney, categories } from "../context/JourneyContext";
+import { categoryName, useJourney } from "../context/JourneyContext";
+import { ApiError, mentiaApi, type AgeRange, type SessionSummary } from "../services/api";
+import { useApiData } from "../hooks/useApiData";
 export function Panel({
   title,
   children,
@@ -17,42 +18,63 @@ export function Panel({
     </div>
   );
 }
+const errorMessage = (e: unknown) =>
+  e instanceof ApiError ? e.message : "Ocurrió un error inesperado. Probá de nuevo.";
 export function AuthScreen({
   mode,
 }: {
   mode: "registro" | "ingreso" | "recuperacion";
 }) {
   const { setCurrentTab } = useApp();
-  const { enter } = useJourney();
+  const { register, login, resetPassword, busy } = useJourney();
   const [alias, setAlias] = useState("");
   const [password, setPassword] = useState("");
   const [repeat, setRepeat] = useState("");
-  const [age, setAge] = useState("18-24");
+  const [age, setAge] = useState<AgeRange>("18-24");
   const [code, setCode] = useState("");
   const [issued, setIssued] = useState("");
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  function submit(e: React.FormEvent) {
+  const username = alias.trim().toLowerCase();
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (!/^[a-z0-9_.]{3,30}$/.test(alias.trim().toLowerCase()))
+    if (!/^[a-z0-9_.]{3,30}$/.test(username))
       return setError(
         "Usá un alias de 3 a 30 caracteres: letras, números, punto o guion bajo.",
       );
-    if (password.length < 10 || new TextEncoder().encode(password).length > 72)
+    if (mode !== "ingreso" && (password.length < 10 || new TextEncoder().encode(password).length > 72))
       return setError(
         "La contraseña debe tener al menos 10 caracteres y hasta 72 bytes.",
       );
     if (mode !== "ingreso" && password !== repeat)
       return setError("Las contraseñas no coinciden.");
-    if (mode === "recuperacion" && !code.trim())
-      return setError("Ingresá un código para simular la recuperación.");
-    if (mode === "ingreso") enter(alias.trim().toLowerCase());
-    else {
-      setIssued(`DEMO-${crypto.randomUUID().toUpperCase()}`);
+    try {
+      if (mode === "ingreso") await login(username, password);
+      else if (mode === "registro") {
+        const recoveryCode = await register(username, password, age);
+        if (recoveryCode) setIssued(recoveryCode);
+        else await login(username, password);
+      } else {
+        setIssued(await resetPassword(username, code.trim(), password));
+        setCode("");
+      }
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  }
+  async function continueAfterCode() {
+    setError("");
+    try {
+      // Con el código guardado, se entra directo con la contraseña recién elegida.
+      await login(username, password);
+    } catch (err) {
+      setError(errorMessage(err));
+      setIssued("");
+      setCurrentTab("ingreso");
+    } finally {
       setPassword("");
       setRepeat("");
-      setCode("");
     }
   }
   if (issued)
@@ -60,10 +82,10 @@ export function AuthScreen({
       <Panel title="Guardá tu código">
         <section className="flow-card">
           <p>
-            Este código de ejemplo se muestra una sola vez en este recorrido. La
-            cuenta y la recuperación todavía son simuladas.
+            Es tu código de recuperación. Se muestra una sola vez: guardalo en un
+            lugar seguro. Lo vas a necesitar si olvidás tu contraseña.
           </p>
-          <code className="block break-all my-4 select-all">{issued}</code>
+          <code className="block break-all my-4 select-all text-xl font-bold">{issued}</code>
           <label className="flex gap-2">
             <input
               type="checkbox"
@@ -72,14 +94,11 @@ export function AuthScreen({
             />
             Ya guardé el código
           </label>
+          {error && <p role="alert" className="text-rose-600 dark:text-rose-300 mt-3">{error}</p>}
           <button
             className="flow-primary mt-4"
-            disabled={!saved}
-            onClick={() =>
-              mode === "registro"
-                ? enter(alias.trim().toLowerCase(), age, true)
-                : setCurrentTab("ingreso")
-            }
+            disabled={!saved || busy}
+            onClick={continueAfterCode}
           >
             Continuar
           </button>
@@ -97,8 +116,9 @@ export function AuthScreen({
       }
     >
       <p className="mb-4 text-sm">
-        Demo sin cuentas reales. Las credenciales no se guardan ni se validan
-        contra un servidor. El perfil y el progreso de la demo se guardan en este navegador.
+        {mode === "recuperacion"
+          ? "Usá el código de recuperación que guardaste al crear tu cuenta. No pedimos email ni teléfono."
+          : "Solo pedimos un alias, una contraseña y tu rango etario. No uses tu nombre real como alias."}
       </p>
       <form onSubmit={submit} className="flow-card flex flex-col gap-4">
         <label>
@@ -114,7 +134,7 @@ export function AuthScreen({
         {mode === "registro" && (
           <label>
             Rango etario
-            <Select value={age} onChange={(e) => setAge(e.target.value)}>
+            <Select value={age} onChange={(e) => setAge(e.target.value as AgeRange)}>
               {["18-24", "25-30", "31-40", "41+"].map((a) => (
                 <option key={a}>{a}</option>
               ))}
@@ -139,7 +159,7 @@ export function AuthScreen({
             autoComplete={
               mode === "ingreso" ? "current-password" : "new-password"
             }
-            minLength={10}
+            minLength={mode === "ingreso" ? undefined : 10}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -161,12 +181,12 @@ export function AuthScreen({
             {error}
           </p>
         )}
-        <button className="flow-primary" type="submit">
+        <button className="flow-primary" type="submit" disabled={busy}>
           {mode === "ingreso"
-            ? "Entrar a la demo"
+            ? "Ingresar"
             : mode === "registro"
-              ? "Crear cuenta de ejemplo"
-              : "Simular restablecimiento"}
+              ? "Crear cuenta"
+              : "Restablecer contraseña"}
         </button>
       </form>
       <div className="flex flex-wrap gap-4 mt-5">
@@ -194,10 +214,10 @@ export function AuthScreen({
   );
 }
 export function ConfigurationScreen() {
-  const { minutes, goals, configure, assessmentRequired } = useJourney();
+  const { minutes, goals, configure, configured, categories, busy } = useJourney();
   const { setCurrentTab } = useApp();
   const [duration, setDuration] = useState(minutes);
-  const [selected, setSelected] = useState(goals);
+  const [selected, setSelected] = useState(goals.length ? goals : categories.filter((c) => c.mvp).map((c) => c.code));
   return (
     <Panel title="Tu entrenamiento">
       <p className="mb-4">
@@ -225,12 +245,13 @@ export function ConfigurationScreen() {
           </Select>
         </label>
         <fieldset>
-          <legend className="mb-3">Áreas de entrenamiento</legend>
+          <legend className="mb-3">Áreas de entrenamiento (hasta 4)</legend>
           {categories.map((c) => (
             <label className="flex gap-3 mb-3" key={c.code}>
               <input
                 type="checkbox"
                 checked={selected.includes(c.code)}
+                disabled={!selected.includes(c.code) && selected.length >= 4}
                 onChange={() =>
                   setSelected((p) =>
                     p.includes(c.code)
@@ -239,14 +260,17 @@ export function ConfigurationScreen() {
                   )
                 }
               />
-              {c.name}
+              <span>
+                {c.name}
+                {c.description && <span className="block text-xs text-slate-500 dark:text-slate-400">{c.description}</span>}
+              </span>
             </label>
           ))}
         </fieldset>
-        <button className="flow-primary" disabled={!selected.length}>
+        <button className="flow-primary" disabled={!selected.length || busy}>
           Guardar y continuar
         </button>
-        {!assessmentRequired && (
+        {configured && (
           <button
             type="button"
             className="flow-link"
@@ -260,86 +284,115 @@ export function ConfigurationScreen() {
   );
 }
 export function TrainingScreen() {
-  const { minutes, begin, history, skipAssessment } = useJourney();
-  const { currentTab } = useApp();
+  const { minutes, begin, skipAssessment, isAdmin, assessed, busy, goals, categories } = useJourney();
+  const { currentTab, setCurrentTab } = useApp();
   const initial = currentTab === "evaluacion";
   return (
     <Panel title={!initial ? "Preparar entrenamiento" : "Evaluación inicial"}>
       <section className="flow-card">
         <p className="text-lg font-bold mb-3">
-          {!initial ? "Una sesión a tu ritmo" : "Tu punto de partida"}
+          {!initial ? "Una sesión a tu medida" : "Tu punto de partida"}
         </p>
         <p>
-          {initial ? "La evaluación inicial sirve para establecer tu punto de partida en MentIA. Los resultados describen tu desempeño en la plataforma." : "Practicá con la dificultad que corresponde a tu progreso. No necesitás repetir la evaluación inicial para entrenar."}
+          {initial
+            ? "La evaluación inicial establece tu punto de partida en MentIA: dos actividades breves de cada área, en el mismo nivel para todos. Los resultados describen tu desempeño dentro de la plataforma."
+            : `Armamos una sesión de unos ${minutes} minutos con actividades de tus áreas, en el nivel que corresponde a tu desempeño y rotando ejercicios para que no se repitan.`}
         </p>
-        <p className="mt-4">
-          Preferencia: {minutes} minutos. En esta demo vas a probar tres
-          secuencias visuales breves; todavía no representan la evaluación
-          completa ni las categorías definitivas.
-        </p>
-        <p className="mt-4 text-sm text-accent">Memoria · Nivel {!initial ? memoryProgress(history).level : 1} · {!initial ? memoryProgress(history).objects : 4} objetos. La dificultad se asigna automáticamente.</p>
+        {!initial && goals.length > 0 && (
+          <p className="mt-3 text-sm text-accent">
+            Áreas elegidas: {goals.map((g) => categoryName(categories, g)).join(" · ")}
+          </p>
+        )}
         <ol className="list-decimal pl-5 my-5 space-y-2">
-          <li>Observá la secuencia de símbolos.</li>
-          <li>Repetila en el mismo orden.</li>
-          <li>Al terminar, revisá tus aciertos y tiempos.</li>
+          <li>Leé las instrucciones de cada actividad.</li>
+          <li>Respondé a tu ritmo; podés pausar cuando quieras.</li>
+          <li>Al terminar, revisá tus resultados y cómo sigue tu nivel.</li>
         </ol>
-        <button className="flow-primary" onClick={() => begin(initial)}>
-          {!initial
-            ? "Comenzar sesión de ejemplo"
-            : "Comenzar evaluación de ejemplo"}
+        {initial && assessed && (
+          <p className="text-sm mb-4">Ya completaste la evaluación. Si la repetís, se reemplaza tu punto de partida.</p>
+        )}
+        <button className="flow-primary" disabled={busy} onClick={() => begin(initial ? "assessment" : "training", initial && assessed)}>
+          {!initial ? "Comenzar sesión" : assessed ? "Repetir evaluación" : "Comenzar evaluación"}
         </button>
-        {initial && <>
-          <button className="flow-secondary mt-3" onClick={skipAssessment}>Saltear por ahora</button>
-          <p className="text-sm text-slate-600 dark:text-slate-300 mt-3">Podés hacerla después desde Perfil. Mientras tanto, empezás en nivel 1, sin resultados de evaluación ni XP extra.</p>
-        </>}
+        {initial && !assessed && (
+          <button className="flow-link mt-4" onClick={() => setCurrentTab("inicio")}>Hacerla más tarde</button>
+        )}
+        {initial && isAdmin && (
+          <>
+            <button className="flow-secondary mt-3" disabled={busy} onClick={skipAssessment}>Saltear (admin)</button>
+            <p className="text-sm text-slate-600 dark:text-slate-300 mt-3">Herramienta de debug: deja el nivel 1 en todas las áreas sin hacer la evaluación.</p>
+          </>
+        )}
       </section>
     </Panel>
   );
 }
 export function ResultsScreen() {
-  const { selected, assessed } = useJourney();
+  const { result, categories } = useJourney();
   const { setCurrentTab } = useApp();
-  if (!selected)
+  if (!result)
     return (
       <Panel title="Resultados">
         <p>Todavía no seleccionaste una sesión.</p>
       </Panel>
     );
+  const delta = result.comparison ? Math.round(result.comparison.accuracyDelta * 100) : null;
   return (
     <Panel
       title={
-        selected.type === "INITIAL_ASSESSMENT"
+        result.type === "INITIAL_ASSESSMENT"
           ? "Evaluación completada"
           : "Resultado de sesión"
       }
     >
       <section className="flow-card">
-        <p className="mb-4">
-          Memoria · Nivel {selected.difficultyLevel} · {selected.difficultyLevel + 3} objetos.
-        </p>
         <div className="grid grid-cols-2 gap-4">
           <Metric
             label="Aciertos"
-            value={`${selected.correctCount}/${selected.itemsCompleted}`}
+            value={`${result.correctCount}/${result.itemsCompleted}`}
           />
           <Metric
             label="Precisión"
-            value={`${Math.round(selected.accuracy * 100)}%`}
+            value={`${Math.round(result.accuracy * 100)}%`}
           />
           <Metric
             label="Tiempo"
-            value={`${Math.round(selected.totalTimeMs / 1000)} s`}
+            value={`${Math.round(result.totalTimeMs / 1000)} s`}
           />
-          <Metric label="XP de ejemplo" value={`+${selected.xpEarned}`} />
+          {result.gamification && <Metric label="XP" value={`+${result.gamification.xpEarned}`} />}
         </div>
-        <p className="mt-5 text-sm">
-          La adaptación de dificultad y los resultados por categoría se
-          incorporarán con el motor del backend y los ejercicios definitivos.
-        </p>
+        {delta !== null && (
+          <p className="mt-4 text-sm">
+            Respecto de tu sesión anterior: {delta === 0 ? "misma precisión" : `${delta > 0 ? "+" : ""}${delta} puntos de precisión`}.
+          </p>
+        )}
+        {result.gamification?.leveledUp && (
+          <p className="mt-3 font-bold text-accent">¡Subiste al nivel {result.gamification.level} de MentIA!</p>
+        )}
       </section>
+      {result.categories.length > 0 && (
+        <section className="flow-card mt-4">
+          <h2 className="font-bold mb-3">{result.type === "INITIAL_ASSESSMENT" ? "Tu punto de partida por área" : "Por área"}</h2>
+          {result.categories.map((c) => {
+            const arrow = c.difficultyLevelAfter > c.difficultyLevelBefore ? "↑" : c.difficultyLevelAfter < c.difficultyLevelBefore ? "↓" : "→";
+            return (
+              <div key={c.category} className="flex justify-between py-2 border-b border-slate-300/20 text-sm">
+                <span>{categoryName(categories, c.category)}</span>
+                <span>{Math.round(c.accuracy * 100)}% · nivel {c.difficultyLevelBefore} {arrow} {c.difficultyLevelAfter}</span>
+              </div>
+            );
+          })}
+        </section>
+      )}
+      {!!result.gamification?.unlockedAchievements.length && (
+        <section className="flow-card mt-4">
+          <h2 className="font-bold mb-2">Logros desbloqueados</h2>
+          {result.gamification.unlockedAchievements.map((a) => <p key={a.code}>★ {a.name}</p>)}
+        </section>
+      )}
       <button
         className="flow-primary mt-5"
-        onClick={() => setCurrentTab(assessed ? "inicio" : "evaluacion")}
+        onClick={() => setCurrentTab("inicio")}
       >
         Continuar
       </button>
@@ -360,9 +413,27 @@ function Metric({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+const statusLabel: Record<string, string> = {
+  COMPLETED: "Completada",
+  ABANDONED: "Abandonada",
+  GENERATED: "Sin empezar",
+  IN_PROGRESS: "En curso",
+};
 export function HistoryScreen() {
-  const { history, select } = useJourney();
+  const { history, openResult, token } = useJourney();
   const [filter, setFilter] = useState("ALL");
+  const [extra, setExtra] = useState<SessionSummary[]>([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(history.length >= 30);
+  const all = [...history, ...extra.filter((e) => !history.some((h) => h.id === e.id))];
+  const visible = all.filter((r) => filter === "ALL" || r.status === filter);
+  async function loadMore() {
+    if (!token) return;
+    const next = await mentiaApi.sessions(token, page + 1, 30);
+    setExtra((p) => [...p, ...next.items]);
+    setPage(page + 1);
+    setHasMore((page + 2) * 30 < next.totalElements);
+  }
   return (
     <Panel title="Historial">
       <label>
@@ -374,70 +445,51 @@ export function HistoryScreen() {
         </Select>
       </label>
       <div className="history-grid mt-4 space-y-3">
-        {!history.filter((r) => filter === "ALL" || r.status === filter)
-          .length && (
+        {!visible.length && (
           <p className="flow-card">
             No hay sesiones para este filtro. Comenzá desde Entrenar.
           </p>
         )}
-        {history
-          .filter((r) => filter === "ALL" || r.status === filter)
-          .map((r) => {
-            const complete = r.status === "COMPLETED";
-            const content = <>
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <span className="history-icon material-symbols-outlined" aria-hidden="true">{complete ? "task_alt" : "pause_circle"}</span>
-                <span className={`status-badge ${complete ? "completed" : "abandoned"}`}>{complete ? "Completada" : "Abandonada"}</span>
-              </div>
-              <strong className="block font-space">{r.type === "INITIAL_ASSESSMENT" ? "Evaluación inicial" : "Entrenamiento"} · {complete ? "Completada" : "Abandonada"}</strong>
-              <span className="block text-sm mt-2 text-slate-500 dark:text-slate-400">
-                {new Date(r.finishedAt).toLocaleString("es-AR")} · {r.itemsCompleted} intentos
-              </span>
-              {complete ? <span className="flex justify-between items-center mt-4 pt-3 border-t border-slate-200 dark:border-white/10 flow-link">
-                Ver resultado · {Math.round(r.accuracy * 100)}%<span aria-hidden="true">→</span>
-              </span> : <span className="block text-sm mt-3 text-slate-500 dark:text-slate-400">Sesión sin finalizar · sin XP</span>}
-            </>;
-            return complete ? <button className="flow-card history-card w-full text-left" key={r.id} onClick={() => select(r)}>{content}</button>
-              : <article className="flow-card w-full text-left" key={r.id}>{content}</article>;
-          })}
+        {visible.map((r) => {
+          const complete = r.status === "COMPLETED";
+          const when = r.finishedAt ? new Date(r.finishedAt).toLocaleString("es-AR") : "Sin finalizar";
+          const content = <>
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <span className="history-icon material-symbols-outlined" aria-hidden="true">{complete ? "task_alt" : "pause_circle"}</span>
+              <span className={`status-badge ${complete ? "completed" : "abandoned"}`}>{statusLabel[r.status]}</span>
+            </div>
+            <strong className="block font-space">{r.type === "INITIAL_ASSESSMENT" ? "Evaluación inicial" : "Entrenamiento"} · {statusLabel[r.status]}</strong>
+            <span className="block text-sm mt-2 text-slate-500 dark:text-slate-400">
+              {when} · {r.itemsCompleted} actividades
+            </span>
+            {complete ? <span className="flex justify-between items-center mt-4 pt-3 border-t border-slate-200 dark:border-white/10 flow-link">
+              Ver resultado · {Math.round((r.accuracy ?? 0) * 100)}%<span aria-hidden="true">→</span>
+            </span> : <span className="block text-sm mt-3 text-slate-500 dark:text-slate-400">Sesión sin completar · sin XP</span>}
+          </>;
+          return complete ? <button className="flow-card history-card w-full text-left" key={r.id} onClick={() => openResult(r.id)}>{content}</button>
+            : <article className="flow-card w-full text-left" key={r.id}>{content}</article>;
+        })}
       </div>
+      {hasMore && <button className="flow-link mt-4" onClick={loadMore}>Ver más sesiones</button>}
     </Panel>
   );
 }
 export function AchievementsScreen() {
-  const { history } = useJourney();
-  const completed = history.filter((r) => r.status === "COMPLETED");
-  const achievements = [
-    [
-      "Primer paso",
-      "Completá la evaluación de ejemplo.",
-      completed.some((r) => r.type === "INITIAL_ASSESSMENT"),
-    ],
-    [
-      "En movimiento",
-      "Completá tres sesiones de ejemplo.",
-      completed.length >= 3,
-    ],
-    [
-      "Una nueva sesión",
-      "Completá un entrenamiento de ejemplo.",
-      completed.some((r) => r.type === "TRAINING"),
-    ],
-  ];
+  const { data, error, loading } = useApiData(mentiaApi.achievements);
   return (
     <Panel title="Tus logros">
-      <p className="mb-4">
-        Condiciones de demostración; las reglas definitivas vendrán del backend.
-      </p>
+      <p className="mb-4">Logros por usar MentIA con constancia. Se desbloquean al completar sesiones.</p>
+      {loading && <p>Cargando logros…</p>}
+      {error && <p role="alert">{error}</p>}
       <div className="achievements-grid space-y-3">
-        {achievements.map(([title, description, unlocked]) => (
-          <section className="flow-card" key={String(title)}>
+        {data?.map((a) => (
+          <section className="flow-card" key={a.code}>
             <strong>
-              {unlocked ? "★" : "☆"} {title}
+              {a.unlocked ? "★" : "☆"} {a.name}
             </strong>
-            <p className="text-sm mt-2">{description}</p>
+            <p className="text-sm mt-2">{a.description}</p>
             <span className="text-accent text-sm">
-              {unlocked ? "Obtenido" : "Por descubrir"}
+              {a.unlocked ? `Obtenido${a.unlockedAt ? ` el ${new Date(a.unlockedAt).toLocaleDateString("es-AR")}` : ""}` : "Por descubrir"}
             </span>
           </section>
         ))}

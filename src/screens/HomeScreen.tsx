@@ -1,5 +1,4 @@
 import { Zap } from "lucide-react";
-import { streakDays } from "../domain/training";
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
@@ -7,7 +6,7 @@ import { streakDays } from "../domain/training";
 
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
-import { useJourney } from "../context/JourneyContext";
+import { categoryName, useJourney } from "../context/JourneyContext";
 import { DraggableDashboardCard } from "../components/DraggableDashboardCard";
 import { DashboardWidget, WidgetId } from "../types";
 
@@ -22,7 +21,8 @@ export const HomeScreen: React.FC = () => {
     toggleWidget,
   } = useApp();
 
-  const { history, minutes } = useJourney();
+  const { history, minutes, goals, categories, canTrain } = useJourney();
+  const streak = userStats.streakDays;
   const [selectedDay, setSelectedDay] = useState<string>(() => ["D", "L", "M", "X", "J", "V", "S"][new Date().getDay()]);
   const lastSession = history.find(r => r.status === "COMPLETED");
   const [showAddWidgetModal, setShowAddWidgetModal] = useState(false);
@@ -39,17 +39,18 @@ export const HomeScreen: React.FC = () => {
     date.setDate(date.getDate() - 6 + i);
     const sessions = history.filter(
       (r) =>
-        r.status === "COMPLETED" &&
+        r.status === "COMPLETED" && !!r.finishedAt &&
         new Date(r.finishedAt).toDateString() === date.toDateString(),
     );
-    const xp = sessions.reduce((s, r) => s + r.xpEarned, 0);
+    const trained = Math.round(sessions.reduce((s, r) => s + r.totalTimeMs, 0) / 60000);
     return {
       label: ["D", "L", "M", "X", "J", "V", "S"][date.getDay()],
       full: date.toLocaleDateString("es-AR", { weekday: "long" }),
       height: "h-8",
-      heightPercent: Math.min(100, xp),
-      minutes: `${Math.round(sessions.reduce((s, r) => s + r.totalTimeMs, 0) / 60000)} min`,
-      xp,
+      // La barra llega al tope cuando se entrenó la duración elegida.
+      heightPercent: sessions.length ? Math.max(10, Math.min(100, Math.round((100 * trained) / minutes))) : 0,
+      minutes: `${trained} min`,
+      sessions: sessions.length,
       isToday: i === 6,
     };
   });
@@ -74,7 +75,7 @@ export const HomeScreen: React.FC = () => {
                     auto_awesome
                   </span>
                   <span className="font-space text-[10px] tracking-wider uppercase font-bold">
-                    Sesión de ejemplo
+                    Sesión adaptada
                   </span>
                 </div>
                 <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 dark:bg-[#31353e] text-slate-600 dark:text-[#bcc9cd]">
@@ -96,22 +97,19 @@ export const HomeScreen: React.FC = () => {
                   Tu próximo entrenamiento
                 </h2>
                 <p className="font-dmsans text-[14px] text-slate-600 dark:text-[#bcc9cd] leading-snug">
-                  Probá tres secuencias visuales mientras preparamos los
-                  ejercicios definitivos.
+                  {canTrain
+                    ? "Actividades elegidas según tu nivel en cada área, rotando para que no se repitan."
+                    : "Primero completá la evaluación inicial para conocer tu punto de partida."}
                 </p>
               </div>
 
               {/* Cognitive Tags */}
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-[#262a33] text-slate-700 dark:text-[#bcc9cd] font-space text-[11px] font-semibold">
-                  Memoria
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-[#262a33] text-slate-700 dark:text-[#bcc9cd] font-space text-[11px] font-semibold">
-                  Atención
-                </span>
-                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-[#262a33] text-slate-700 dark:text-[#bcc9cd] font-space text-[11px] font-semibold">
-                  Memoria de trabajo
-                </span>
+                {goals.map((code) => (
+                  <span key={code} className="px-3 py-1 rounded-full bg-slate-100 dark:bg-[#262a33] text-slate-700 dark:text-[#bcc9cd] font-space text-[11px] font-semibold">
+                    {categoryName(categories, code)}
+                  </span>
+                ))}
               </div>
 
               {/* Futuristic Cybernetic Visual */}
@@ -129,7 +127,7 @@ export const HomeScreen: React.FC = () => {
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-brand" />
                     </span>
                     <span className="font-space text-[11px] text-accent font-bold tracking-wider uppercase">
-                      Secuencias visuales listas
+                      {canTrain ? "Lista para vos" : "Evaluación pendiente"}
                     </span>
                   </div>
                 </div>
@@ -137,7 +135,7 @@ export const HomeScreen: React.FC = () => {
 
               {/* Start CTA Button */}
               <button
-                onClick={() => setCurrentTab("entrenar")}
+                onClick={() => setCurrentTab(canTrain ? "entrenar" : "evaluacion")}
                 className="dashboard-action w-full h-14 rounded-full bg-brand hover:bg-brand dark:hover:bg-brand text-brand-ink flex items-center justify-center gap-2 shadow-lg shadow-brand/25 active:scale-95 transition-all duration-150 cursor-pointer"
               >
                 <span className="font-space text-[18px] font-bold tracking-tight">
@@ -178,12 +176,12 @@ export const HomeScreen: React.FC = () => {
                     local_fire_department
                   </span>
                   <span className="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-[#262a33] text-amber-600 dark:text-[#ffb95f] font-space text-[10px] font-bold">
-                    {streakDays(history) ? "En racha" : "Por empezar"}
+                    {streak ? "En racha" : "Por empezar"}
                   </span>
                 </div>
                 <div className="flex flex-col gap-0.5 mt-3">
                   <span className="font-space text-[22px] font-bold text-slate-900 dark:text-[#dfe2ee]">
-                    {streakDays(history)} días
+                    {streak} días
                   </span>
                   <span className="font-dmsans text-[12px] text-slate-500 dark:text-[#bcc9cd] leading-tight">
                     Racha de días consecutivos
@@ -194,7 +192,7 @@ export const HomeScreen: React.FC = () => {
                     <div
                       key={d.full}
                       title={d.full}
-                      className={`h-2 flex-1 rounded-full ${d.xp ? "bg-amber-500" : "bg-slate-200 dark:bg-[#31353e]"}`}
+                      className={`h-2 flex-1 rounded-full ${d.sessions ? "bg-amber-500" : "bg-slate-200 dark:bg-[#31353e]"}`}
                     />
                   ))}
                 </div>
@@ -218,7 +216,7 @@ export const HomeScreen: React.FC = () => {
                     Última sesión
                   </span>
                   <span className="font-dmsans text-[12px] text-indigo-600 dark:text-[#c0c1ff] font-semibold">
-                    {lastSession ? `+${lastSession.xpEarned} XP de ejemplo` : "Tu primera sesión te espera"}
+                    {lastSession?.finishedAt ? new Date(lastSession.finishedAt).toLocaleDateString("es-AR", { weekday: "long", day: "numeric" }) : "Tu primera sesión te espera"}
                   </span>
                 </div>
                 <div className="flex items-center gap-1.5 mt-3 text-slate-500 dark:text-[#bcc9cd]">
@@ -229,7 +227,7 @@ export const HomeScreen: React.FC = () => {
                     {lastSession ? "check_circle" : "schedule"}
                   </span>
                   <span className="font-space text-[10px] font-bold">
-                    {lastSession ? `${lastSession.itemsCompleted}/3 intentos · ${Math.round(lastSession.accuracy * 100)} % de precisión` : "Todavía no completaste una sesión"}
+                    {lastSession ? `${lastSession.itemsCompleted} actividades · ${Math.round((lastSession.accuracy ?? 0) * 100)} % de precisión` : "Todavía no completaste una sesión"}
                   </span>
                 </div>
               </div>
@@ -322,8 +320,7 @@ export const HomeScreen: React.FC = () => {
                   </strong>
                 </span>
                 <span className="text-accent font-bold">
-                  {daysData.find((d) => d.label === selectedDay)?.xp} XP
-                  acumulados
+                  {daysData.find((d) => d.label === selectedDay)?.minutes} entrenados
                 </span>
               </div>
             </div>
@@ -379,15 +376,15 @@ export const HomeScreen: React.FC = () => {
                   electric_bolt
                 </span>
                 <span className="font-space text-[11px] uppercase tracking-wider text-accent font-bold">
-                  Secuencias de ejemplo
+                  Sesión rápida
                 </span>
               </div>
               <span className="font-space text-[10px] bg-brand/30 text-accent px-2 py-0.5 rounded-full font-bold">
-                XP de ejemplo
+                Suma XP
               </span>
             </div>
             <p className="font-dmsans text-[13px] text-slate-300">
-              Probá el mismo ejercicio provisional de secuencias visuales.
+              Una sesión con la duración que elegiste, en tu nivel.
             </p>
             <button
               onClick={() => setCurrentTab("entrenar")}

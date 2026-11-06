@@ -7,23 +7,29 @@ import { Zap } from "lucide-react";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
 import { useTheme } from "../context/ThemeContext";
-import { useJourney } from "../context/JourneyContext";
-import { AppTheme } from "../types";
+import { categoryName, useJourney } from "../context/JourneyContext";
+import { ApiError } from "../services/api";
 
 export const ProfileScreen: React.FC = () => {
-  const { logout, minutes, assessmentStatus } = useJourney();
+  const { logout, minutes, assessed, goals, categories, regenerateRecoveryCode, busy } = useJourney();
   const { userStats, setCurrentTab } = useApp();
   const { theme, setTheme, isDark } = useTheme();
+  const [password, setPassword] = useState("");
+  const [newCode, setNewCode] = useState("");
+  const [codeError, setCodeError] = useState("");
 
-  const { goals } = useJourney();
-  const priorities = goals.map(
-    (code) =>
-      ({
-        MEMORIA: "Memoria",
-        ATENCION: "Atención",
-        MEMORIA_TRABAJO: "Memoria de trabajo",
-      })[code] || code,
-  );
+  const priorities = goals.map((code) => categoryName(categories, code));
+  async function regenerate(e: React.FormEvent) {
+    e.preventDefault();
+    setCodeError("");
+    try {
+      setNewCode(await regenerateRecoveryCode(password));
+    } catch (err) {
+      setCodeError(err instanceof ApiError ? err.message : "No pudimos generar un código nuevo.");
+    } finally {
+      setPassword("");
+    }
+  }
   return (
     <div className="profile-page flex flex-col w-full px-4 pt-2 pb-6 select-none bg-slate-50 dark:bg-[#0f131c] text-slate-800 dark:text-[#dfe2ee] transition-colors">
       {/* User Card Header */}
@@ -98,7 +104,7 @@ export const ProfileScreen: React.FC = () => {
               {userStats.completedActivities}
             </span>
             <span className="font-space text-[10px] text-slate-500 dark:text-slate-300 uppercase mt-0.5 block">
-              Actividades
+              Sesiones
             </span>
           </div>
         </div>
@@ -332,7 +338,7 @@ export const ProfileScreen: React.FC = () => {
           <div className="bg-slate-50 dark:bg-[#0a0e16] rounded-2xl p-3 border border-slate-200/60 dark:border-white/[0.04]">
             <div className="flex items-center justify-between mb-2">
               <span className="font-space text-[12px] font-bold text-slate-900 dark:text-[#dfe2ee]">
-                Capacidades priorizadas
+                Áreas priorizadas
               </span>
               <span className="font-space text-[10px] text-slate-500 dark:text-[#869397]">
                 {priorities.length} activas
@@ -373,8 +379,8 @@ export const ProfileScreen: React.FC = () => {
 
       <section className="flow-card mb-4">
         <h3 className="font-space font-bold mb-3">Evaluación inicial</h3>
-        <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">{assessmentStatus === "completed" ? "Ya completaste tu evaluación inicial." : assessmentStatus === "skipped" ? "La salteaste por ahora. Podés hacerla cuando quieras." : "Todavía no realizaste la evaluación inicial."}</p>
-        {assessmentStatus !== "completed" && <button className="flow-secondary" onClick={() => setCurrentTab("evaluacion")}>Hacer evaluación inicial</button>}
+        <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">{assessed ? "Ya completaste tu evaluación inicial." : "Todavía no realizaste la evaluación inicial. La necesitás para empezar a entrenar."}</p>
+        <button className="flow-secondary" onClick={() => setCurrentTab("evaluacion")}>{assessed ? "Repetir evaluación inicial" : "Hacer evaluación inicial"}</button>
       </section>
 
       <section className="flow-card mb-4">
@@ -386,11 +392,25 @@ export const ProfileScreen: React.FC = () => {
         >
           Configurar entrenamiento
         </button>
-        <p className="text-sm mt-4">
-          El acceso definitivo usará alias y contraseña. El código de
-          recuperación se mostrará una sola vez al generarlo. Esta demo no
-          almacena contraseñas ni crea cuentas.
-        </p>
+        <h4 className="font-bold mt-5 mb-2">Código de recuperación</h4>
+        {newCode ? (
+          <>
+            <p className="text-sm">Tu nuevo código. Se muestra una sola vez; el anterior ya no sirve.</p>
+            <code className="block break-all my-3 select-all text-lg font-bold">{newCode}</code>
+            <button className="flow-link" onClick={() => setNewCode("")}>Ya lo guardé</button>
+          </>
+        ) : (
+          <form onSubmit={regenerate} className="flex flex-col gap-3">
+            <p className="text-sm">Si perdiste tu código, generá uno nuevo. Necesitamos tu contraseña actual.</p>
+            <label>
+              Contraseña actual
+              <input type="password" required autoComplete="current-password" value={password}
+                onChange={(e) => setPassword(e.target.value)} />
+            </label>
+            {codeError && <p role="alert" className="text-rose-600 dark:text-rose-300 text-sm">{codeError}</p>}
+            <button className="flow-secondary" disabled={busy}>Generar código nuevo</button>
+          </form>
+        )}
       </section>
 
       {/* Logout & App Version */}

@@ -58,9 +58,7 @@ export interface UserStats {
   xp: number;
   streakDays: number;
   accuracy: number;
-  topPercent: number;
   completedActivities: number;
   weeklySessions: number;
   totalPlayTime: string;
-  recoveryCode: string;
 }

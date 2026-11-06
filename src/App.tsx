@@ -29,23 +29,19 @@ const MainLayout: React.FC = () => {
   const journey = useJourney();
   const publicTabs = ["landing", "registro", "ingreso", "recuperacion"];
   React.useEffect(() => {
+    if (!journey.ready) return;
     if (!journey.username && !publicTabs.includes(currentTab))
       setCurrentTab("ingreso");
     else if (
       journey.username &&
+      journey.profile &&
       !journey.configured &&
       ![...publicTabs, "configuracion"].includes(currentTab)
     )
       setCurrentTab("configuracion");
-    else if (
-      journey.username &&
-      journey.assessmentRequired &&
-      currentTab === "juego" &&
-      !journey.assessment
-    )
-      setCurrentTab("evaluacion");
-    else if (journey.assessed && currentTab === "evaluacion") setCurrentTab("inicio");
-  }, [currentTab, journey.username, journey.configured, journey.assessmentRequired, journey.assessed]);
+    else if (journey.username && currentTab === "juego" && !journey.session)
+      setCurrentTab("entrenar");
+  }, [currentTab, journey.ready, journey.username, journey.profile, journey.configured, journey.session]);
   const { isDark } = useTheme();
 
   const renderActiveScreen = () => {
@@ -105,12 +101,12 @@ const MainLayout: React.FC = () => {
             <Header title="MentIA" />
           )}
 
-          {currentTab !== "juego" && (
-            <div className="demo-notice" role="status">
-              <span className="demo-dot" /> Demo · perfil guardado en este navegador
+          {journey.notice && (
+            <div role="alert" className="mx-4 my-2 px-4 py-3 rounded-2xl text-sm bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-100 flex items-start justify-between gap-3">
+              <span>{journey.notice}</span>
+              <button className="flow-link shrink-0" onClick={journey.clearNotice}>Cerrar</button>
             </div>
           )}
-          {!journey.storageAvailable && <p role="alert" className="px-4 py-2 text-sm text-amber-800 dark:text-amber-200">No se pudo guardar el perfil en este navegador. Podés continuar, pero el recorrido se perderá al recargar.</p>}
           {journey.username && ["progreso", "historial", "logros"].includes(currentTab) && (
             <nav aria-label="Secciones de progreso" className="section-nav">
               {([
@@ -126,9 +122,12 @@ const MainLayout: React.FC = () => {
             </nav>
           )}
           {/* Screen View */}
-          <main className="app-content" key={currentTab} id="app-content" tabIndex={-1}>
-            {(journey.username || publicTabs.includes(currentTab)) &&
-              renderActiveScreen()}
+          <main className="app-content" key={currentTab} id="app-content" tabIndex={-1} aria-busy={!journey.ready}>
+            {!journey.ready ? (
+              <p className="flow-page" role="status">Cargando tu perfil…</p>
+            ) : (
+              (journey.username || publicTabs.includes(currentTab)) && renderActiveScreen()
+            )}
           </main>
 
           {/* Bottom Dock Navigation */}
