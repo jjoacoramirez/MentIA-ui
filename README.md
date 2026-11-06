@@ -51,3 +51,9 @@ npm run build
 ```
 
 Las pruebas automatizadas usan Vitest y jsdom. La revisión visual debe contemplar computadora y celular, ambos temas y los principales recorridos de navegación.
+
+## Panel de administración
+
+Con MentIA-api iniciado en el puerto 8080 y el endpoint de métricas aplicado, ejecutá `npm run dev` y abrí `http://localhost:3000/admin`. Ingresá con una cuenta de la API que tenga rol ADMIN. La configuración local de Vite redirige `/api/v1` a MentIA-api. En un despliegue, serví la ruta del panel con el fallback de la SPA y redirigí `/api/v1` al backend desde el mismo origen.
+
+El panel usa los entrenamientos que están en PostgreSQL. Los datos de la demo de jugadores se guardan en el navegador y quedan fuera de este reporte.

@@ -1,6 +1,6 @@
 /** Contrato de transporte para MentIA-api. No se usa como fallback silencioso de la demo. */
 const baseUrl = (
-  import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1"
+  import.meta.env.VITE_API_URL || "/api/v1"
 ).replace(/\/$/, "");
 export class ApiError extends Error {
   constructor(
@@ -46,7 +46,7 @@ export const mentiaApi = {
       },
     ),
   login: (username: string, password: string) =>
-    apiRequest<{ accessToken: string; tokenType: string; expiresIn: number }>(
+    apiRequest<{ accessToken: string; tokenType: string; expiresIn: number; role: "USER" | "ADMIN" }>(
       "/auth/login",
       { method: "POST", body: JSON.stringify({ username, password }) },
     ),
