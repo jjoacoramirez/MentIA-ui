@@ -5,123 +5,78 @@
 
 import React from "react";
 import { useApp } from "../context/AppContext";
+import { useJourney } from "../context/JourneyContext";
 import { useTheme } from "../context/ThemeContext";
+import type { ScreenTab } from "../types";
 import { BrandLogo } from "./BrandLogo";
 
-interface HeaderProps {
-  title?: string;
-  subtitle?: string;
-}
+/** Nombre de cada pantalla en el header; las de la navegación usan la misma etiqueta que la navegación. */
+const sections: Partial<Record<ScreenTab, string>> = {
+  inicio: "Inicio",
+  entrenar: "Entrenar",
+  biblioteca: "Juegos",
+  progreso: "Progreso",
+  historial: "Progreso",
+  logros: "Progreso",
+  perfil: "Perfil",
+  resultado: "Resultado",
+  configuracion: "Preferencias",
+  evaluacion: "Evaluación inicial",
+  admin: "Panel admin",
+};
 
-export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
-  const {
-    currentTab,
-    setCurrentTab,
-    userStats,
-    isCustomizingLayout,
-    setIsCustomizingLayout,
-  } = useApp();
-  const { isDark, theme, toggleTheme } = useTheme();
+const themeLabels = { light: "claro", dark: "oscuro", system: "del sistema" } as const;
 
-  const getSubtext = () => {
-    if (subtitle) return subtitle;
-    switch (currentTab) {
-      case "inicio":
-        return "Inicio";
-      case "biblioteca": return "Biblioteca de juegos";
-      case "entrenar":
-        return "Entrenar";
-      case "progreso":
-        return "Progreso";
-      case "perfil":
-        return "Perfil";
-      case "historial": return "Historial";
-      case "logros": return "Logros";
-      case "resultado": return "Resultados";
-      case "configuracion": return "Preferencias";
-      case "evaluacion": return "Evaluación inicial";
-      default:
-        return "";
-    }
-  };
+/**
+ * Header único de las pantallas con sesión iniciada: marca y sección a la izquierda; tema, panel admin (solo
+ * admins) y perfil a la derecha, siempre en el mismo lugar. Las acciones propias de una pantalla van en la pantalla.
+ */
+export const Header: React.FC = () => {
+  const { currentTab, setCurrentTab, userStats } = useApp();
+  const { isAdmin } = useJourney();
+  const { theme, toggleTheme } = useTheme();
+  const section = sections[currentTab];
+  const iconButton = "w-9 h-9 flex items-center justify-center rounded-full text-slate-600 dark:text-[#dfe2ee] hover:bg-black/5 dark:hover:bg-white/10 transition-colors";
 
   return (
     <header className="sticky top-0 w-full z-40 bg-white/90 dark:bg-[#0f131c]/85 backdrop-blur-xl border-b border-slate-200/60 dark:border-white/[0.06] transition-colors">
       <div className="h-16 px-4 flex items-center justify-between w-full mx-auto">
-        {/* Left: Back button or Logo + Title */}
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={() => setCurrentTab("inicio")}
-            aria-label="Ir al inicio"
-            className="flex items-center gap-2 cursor-pointer select-none group"
-          >
-            <BrandLogo size="sm" />
-            <div className="flex flex-col">
-              <span className="font-space font-bold text-[18px] text-accent leading-none tracking-tight">
-                {title || "MentIA"}
+        <button
+          onClick={() => setCurrentTab("inicio")}
+          aria-label="Ir al inicio"
+          className="flex items-center gap-2 cursor-pointer select-none"
+        >
+          <BrandLogo size="sm" />
+          <span className="flex flex-col items-start">
+            <span className="font-space font-bold text-[18px] text-accent leading-none tracking-tight">MentIA</span>
+            {section && (
+              <span className="font-space text-[10px] uppercase tracking-wider text-slate-500 dark:text-[#869397] font-semibold leading-none mt-0.5">
+                {section}
               </span>
-              {getSubtext() && (
-                <span className="font-space text-[10px] uppercase tracking-wider text-slate-500 dark:text-[#869397] font-semibold leading-none mt-0.5">
-                  {getSubtext()}
-                </span>
-              )}
-            </div>
-          </button>
-        </div>
+            )}
+          </span>
+        </button>
 
-        {/* Right: Actions */}
         <div className="flex items-center gap-1.5">
-          {currentTab === "inicio" && <button onClick={() => setCurrentTab("historial")} aria-label="Historial" title="Historial" className="session-icon"><span aria-hidden="true" className="material-symbols-outlined">history</span></button>}
-          {/* Quick theme toggle */}
-          <button
-            onClick={toggleTheme}
-            title={`Tema actual: ${theme}. Clic para cambiar.`}
-            className="w-9 h-9 flex items-center justify-center rounded-full text-slate-600 dark:text-[#dfe2ee] hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-          >
-            <span
-              aria-hidden="true"
-              className="material-symbols-outlined text-[20px]"
-            >
-              {theme === "dark"
-                ? "dark_mode"
-                : theme === "light"
-                  ? "light_mode"
-                  : "brightness_auto"}
+          <button onClick={toggleTheme} aria-label={`Cambiar tema (ahora: ${themeLabels[theme]})`} title="Cambiar tema" className={iconButton}>
+            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">
+              {theme === "dark" ? "dark_mode" : theme === "light" ? "light_mode" : "brightness_auto"}
             </span>
           </button>
-
-          {/* If on home screen, show Layout Edit toggle button */}
-          {currentTab === "inicio" && (
-            <button
-              onClick={() => setIsCustomizingLayout(!isCustomizingLayout)}
-              title="Organizar y personalizar widgets del dashboard"
-              className={`w-9 h-9 flex items-center justify-center rounded-full transition-all ${
-                isCustomizingLayout
-                  ? "bg-brand text-brand-ink shadow-md shadow-brand/30"
-                  : "text-slate-600 dark:text-[#dfe2ee] hover:bg-black/5 dark:hover:bg-white/10"
-              }`}
-            >
-              <span
-                aria-hidden="true"
-                className="material-symbols-outlined text-[19px]"
-              >
-                {isCustomizingLayout ? "done" : "dashboard_customize"}
-              </span>
+          {isAdmin && (
+            <button onClick={() => setCurrentTab("admin")} aria-label="Panel admin" title="Panel admin"
+              aria-current={currentTab === "admin" ? "page" : undefined}
+              className={`${iconButton} ${currentTab === "admin" ? "bg-brand/15 text-accent!" : ""}`}>
+              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">insights</span>
             </button>
           )}
-
-          {/* User profile avatar */}
           <button
             onClick={() => setCurrentTab("perfil")}
+            aria-label="Ir a mi perfil"
             className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand to-indigo-600 dark:from-brand dark:to-brand flex items-center justify-center text-brand-ink shadow-sm ml-1 hover:ring-2 hover:ring-brand transition-all active:scale-95"
-            title={`${userStats.name} (${userStats.username})`}
+            title={userStats.username}
           >
-            <span
-              aria-hidden="true"
-              className="material-symbols-outlined text-[18px]"
-            >
-              person
-            </span>
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">person</span>
           </button>
         </div>
       </div>
