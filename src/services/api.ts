@@ -76,7 +76,8 @@ export interface ProfileUpdate {
 }
 export interface Category { code: string; name: string; description?: string; mvp: boolean }
 export interface PerformanceProfile {
-  categories: { category: string; score: number; level: number; updatedAt?: string }[];
+  /** `progress`: puntos dentro del nivel, de 0 (piso) a 100 (techo). */
+  categories: { category: string; score: number; level: number; progress: number; updatedAt?: string }[];
 }
 export interface SessionItem {
   sessionItemId: string;
@@ -119,6 +120,9 @@ export interface CategoryResult {
   avgResponseTimeMs?: number | null;
   difficultyLevelBefore: number;
   difficultyLevelAfter: number;
+  /** Puntos dentro del nivel antes y después (0 a 100). En la evaluación inicial no hay "antes". */
+  levelProgressBefore?: number | null;
+  levelProgressAfter?: number | null;
 }
 export interface SessionResult {
   sessionId: string;
@@ -166,6 +170,28 @@ export interface CategoryProgress {
   points: { periodStart: string; accuracy: number; avgDifficultyLevel: number; sessions: number }[];
 }
 export interface Achievement { code: string; name: string; description: string; unlocked: boolean; unlockedAt?: string | null }
+export interface ConsistencyGroup {
+  label: string;
+  minActiveDays: number;
+  maxActiveDays?: number | null;
+  users: number;
+  sessionsCompleted: number;
+  sessionsAbandoned: number;
+  avgSessionsPerUser?: number | null;
+  abandonRate?: number | null;
+  usersWithTrend: number;
+  avgFirstAccuracy?: number | null;
+  avgLastAccuracy?: number | null;
+  avgAccuracyDelta?: number | null;
+  avgLevelDelta?: number | null;
+  categories: { category: string; users: number; avgLevelDelta: number }[];
+}
+export interface ConsistencyReport {
+  generatedAt: string;
+  timeZone: string;
+  totals: { users: number; usersWithStartingPoint: number; usersWithTraining: number; sessionsCompleted: number; sessionsAbandoned: number; abandonRate?: number | null };
+  groups: ConsistencyGroup[];
+}
 
 // ---- Operaciones ----
 
@@ -198,10 +224,11 @@ export const mentiaApi = {
     apiRequest<Session>(`/assessment/start${restart ? "?restart=true" : ""}`, { method: "POST" }, token),
   skipAssessment: (token: string) => apiRequest<void>("/assessment/skip", { method: "POST" }, token),
 
-  createSession: (token: string, durationMinutes?: number) =>
+  /** Sin `category`, la sesión mezcla todas las áreas; con `category`, solo trae actividades de esa área. */
+  createSession: (token: string, options: { durationMinutes?: number; category?: string } = {}) =>
     apiRequest<Session>(
       "/sessions",
-      durationMinutes ? { method: "POST", body: json({ durationMinutes }) } : { method: "POST" },
+      options.durationMinutes || options.category ? { method: "POST", body: json(options) } : { method: "POST" },
       token,
     ),
   session: (token: string, id: string) => apiRequest<Session>(`/sessions/${id}`, {}, token),
@@ -224,4 +251,6 @@ export const mentiaApi = {
     apiRequest<CategoryProgress[]>(`/progress/categories?granularity=${granularity}`, {}, token),
   gamification: (token: string) => apiRequest<GamificationState>("/gamification/me", {}, token),
   achievements: (token: string) => apiRequest<Achievement[]>("/achievements", {}, token),
+  /** Solo ADMIN: evolución del desempeño según la constancia, en agregados por grupo. */
+  consistencyReport: (token: string) => apiRequest<ConsistencyReport>("/admin/metrics/consistency", {}, token),
 };

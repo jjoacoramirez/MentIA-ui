@@ -18,7 +18,8 @@ export type ScreenTab =
   | "juego"
   | "resultado"
   | "historial"
-  | "logros";
+  | "logros"
+  | "admin";
 
 export type AppTheme = "dark" | "light" | "system";
 

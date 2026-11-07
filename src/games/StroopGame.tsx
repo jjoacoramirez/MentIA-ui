@@ -47,7 +47,7 @@ export function StroopGame({ item, paused, onDone }: GameProps) {
   const current = sequence[trial];
   return (
     <>
-      <p className="mb-3 text-sm">Estímulo {trial + 1} de {trials} · elegí el color de la tinta</p>
+      <p className="mb-3 text-sm">{trial + 1} de {trials} · ¿De qué color está pintada la palabra?</p>
       <p className="text-5xl font-bold text-center py-8 uppercase" style={{ color: colors[current.ink].hex }}
         aria-label={`Palabra ${colors[current.word].name}`}>{colors[current.word].name}</p>
       <div className="grid grid-cols-2 gap-2">

@@ -39,13 +39,13 @@ export function SequenceGame({ item, paused, onDone }: GameProps) {
   if (!answering)
     return (
       <div className="py-8 text-center" aria-live="polite">
-        <p className="text-sm mb-4">Elemento {shown + 1} de {length}</p>
-        <span className="text-6xl text-accent" aria-label="Elemento de la secuencia">{target[shown]}</span>
+        <p className="text-sm mb-4">Mirá con atención · {shown + 1} de {length}</p>
+        <span key={shown} className="nback-symbol" aria-label="Elemento de la secuencia">{target[shown]}</span>
       </div>
     );
   return (
     <>
-      <p className="mb-3 text-sm">{reverse ? "Repetí la secuencia en orden inverso." : "Repetí la secuencia en el mismo orden."}</p>
+      <p className="mb-3 text-sm">{reverse ? "Ahora armala al revés: empezá por el último que viste." : "Ahora repetila en el mismo orden."}</p>
       <div className="grid gap-2 mb-5" style={{ gridTemplateColumns: `repeat(${Math.min(length, 6)}, minmax(0, 1fr))` }} aria-label="Tu respuesta">
         {Array.from({ length }, (_, i) => (
           <span key={i} className="rounded-xl bg-brand/10 text-2xl text-center py-3">{answer[i] || "·"}</span>

@@ -78,6 +78,7 @@ describe("Recorrido contra la API", () => {
 
     click("Continuar");
     expect(await screen.findByText("Hola, explorador_01")).toBeInTheDocument();
+    click("Progreso");
     click("Historial");
     await clickWhenReady(/Evaluación inicial · Completada/);
     expect(await screen.findByRole("heading", { name: "Evaluación completada" })).toBeInTheDocument();
@@ -118,6 +119,55 @@ describe("Recorrido contra la API", () => {
     await clickWhenReady("Saltear (admin)");
     expect(await screen.findByText("Hola, admin_01")).toBeInTheDocument();
     expect(api.calls.some((c) => c.path === "/assessment/skip")).toBe(true);
+  });
+
+  it("solo un admin ve el panel con los datos agregados por constancia", async () => {
+    api.users.set("admin_02", {
+      password: PASSWORD, role: "ADMIN", hasLevels: true,
+      profile: { ageRange: "18-24", sessionMinutes: 10, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: true },
+    });
+    await login("admin_02");
+    await screen.findByText("Hola, admin_02");
+    click("Panel admin");
+    expect(await screen.findByRole("heading", { name: "Detalle por grupo" })).toBeInTheDocument();
+    expect(screen.getByText("Sesiones completadas").previousSibling).toHaveTextContent("30");
+    const row = screen.getAllByRole("row", { name: /4 a 7 días/ })[0];
+    expect(row).toHaveTextContent("+15 pp");
+    expect(row).toHaveTextContent("+1.25");
+    expect(screen.getByRole("button", { name: "Descargar CSV" })).toBeInTheDocument();
+  });
+
+  it("un usuario común no tiene acceso al panel admin", async () => {
+    api.users.set("comun_01", {
+      password: PASSWORD, role: "USER", hasLevels: true,
+      profile: { ageRange: "18-24", sessionMinutes: 10, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: true },
+    });
+    await login("comun_01");
+    await screen.findByText("Hola, comun_01");
+    expect(screen.queryByRole("button", { name: "Panel admin" })).not.toBeInTheDocument();
+  });
+
+  it("desde Juegos se entrena un área sola o todas juntas", async () => {
+    api.users.set("por_area", {
+      password: PASSWORD, role: "USER", hasLevels: true,
+      profile: { ageRange: "25-30", sessionMinutes: 10, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: true },
+    });
+    await login("por_area");
+    await screen.findByText("Hola, por_area");
+    click("Juegos");
+    expect(await screen.findByText("35/100 puntos en este nivel")).toBeInTheDocument();
+    expect(screen.getByRole("progressbar", { name: "Progreso en el nivel de Atención" })).toHaveAttribute("aria-valuenow", "35");
+    await clickWhenReady("Jugar Atención");
+    await clickWhenReady("Comenzar actividad");
+    expect(api.calls.find((c) => c.method === "POST" && c.path === "/sessions")?.body).toEqual({ category: "ATENCION" });
+
+    await clickWhenReady("Salir");
+    click("Abandonar sesión");
+    await screen.findByText(/Entrenamiento · Abandonada/);
+    click("Juegos");
+    await clickWhenReady("Jugar en mi nivel");
+    await clickWhenReady("Comenzar actividad");
+    expect(api.calls.filter((c) => c.method === "POST" && c.path === "/sessions").at(-1)?.body).toBeUndefined();
   });
 
   it("abandonar una sesión la deja en el historial sin resultado", async () => {

@@ -422,13 +422,30 @@ export const HomeScreen: React.FC = () => {
           </p>
         </div>
 
-        <div className="xp-summary flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#262a33] border border-slate-200/80 dark:border-white/[0.04] text-accent shadow-sm shrink-0">
-          <Zap size={18} className="xp-bolt" aria-hidden="true" />
-          <span className="font-space text-[11px] font-bold text-slate-800 dark:text-[#dfe2ee]">
-            Nivel {userStats.level}{" "}
-            <span className="text-slate-400 dark:text-white/30">•</span>{" "}
-            {userStats.xp} XP
-          </span>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="xp-summary flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white dark:bg-[#262a33] border border-slate-200/80 dark:border-white/[0.04] text-accent shadow-sm">
+            <Zap size={18} className="xp-bolt" aria-hidden="true" />
+            <span className="font-space text-[11px] font-bold text-slate-800 dark:text-[#dfe2ee]">
+              Nivel {userStats.level}{" "}
+              <span className="text-slate-400 dark:text-white/30">•</span>{" "}
+              {userStats.xp} XP
+            </span>
+          </div>
+          <button
+            onClick={() => setIsCustomizingLayout(!isCustomizingLayout)}
+            aria-label={isCustomizingLayout ? "Terminar de organizar el inicio" : "Organizar el inicio"}
+            aria-pressed={isCustomizingLayout}
+            title="Organizar y personalizar las tarjetas del inicio"
+            className={`w-9 h-9 flex items-center justify-center rounded-full transition-all ${
+              isCustomizingLayout
+                ? "bg-brand text-brand-ink shadow-md shadow-brand/30"
+                : "text-slate-600 dark:text-[#dfe2ee] hover:bg-black/5 dark:hover:bg-white/10"
+            }`}
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[19px]">
+              {isCustomizingLayout ? "done" : "dashboard_customize"}
+            </span>
+          </button>
         </div>
       </div>
 

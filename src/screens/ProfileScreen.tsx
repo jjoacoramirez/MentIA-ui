@@ -13,7 +13,7 @@ import { ApiError } from "../services/api";
 export const ProfileScreen: React.FC = () => {
   const { logout, minutes, assessed, goals, categories, regenerateRecoveryCode, busy } = useJourney();
   const { userStats, setCurrentTab } = useApp();
-  const { theme, setTheme, isDark } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [password, setPassword] = useState("");
   const [newCode, setNewCode] = useState("");
   const [codeError, setCodeError] = useState("");
@@ -126,14 +126,6 @@ export const ProfileScreen: React.FC = () => {
               Apariencia y tema
             </h3>
           </div>
-          <span className="font-space text-[10px] bg-brand/10 dark:bg-[#262a33] text-accent px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
-            Activo:{" "}
-            {theme === "light"
-              ? "Claro"
-              : theme === "dark"
-                ? "Oscuro"
-                : "Sistema"}
-          </span>
         </div>
 
         <p className="font-dmsans text-[13px] text-slate-500 dark:text-[#bcc9cd] mb-3.5 leading-snug">
@@ -270,42 +262,43 @@ export const ProfileScreen: React.FC = () => {
             </span>
           </button>
         </div>
-
-        {/* Footnote banner */}
-        <div className="bg-slate-50 dark:bg-[#0a0e16] rounded-2xl p-3 flex items-center gap-2.5 border border-slate-200/60 dark:border-white/[0.04]">
-          <span
-            aria-hidden="true"
-            className="material-symbols-outlined text-accent text-[18px] shrink-0"
-          >
-            wb_incandescent
-          </span>
-          <p className="font-dmsans text-[12px] text-slate-600 dark:text-[#bcc9cd] leading-tight">
-            {isDark
-              ? "El modo oscuro usa una superficie de fondo #0F131C."
-              : "El modo claro usa superficies claras y texto oscuro."}
-          </p>
-        </div>
       </section>
 
       {/* PREFERENCIAS DE ENTRENAMIENTO */}
       <section className="bg-white dark:bg-[#1c2028] rounded-3xl p-5 shadow-sm border border-slate-200/70 dark:border-white/[0.04] mb-4">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-8 h-8 rounded-full bg-indigo-50 dark:bg-[#3131c0]/30 flex items-center justify-center text-indigo-600 dark:text-[#c0c1ff]">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 shrink-0 rounded-full bg-indigo-50 dark:bg-[#3131c0]/30 flex items-center justify-center text-indigo-600 dark:text-[#c0c1ff]">
+              <span
+                aria-hidden="true"
+                className="material-symbols-outlined text-[18px]"
+              >
+                tune
+              </span>
+            </div>
+            <div>
+              <h3 className="font-space text-[16px] font-bold text-slate-900 dark:text-[#dfe2ee]">
+                Preferencias de entrenamiento
+              </h3>
+              <p className="font-dmsans text-[12px] text-slate-500 dark:text-[#bcc9cd]">
+                Tus preferencias para las próximas sesiones.
+              </p>
+            </div>
+          </div>
+          {/* Edita duración y áreas a la vez: por eso va en el encabezado y no dentro de un recuadro. */}
+          <button
+            onClick={() => setCurrentTab("configuracion")}
+            aria-label="Editar preferencias de entrenamiento"
+            className="shrink-0 flex items-center gap-1 text-accent hover:bg-brand/10 rounded-full border border-accent/40 font-space text-[12px] font-bold px-3 py-1.5 cursor-pointer"
+          >
             <span
               aria-hidden="true"
-              className="material-symbols-outlined text-[18px]"
+              className="material-symbols-outlined text-[15px]"
             >
-              tune
+              edit
             </span>
-          </div>
-          <div>
-            <h3 className="font-space text-[16px] font-bold text-slate-900 dark:text-[#dfe2ee]">
-              Preferencias de entrenamiento
-            </h3>
-            <p className="font-dmsans text-[12px] text-slate-500 dark:text-[#bcc9cd]">
-              Tus preferencias para las próximas sesiones.
-            </p>
-          </div>
+            <span>Editar</span>
+          </button>
         </div>
 
         <div className="space-y-2.5 mt-3">
@@ -359,19 +352,6 @@ export const ProfileScreen: React.FC = () => {
                   <span>{item}</span>
                 </div>
               ))}
-
-              <button
-                onClick={() => setCurrentTab("configuracion")}
-                className="flex items-center gap-1 text-accent hover:underline font-space text-[11px] font-bold px-2 py-1 cursor-pointer"
-              >
-                <span
-                  aria-hidden="true"
-                  className="material-symbols-outlined text-[15px]"
-                >
-                  edit
-                </span>
-                <span>Editar</span>
-              </button>
             </div>
           </div>
         </div>
