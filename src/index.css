@@ -386,3 +386,19 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
 /* Progreso dentro del nivel. */
 .level-progress { height:6px; border-radius:9999px; background:color-mix(in srgb,var(--brand) 18%,transparent); overflow:hidden; }
 .level-progress > span { display:block; height:100%; border-radius:inherit; background:var(--accent); transition:width .4s ease; }
+
+/* Panel admin. */
+.admin-tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.75rem; }
+.admin-tile { margin:0; padding:1rem; }
+.admin-table-wrap { overflow-x:auto; }
+.admin-table { width:100%; border-collapse:collapse; font-size:.85rem; }
+.admin-table th, .admin-table td { padding:.5rem .6rem; text-align:right; border-bottom:1px solid #94a3b833; white-space:nowrap; }
+.admin-table th[scope="row"], .admin-table thead th:first-child { text-align:left; }
+.admin-table thead th { font-size:.75rem; color:#64748b; font-weight:600; }
+.admin-small { color:var(--accent); font-weight:700; }
+.delta-bars { display:flex; flex-direction:column; gap:.6rem; }
+.delta-row { display:grid; grid-template-columns:minmax(90px,8rem) 1fr 4.5rem; align-items:center; gap:.75rem; font-size:.85rem; }
+.delta-track { position:relative; height:14px; }
+.delta-zero { position:absolute; left:50%; top:-3px; bottom:-3px; width:1px; background:#94a3b8; }
+.delta-bar { position:absolute; top:0; bottom:0; background:var(--accent); border-radius:4px; }
+.delta-value { text-align:right; font-variant-numeric:tabular-nums; }

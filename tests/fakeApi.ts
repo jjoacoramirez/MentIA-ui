@@ -95,6 +95,22 @@ export function installFakeApi() {
     if (path === "/progress/summary") return ok({ sessionsCompleted: history.filter((h) => h.status === "COMPLETED").length, sessionsAbandoned: history.filter((h) => h.status === "ABANDONED").length, activeDaysLast30: 1, currentStreakDays: 1, dailyGoal: null });
     if (path === "/progress/categories") return ok([]);
     if (path === "/sessions" && method === "GET") return ok({ items: history, page: 0, size: 30, totalElements: history.length });
+    if (path === "/admin/metrics/consistency") {
+      if (user.role !== "ADMIN") return problem(403, "FORBIDDEN", "No tenés acceso a este recurso.");
+      const group = (label: string, min: number, max: number | null, users: number, accuracyDelta: number | null, levelDelta: number | null) => ({
+        label, minActiveDays: min, maxActiveDays: max, users, sessionsCompleted: users * min, sessionsAbandoned: 0,
+        avgSessionsPerUser: users ? min : null, abandonRate: users ? 0 : null, usersWithTrend: accuracyDelta == null ? 0 : users,
+        avgFirstAccuracy: accuracyDelta == null ? null : 0.6, avgLastAccuracy: accuracyDelta == null ? null : 0.6 + accuracyDelta,
+        avgAccuracyDelta: accuracyDelta, avgLevelDelta: levelDelta,
+        categories: levelDelta == null ? [] : [{ category: "ATENCION", users, avgLevelDelta: levelDelta }],
+      });
+      return ok({
+        generatedAt: "2026-11-07T12:00:00Z", timeZone: "America/Argentina/Buenos_Aires",
+        totals: { users: 9, usersWithStartingPoint: 8, usersWithTraining: 7, sessionsCompleted: 30, sessionsAbandoned: 3, abandonRate: 0.091 },
+        groups: [group("Sin sesiones completadas", 0, 0, 2, null, null), group("1 día", 1, 1, 3, null, 0), group("2 a 3 días", 2, 3, 2, 0.08, 0.5),
+          group("4 a 7 días", 4, 7, 2, 0.15, 1.25), group("8 días o más", 8, null, 0, null, null)],
+      });
+    }
     if (path === "/achievements") return ok([
       { code: "FIRST_SESSION", name: "Primer paso", description: "Completaste tu primera sesión en MentIA.", unlocked: history.some((h) => h.status === "COMPLETED"), unlockedAt: null },
     ]);

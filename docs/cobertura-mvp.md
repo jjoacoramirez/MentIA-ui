@@ -15,7 +15,7 @@ El frontend consume todos los endpoints de MentIA-api (`openapi.yaml`). No hay d
 | BACK-14 | Inicio, Historial, Progreso | `GET /sessions`, `/progress/summary`, `/progress/categories` |
 | BACK-18 | Inicio, Progreso, Resultado | `/gamification/me` y `gamification` del resultado |
 | BACK-19 | Logros, Resultado | `/achievements` y logros desbloqueados del resultado |
-| BACK-21 | No aplica | Las métricas se registran del lado del servidor |
+| BACK-21 | Panel admin (solo ADMIN, desde el header) | `/admin/metrics/consistency`: evolución del desempeño por grupos de constancia, solo agregados; descarga en CSV |
 | BACK-15, 16, 17, 20 | Fuera del MVP | — |
 
 ## Pendiente

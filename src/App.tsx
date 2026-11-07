@@ -23,6 +23,7 @@ import {
   AchievementsScreen,
 } from "./screens/FlowScreens";
 import { ProfileScreen } from "./screens/ProfileScreen";
+import { AdminScreen } from "./screens/AdminScreen";
 
 const MainLayout: React.FC = () => {
   const { currentTab, setCurrentTab } = useApp();
@@ -73,6 +74,8 @@ const MainLayout: React.FC = () => {
         return <ProgressScreen />;
       case "perfil":
         return <ProfileScreen />;
+      case "admin":
+        return <AdminScreen />;
       default:
         return <HomeScreen />;
     }
@@ -92,13 +95,13 @@ const MainLayout: React.FC = () => {
         <div
           id="phone-frame-container"
           data-screen={currentTab}
-          data-navigation={["inicio", "entrenar", "biblioteca", "progreso", "perfil", "historial", "logros", "resultado"].includes(currentTab)}
+          data-navigation={["inicio", "entrenar", "biblioteca", "progreso", "perfil", "historial", "logros", "resultado", "admin"].includes(currentTab)}
           data-theme={isDark ? "dark" : "light"}
           className={`app-frame ${isDark ? "dark" : "light"}`}
         >
           {/* Screen Top Header (except on landing onboarding screen) */}
           {!publicTabs.includes(currentTab) && currentTab !== "juego" && (
-            <Header title="MentIA" />
+            <Header />
           )}
 
           {journey.notice && (

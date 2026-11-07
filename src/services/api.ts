@@ -170,6 +170,28 @@ export interface CategoryProgress {
   points: { periodStart: string; accuracy: number; avgDifficultyLevel: number; sessions: number }[];
 }
 export interface Achievement { code: string; name: string; description: string; unlocked: boolean; unlockedAt?: string | null }
+export interface ConsistencyGroup {
+  label: string;
+  minActiveDays: number;
+  maxActiveDays?: number | null;
+  users: number;
+  sessionsCompleted: number;
+  sessionsAbandoned: number;
+  avgSessionsPerUser?: number | null;
+  abandonRate?: number | null;
+  usersWithTrend: number;
+  avgFirstAccuracy?: number | null;
+  avgLastAccuracy?: number | null;
+  avgAccuracyDelta?: number | null;
+  avgLevelDelta?: number | null;
+  categories: { category: string; users: number; avgLevelDelta: number }[];
+}
+export interface ConsistencyReport {
+  generatedAt: string;
+  timeZone: string;
+  totals: { users: number; usersWithStartingPoint: number; usersWithTraining: number; sessionsCompleted: number; sessionsAbandoned: number; abandonRate?: number | null };
+  groups: ConsistencyGroup[];
+}
 
 // ---- Operaciones ----
 
@@ -229,4 +251,6 @@ export const mentiaApi = {
     apiRequest<CategoryProgress[]>(`/progress/categories?granularity=${granularity}`, {}, token),
   gamification: (token: string) => apiRequest<GamificationState>("/gamification/me", {}, token),
   achievements: (token: string) => apiRequest<Achievement[]>("/achievements", {}, token),
+  /** Solo ADMIN: evolución del desempeño según la constancia, en agregados por grupo. */
+  consistencyReport: (token: string) => apiRequest<ConsistencyReport>("/admin/metrics/consistency", {}, token),
 };
