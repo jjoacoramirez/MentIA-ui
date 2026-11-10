@@ -11,7 +11,7 @@ import { categoryName, useJourney } from "../context/JourneyContext";
 import { ApiError } from "../services/api";
 
 export const ProfileScreen: React.FC = () => {
-  const { logout, minutes, assessed, goals, categories, regenerateRecoveryCode, busy } = useJourney();
+  const { logout, minutes, assessed, goals, categories, regenerateRecoveryCode, busy, isAdmin } = useJourney();
   const { userStats, setCurrentTab } = useApp();
   const { theme, setTheme } = useTheme();
   const [password, setPassword] = useState("");
@@ -365,6 +365,9 @@ export const ProfileScreen: React.FC = () => {
 
       <section className="flow-card mb-4">
         <h3 className="font-space font-bold mb-3">Preferencias y acceso</h3>
+        {isAdmin && (
+          <a href="/admin" className="flow-link block mb-3">Panel de métricas de uso (página aparte)</a>
+        )}
         <p className="text-sm mb-3">Duración preferida: {minutes} minutos.</p>
         <button
           className="flow-link"
