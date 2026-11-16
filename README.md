@@ -13,6 +13,10 @@ npm run dev
 
 Abrir http://localhost:3000. En desarrollo, Vite reenvía `/api` a `http://localhost:8080`, así que el navegador ve un solo origen y no hace falta CORS. Para apuntar a otro backend: `MENTIA_API_TARGET=http://otro-host:8080 npm run dev`. Fuera de desarrollo, `VITE_API_URL` define la URL base de la API (por defecto `/api/v1`, mismo origen).
 
+## Publicar
+
+La UI se publica en Vercel y reenvía `/api/*` a MentIA-api en Railway (`vercel.json`), así que el navegador ve un solo origen y no hace falta CORS. Antes del primer deploy hay que poner el dominio de Railway en `vercel.json`. Pasos completos en `docs/despliegue.md` de MentIA-api.
+
 ## Recorrido
 
 1. **Crear cuenta**: alias, contraseña y rango etario. El servidor devuelve el código de recuperación, que se muestra una sola vez.
