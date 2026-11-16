@@ -48,7 +48,8 @@ interface Journey {
   session: Session | null;
   assessment: boolean;
   doneItems: string[];
-  begin: (kind: "assessment" | "training", restart?: boolean) => Promise<void>;
+  /** `restart` repite la evaluación; `category` arma un entrenamiento de una sola área. */
+  begin: (kind: "assessment" | "training", options?: { restart?: boolean; category?: string }) => Promise<void>;
   recordAttempt: (item: SessionItem, outcome: GameOutcome) => Promise<void>;
   finish: () => Promise<void>;
   abandon: () => Promise<void>;
@@ -200,11 +201,13 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  async function begin(kind: "assessment" | "training", restart = false) {
+  async function begin(kind: "assessment" | "training", { restart = false, category }: { restart?: boolean; category?: string } = {}) {
     const t = tokenRef.current;
     if (!t) return;
     try {
-      const created = await run(() => (kind === "assessment" ? mentiaApi.startAssessment(t, restart) : mentiaApi.createSession(t)));
+      const created = await run(() =>
+        kind === "assessment" ? mentiaApi.startAssessment(t, restart) : mentiaApi.createSession(t, { category }),
+      );
       const started = created.status === "GENERATED" ? await mentiaApi.startSession(t, created.id) : created;
       setSession(started);
       setDoneItems(loadDoneItems(started.id));

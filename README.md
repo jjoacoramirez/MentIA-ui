@@ -18,7 +18,7 @@ Abrir http://localhost:3000. En desarrollo, Vite reenvía `/api` a `http://local
 1. **Crear cuenta**: alias, contraseña y rango etario. El servidor devuelve el código de recuperación, que se muestra una sola vez.
 2. **Configurar**: duración de sesión y áreas (las categorías vienen de `/categories`).
 3. **Evaluación inicial**: 2 actividades por área, en el mismo nivel para todos. Al cerrarla, el servidor fija el nivel de partida por área. Se puede dejar para más tarde, pero sin ella no se puede entrenar. **Saltearla es solo para admins** (herramienta de debug; el rol viene del login).
-4. **Entrenar**: el servidor arma la sesión según el nivel de cada área, con rotación de ejercicios y variantes. Al cerrarla ajusta el nivel por área y suma XP.
+4. **Entrenar**: desde Juegos se juega un área sola o una sesión combinada de todas. El servidor arma la sesión según el nivel de cada área, con rotación de ejercicios y variantes. Al cerrarla ajusta el nivel de las áreas jugadas y suma XP.
 5. **Resultado, historial, progreso y logros**: todo sale del servidor.
 6. **Perfil**: tema, preferencias, evaluación y regenerar el código de recuperación (pide la contraseña actual).
 
@@ -43,6 +43,15 @@ Son una primera versión funcional para validar con el equipo (mecánica, tiempo
 ## Sesión y datos guardados
 
 El token, el alias y el rol se guardan en `sessionStorage`: sobreviven a una recarga y se borran al cerrar la pestaña o la sesión. No se guardan contraseñas ni códigos de recuperación. Si el servidor responde 401 (token vencido o revocado), se vuelve al ingreso. En `localStorage` solo quedan el tema y la disposición de tarjetas de Inicio.
+
+## Paneles de administración
+
+Hay dos paneles en paralelo para que el equipo elija con cuál quedarse. Los dos requieren una cuenta con rol ADMIN y solo muestran agregados de los entrenamientos guardados en PostgreSQL.
+
+- **Panel admin (dentro de la app):** ícono de gráfico en el header, visible solo para admins. Muestra la evolución de precisión y nivel según la constancia (`GET /api/v1/admin/metrics/consistency`) y permite descargar CSV.
+- **Panel de métricas de uso (página aparte):** `http://localhost:3000/admin`, con su propio ingreso. Muestra actividad diaria, cohortes y ejercicios con filtros por período, área y ejercicio (`GET /api/v1/admin/metrics`). Los admins lo ven enlazado desde Perfil.
+
+En un despliegue, serví `/admin` con el fallback de la SPA y redirigí `/api` al backend desde el mismo origen.
 
 ## Verificaciones
 

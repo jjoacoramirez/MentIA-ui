@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { categoryName, useJourney } from "../context/JourneyContext";
 import { useApp } from "../context/AppContext";
 import { Pause, X, Brain, CheckCircle2 } from "lucide-react";
-import { exerciseNames, Game, type GameOutcome } from "../games";
+import { exerciseNames, Game, levelHint, type GameOutcome } from "../games";
 import { ApiError } from "../services/api";
 
 /**
@@ -86,6 +86,7 @@ export const GameSessionScreen: React.FC = () => {
             <>
               <h2 className="text-lg font-bold mb-3">{exerciseNames[item.exerciseType]}</h2>
               <p className="mb-5">{item.instructions}</p>
+              {levelHint(item) && <p className="mb-5 font-semibold text-accent">{levelHint(item)}</p>}
               <button className="flow-primary" onClick={() => setPhase("play")}>Comenzar actividad</button>
             </>
           )}

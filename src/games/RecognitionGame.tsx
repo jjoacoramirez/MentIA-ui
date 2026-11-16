@@ -37,7 +37,7 @@ export function RecognitionGame({ item, paused, onDone }: GameProps) {
   if (!testing)
     return (
       <>
-        <p className="mb-3 text-sm">Memorizá estas imágenes · {Math.ceil(remaining / 1000)} s</p>
+        <p className="mb-3 text-sm">Tratá de recordar estas imágenes · {Math.ceil(remaining / 1000)} s</p>
         <div className="grid grid-cols-4 gap-3 py-4" aria-label="Imágenes para memorizar">
           {targets.map((t) => <span key={t} className="text-4xl text-center">{t}</span>)}
         </div>
@@ -45,13 +45,13 @@ export function RecognitionGame({ item, paused, onDone }: GameProps) {
     );
   return (
     <>
-      <p className="mb-3 text-sm">Marcá solo las imágenes que viste.</p>
-      <div className="grid grid-cols-4 gap-2 mb-5">
+      <p className="mb-3 text-sm">¿Cuáles viste recién? Tocá para marcarlas y después confirmá.</p>
+      <div className="grid grid-cols-4 gap-3 mb-5">
         {options.map((o) => {
           const on = marked.includes(o);
           return (
             <button key={o} aria-pressed={on} aria-label={`Imagen ${o}`} disabled={paused}
-              className={`rounded-2xl border text-3xl py-3 ${on ? "bg-brand/30 border-brand" : "border-brand/30"}`}
+              className="game-tile text-3xl py-3"
               onClick={() => setMarked((m) => (on ? m.filter((x) => x !== o) : [...m, o]))}>{o}</button>
           );
         })}

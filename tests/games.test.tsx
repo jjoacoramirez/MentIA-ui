@@ -88,6 +88,18 @@ describe("Mecánicas", () => {
     expect(done).toHaveBeenCalledWith(expect.objectContaining({ isCorrect: false, accuracy: 0.5 }));
   });
 
+  it("n-back: entre un símbolo y el siguiente la pantalla queda vacía un momento", () => {
+    vi.useFakeTimers();
+    play(item("N_BACK", { n: 1, trials: 4, matchRatio: 0.5, stimulusMs: 2000 }, { symbols: ["A", "B"] }));
+    expect(screen.getByText("¿Es igual al símbolo anterior?")).toBeInTheDocument();
+    expect(screen.getByLabelText("Elemento actual")).toBeInTheDocument();
+    advance(1700);
+    expect(screen.queryByLabelText("Elemento actual")).not.toBeInTheDocument();
+    advance(400);
+    expect(screen.getByLabelText("Elemento actual")).toBeInTheDocument();
+    expect(screen.getByLabelText("Símbolo 2 de 4")).toBeInTheDocument();
+  });
+
   it("n-back: sin tocar nada se aciertan los rechazos y se pierden las coincidencias", () => {
     vi.useFakeTimers();
     const done = play(item("N_BACK", { n: 1, trials: 6, matchRatio: 0.5, stimulusMs: 500 }, { symbols: ["A", "B", "C"] }));

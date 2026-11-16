@@ -17,7 +17,7 @@ export function OddOneOutGame({ item, paused, onDone }: GameProps) {
   const limit = num(item.params.timeLimitMs, 6000);
   const pair = pairs.length
     ? pairs[Math.min(pairs.length - 1, Math.round(num(item.params.similarity, 0.3) * (pairs.length - 1)))]
-    : (["●", "◐"] as [string, string]);
+    : (["◆", "◇"] as [string, string]);
   const rounds = useMemo(() => {
     const random = seededRandom(item.seed);
     return Array.from({ length: ROUNDS }, () => random.int(count));
@@ -46,11 +46,15 @@ export function OddOneOutGame({ item, paused, onDone }: GameProps) {
   if (round >= ROUNDS) return null;
   return (
     <>
-      <p className="mb-3 text-sm">Ronda {round + 1} de {ROUNDS} · tocá el elemento distinto · {Math.ceil(remaining / 1000)} s</p>
-      <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.ceil(Math.sqrt(count))}, minmax(0, 1fr))` }}>
+      <div className="flex items-center justify-between mb-3 text-sm">
+        <span>Ronda {round + 1} de {ROUNDS}</span>
+        <span className="font-semibold" aria-label="Tiempo restante">{Math.ceil(remaining / 1000)} s</span>
+      </div>
+      <p className="mb-4 font-semibold">¿Cuál es distinto al resto? Tocalo.</p>
+      <div className="grid gap-3" style={{ gridTemplateColumns: `repeat(${Math.ceil(Math.sqrt(count))}, minmax(0, 1fr))` }}>
         {Array.from({ length: count }, (_, i) => (
           <button key={`${round}-${i}`} aria-label={`Elemento ${i + 1}`} disabled={paused}
-            className="rounded-2xl border border-brand/30 text-3xl py-3 hover:bg-brand/20"
+            className="game-tile text-4xl leading-none py-4 text-ink"
             onClick={() => answer(i)}>{i === rounds[round] ? pair[1] : pair[0]}</button>
         ))}
       </div>

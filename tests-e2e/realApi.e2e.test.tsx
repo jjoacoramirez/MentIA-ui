@@ -72,8 +72,10 @@ describe("MentIA-api real", () => {
     expect(trainingResult.comparison).toBeNull();
     expect(await mentiaApi.sessionResult(token, training.id)).toEqual(trainingResult);
 
-    // Una sesión abandonada.
-    const abandoned = await mentiaApi.createSession(token, 5);
+    // Una sesión de una sola área, que después se abandona.
+    const abandoned = await mentiaApi.createSession(token, { durationMinutes: 5, category: "ATENCION" });
+    expect(abandoned.items.length).toBeGreaterThan(0);
+    expect(abandoned.items.every((i) => i.category === "ATENCION")).toBe(true);
     await mentiaApi.abandonSession(token, abandoned.id);
 
     const [summary, history, performance, evolution, gamification, achievements] = await Promise.all([
@@ -87,6 +89,8 @@ describe("MentIA-api real", () => {
     expect(summary).toMatchObject({ sessionsCompleted: 2, sessionsAbandoned: 1, currentStreakDays: 1 });
     expect(history.totalElements).toBe(3);
     expect(performance.categories).toHaveLength(3);
+    expect(performance.categories.every((c) => c.progress >= 0 && c.progress <= 100)).toBe(true);
+    expect(trainingResult.categories.every((c) => c.levelProgressAfter != null)).toBe(true);
     expect(evolution.length).toBeGreaterThan(0);
     expect(gamification.xp).toBe(summary.gamification?.xp);
     expect(achievements.filter((a) => a.unlocked).map((a) => a.code)).toEqual(expect.arrayContaining(["FIRST_SESSION"]));
