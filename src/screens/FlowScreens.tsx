@@ -1,5 +1,6 @@
 import { Select } from "../components/Select";
 import { EncouragementNote } from "../components/EncouragementNote";
+import { SessionFeedbackCard } from "../components/SessionFeedbackCard";
 import { LevelProgress, progressChange } from "../components/LevelProgress";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
@@ -333,7 +334,7 @@ export function TrainingScreen() {
   );
 }
 export function ResultsScreen() {
-  const { result, categories } = useJourney();
+  const { result, categories, token } = useJourney();
   const { setCurrentTab } = useApp();
   if (!result)
     return (
@@ -375,6 +376,7 @@ export function ResultsScreen() {
           <p className="mt-3 font-bold text-accent">¡Subiste al nivel {result.gamification.level} de MentIA!</p>
         )}
       </section>
+      <SessionFeedbackCard token={token} sessionId={result.sessionId} />
       {result.categories.length > 0 && (
         <section className="flow-card mt-4">
           <h2 className="font-bold mb-3">{result.type === "INITIAL_ASSESSMENT" ? "Tu punto de partida por área" : "Por área"}</h2>

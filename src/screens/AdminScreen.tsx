@@ -4,6 +4,7 @@ import { useApiData } from "../hooks/useApiData";
 import { mentiaApi, type ConsistencyGroup, type ConsistencyReport } from "../services/api";
 import { Panel } from "./FlowScreens";
 import { AdminPushTest } from "../components/AdminPushTest";
+import { AdminContentGenerator } from "../components/AdminContentGenerator";
 
 /** Por debajo de esta cantidad de usuarios, los promedios de un grupo se marcan como poco representativos. */
 const SMALL_GROUP = 5;
@@ -135,6 +136,7 @@ export function AdminScreen() {
         Generado {new Date(data.generatedAt).toLocaleString("es-AR")} · días contados en {data.timeZone}. Los valores describen
         el desempeño dentro de MentIA, no capacidades.
       </p>
+      {token && <AdminContentGenerator token={token} />}
       {token && <AdminPushTest token={token} />}
     </Panel>
   );

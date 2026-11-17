@@ -195,6 +195,15 @@ export interface ConsistencyReport {
 
 export interface PushConfig { enabled: boolean; publicKey: string | null }
 export interface TestPushResult { devices: number; sent: number; removed: number; failed: number }
+/** `AI` si lo escribió la IA; `BASIC` es el texto de respaldo. */
+export interface SessionFeedback { text: string; source: "AI" | "BASIC" }
+export type GeneratableType = "VISUAL_RECOGNITION" | "REVERSE_SEQUENCE" | "N_BACK";
+export interface GenerateContentResult {
+  requested: number;
+  created: { exerciseCode: string; variantKey: string; theme: string; active: boolean }[];
+  rejected: number;
+  stoppedReason: "LIMIT_EXCEEDED" | "CIRCUIT_OPEN" | "PROVIDER_ERROR" | "DISABLED" | null;
+}
 
 // ---- Operaciones ----
 
@@ -260,6 +269,12 @@ export const mentiaApi = {
     apiRequest<void>("/notifications/push-subscription", { method: "PUT", body: json({ endpoint }) }, token),
   unsubscribePush: (token: string, endpoint: string) =>
     apiRequest<void>("/notifications/push-subscription", { method: "DELETE", body: json({ endpoint }) }, token),
+  /** Comentario de cierre de una sesión completada. La primera vez lo genera; después devuelve el guardado. */
+  sessionFeedback: (token: string, sessionId: string) =>
+    apiRequest<SessionFeedback>(`/sessions/${sessionId}/feedback`, { method: "POST" }, token),
+  /** Solo ADMIN: pide a la IA variantes de contenido nuevas (se validan y se guardan en el servidor). */
+  generateContent: (token: string, exerciseType: GeneratableType, count: number) =>
+    apiRequest<GenerateContentResult>("/admin/content/generate", { method: "POST", body: json({ exerciseType, count }) }, token),
   /** Solo ADMIN (debug): manda ya el aviso de recordatorio a los dispositivos de una cuenta. */
   sendTestPush: (token: string, username: string) =>
     apiRequest<TestPushResult>("/admin/notifications/test", { method: "POST", body: json({ username }) }, token),

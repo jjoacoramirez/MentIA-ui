@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ApiError, apiRequest, mentiaApi } from "../services/api";
 import { AdminPushTest } from "../components/AdminPushTest";
+import { AdminContentGenerator } from "../components/AdminContentGenerator";
 
 interface Report {
   from: string;
@@ -293,6 +294,7 @@ export function AdminMetricsScreen() {
               </table></div>}
           </section>
         </>}
+        <AdminContentGenerator token={token} />
         <AdminPushTest token={token} />
       </>}
     </div>

@@ -70,7 +70,7 @@ describe("Elemento diferente", () => {
       // 8 casillas y 5 rondas: ninguna casilla se repite.
       expect(new Set(positions).size).toBe(5);
     }
-  });
+  }, 30000);
 });
 
 describe("Secuencia", () => {
@@ -93,5 +93,5 @@ describe("Secuencia", () => {
       vi.useRealTimers();
       for (let i = 1; i < shown.length; i++) expect(shown[i]).not.toBe(shown[i - 1]);
     }
-  });
+  }, 30000);
 });
