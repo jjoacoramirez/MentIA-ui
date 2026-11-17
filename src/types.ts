@@ -18,7 +18,8 @@ export type ScreenTab =
   | "juego"
   | "resultado"
   | "historial"
-  | "logros";
+  | "logros"
+  | "admin";
 
 export type AppTheme = "dark" | "light" | "system";
 
@@ -58,9 +59,7 @@ export interface UserStats {
   xp: number;
   streakDays: number;
   accuracy: number;
-  topPercent: number;
   completedActivities: number;
   weeklySessions: number;
   totalPlayTime: string;
-  recoveryCode: string;
 }

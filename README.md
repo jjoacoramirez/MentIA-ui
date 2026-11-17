@@ -1,59 +1,73 @@
 # MentIA UI
 
-Interfaz del MVP de MentIA, desarrollada con React 19, TypeScript, Vite y Tailwind CSS 4. Backend en [MentIA-api](https://github.com/jjoacoramirez/MentIA-api).
+Interfaz del MVP de MentIA, desarrollada con React 19, TypeScript, Vite y Tailwind CSS 4. Consume [MentIA-api](https://github.com/jjoacoramirez/MentIA-api) según su contrato `openapi.yaml`.
 
 ## Ejecutar
 
-Node.js 22.12 o superior.
+Node.js 22.12 o superior y MentIA-api corriendo en `http://localhost:8080` (ver su README: `docker compose up -d db` y `./mvnw spring-boot:run`).
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Abrir http://localhost:3000. `npm run build` genera `dist/`; `npm run lint` comprueba tipos y `npm test` ejecuta pruebas del recorrido.
+Abrir http://localhost:3000. En desarrollo, Vite reenvía `/api` a `http://localhost:8080`, así que el navegador ve un solo origen y no hace falta CORS. Para apuntar a otro backend: `MENTIA_API_TARGET=http://otro-host:8080 npm run dev`. Fuera de desarrollo, `VITE_API_URL` define la URL base de la API (por defecto `/api/v1`, mismo origen).
 
-## Probar el recorrido
+## Publicar
 
-1. Comenzar → crear cuenta de ejemplo con un alias (3–30 caracteres), contraseña de al menos 10 caracteres y rango etario.
-2. Guardar el código de ejemplo y confirmar su lectura.
-3. Elegir duración y áreas de entrenamiento.
-4. Completar la evaluación inicial o elegir “Saltear por ahora”. La evaluación de demostración contiene tres secuencias, con seis segundos para memorizar y treinta para responder cada una.
-5. Revisar resultados, inicio, progreso, historial y logros.
-6. Entrenar para repetir una sesión; pausar o abandonar para probar esos estados.
-7. Desde Perfil cambiar tema, preferencias y cerrar sesión.
+La UI se publica en Vercel y reenvía `/api/*` a MentIA-api en Railway (`vercel.json`), así que el navegador ve un solo origen y no hace falta CORS. Antes del primer deploy hay que poner el dominio de Railway en `vercel.json`. Pasos completos en `docs/despliegue.md` de MentIA-api.
 
-El ingreso y la recuperación son simulados; aceptan entradas válidas para recorrer las pantallas. **No se crean cuentas reales ni se verifican credenciales**. No se guardan contraseñas, códigos ni tokens. El alias, las preferencias, el estado de evaluación y los resultados de cada perfil de demostración se guardan en este navegador (localStorage), junto con el tema y la disposición de tarjetas. Al cerrar sesión se elimina la selección activa; al volver a ingresar con el mismo alias se recupera su progreso. La evaluación se ofrece al registrarse y puede saltearse sin sumar XP ni simular resultados. No usar contraseñas reales.
+## Recorrido
 
-## Alcance y límites
+1. **Crear cuenta**: alias, contraseña y rango etario. El servidor devuelve el código de recuperación, que se muestra una sola vez.
+2. **Configurar**: duración de sesión y áreas (las categorías vienen de `/categories`).
+3. **Evaluación inicial**: 2 actividades por área, en el mismo nivel para todos. Al cerrarla, el servidor fija el nivel de partida por área. Se puede dejar para más tarde, pero sin ella no se puede entrenar. **Saltearla es solo para admins** (herramienta de debug; el rol viene del login).
+4. **Entrenar**: desde Juegos se juega un área sola o una sesión combinada de todas. El servidor arma la sesión según el nivel de cada área, con rotación de ejercicios y variantes. Al cerrarla ajusta el nivel de las áreas jugadas y suma XP.
+5. **Resultado, historial, progreso y logros**: todo sale del servidor.
+6. **Perfil**: tema, preferencias, evaluación y regenerar el código de recuperación (pide la contraseña actual).
 
-- Recorridos de registro, ingreso, recuperación con código, configuración, evaluación, entrenamiento, resultados, historial, progreso y logros.
-- La sesión visual es **provisional**, no la evaluación definitiva. No estima capacidades ni asigna resultados por categoría.
-- La duración elegida se conserva como preferencia, pero la demo siempre tiene tres secuencias.
-- XP y niveles de ejemplo se calculan localmente: 10 XP por intento y 10 adicionales por acierto; 200 XP por nivel. Abandonar no concede XP.
-- No hay rankings, percentiles, inferencias clínicas ni modelos de IA. La adaptación y rotación definitivas pertenecen al backend.
-- La navegación integra el historial del navegador; no hay enlaces profundos. Los resultados de la demo se guardan localmente por alias.
-- Se conserva el tema y la personalización del dashboard. El diseño se adapta automáticamente al ancho disponible, con navegación lateral en computadora e inferior en celular.
-- Fuentes e iconos de Google y la ilustración remota del inicio requieren conexión; el logo es un SVG local. Los recursos de referencia visual están en `docs/design-reference/`.
+Pausar detiene el tiempo de la actividad (es local; el contrato no tiene pausa de servidor). Abandonar cierra la sesión en el servidor: no suma XP ni cambia el nivel. Si se recarga en medio de una sesión, al volver a entrenar se retoma la misma y se saltean las actividades ya respondidas.
 
-## Integración posterior
+## Actividades
 
-`src/services/api.ts` prepara el transporte y las operaciones de acceso/perfil según el contrato `openapi.yaml` del backend. No está activado en esta demo. `VITE_API_URL` configura la URL para esa futura integración, pero **no cambia la demo a modo real**.
+Cada actividad es un componente por `exerciseType` en `src/games/`. Los estímulos se generan en el cliente a partir de `params` (según el nivel), `content` (según la variante) y el `seed` de la sesión, con un generador determinístico: con el mismo seed, los mismos estímulos.
 
-Ver [la cobertura del backlog y próximos pasos](docs/cobertura-mvp.md).
+| `exerciseType` | Actividad | Qué se reporta |
+| --- | --- | --- |
+| `REVERSE_SEQUENCE` | Secuencia inversa | Posiciones correctas / largo |
+| `VISUAL_RECOGNITION` | Reconocimiento visual | (aciertos − falsos reconocimientos) / imágenes vistas |
+| `SPATIAL_GRID` | Cuadrícula | Casillas correctas / casillas a recordar |
+| `ODD_ONE_OUT` | Elemento diferente (5 rondas) | Rondas correctas / 5; tiempo promedio de aciertos |
+| `STROOP` | Color y palabra | Estímulos correctos / total; tiempo promedio de aciertos |
+| `N_BACK` | N-back | (aciertos + rechazos correctos) / estímulos evaluables |
+| `AUDITORY_SEQUENCE` | Secuencia (visual, hasta tener audio) | Posiciones correctas / largo |
+
+Son una primera versión funcional para validar con el equipo (mecánica, tiempos y textos).
+
+## Sesión y datos guardados
+
+El token, el alias y el rol se guardan en `sessionStorage`: sobreviven a una recarga y se borran al cerrar la pestaña o la sesión. No se guardan contraseñas ni códigos de recuperación. Si el servidor responde 401 (token vencido o revocado), se vuelve al ingreso. En `localStorage` solo quedan el tema y la disposición de tarjetas de Inicio.
+
+## Paneles de administración
+
+Hay dos paneles en paralelo para que el equipo elija con cuál quedarse. Los dos requieren una cuenta con rol ADMIN y solo muestran agregados de los entrenamientos guardados en PostgreSQL.
+
+- **Panel admin (dentro de la app):** ícono de gráfico en el header, visible solo para admins. Muestra la evolución de precisión y nivel según la constancia (`GET /api/v1/admin/metrics/consistency`) y permite descargar CSV.
+- **Panel de métricas de uso (página aparte):** `http://localhost:3000/admin`, con su propio ingreso. Muestra actividad diaria, cohortes y ejercicios con filtros por período, área y ejercicio (`GET /api/v1/admin/metrics`). Los admins lo ven enlazado desde Perfil.
+
+En un despliegue, serví `/admin` con el fallback de la SPA y redirigí `/api` al backend desde el mismo origen.
 
 ## Verificaciones
 
 ```sh
-npm run lint
-npm test
+npm run lint      # tipos
+npm test          # recorridos y actividades contra una API simulada (tests/fakeApi.ts)
 npm run build
+npm run test:e2e  # punta a punta contra MentIA-api real (requiere backend y `npm run dev` levantados)
 ```
 
-Las pruebas automatizadas usan Vitest y jsdom. La revisión visual debe contemplar computadora y celular, ambos temas y los principales recorridos de navegación.
+Para `test:e2e`, `VITE_API_URL` tiene que ser absoluta, por ejemplo `VITE_API_URL=http://localhost:3000/api/v1 npm run test:e2e`.
 
-## Panel de administración
+La revisión visual debe contemplar computadora y celular, ambos temas y los principales recorridos de navegación.
 
-Con MentIA-api iniciado en el puerto 8080 y el endpoint de métricas aplicado, ejecutá `npm run dev` y abrí `http://localhost:3000/admin`. Ingresá con una cuenta de la API que tenga rol ADMIN. La configuración local de Vite redirige `/api/v1` a MentIA-api. En un despliegue, serví la ruta del panel con el fallback de la SPA y redirigí `/api/v1` al backend desde el mismo origen.
-
-El panel usa los entrenamientos que están en PostgreSQL. Los datos de la demo de jugadores se guardan en el navegador y quedan fuera de este reporte.
+Ver [la cobertura del backlog](docs/cobertura-mvp.md).
