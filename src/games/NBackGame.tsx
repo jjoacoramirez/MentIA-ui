@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { GameProps, num, seededRandom, strings, TICK_MS, useCountdown } from "./common";
+import { GameProps, num, pickAvoiding, seededRandom, strings, TICK_MS, useCountdown } from "./common";
 
 const GAP_MS = 350;
 
@@ -25,9 +25,10 @@ export function NBackGame({ item, paused, onDone }: GameProps) {
     for (let i = 0; i < trials; i++) {
       if (i >= n && random.next() < matchRatio) list.push(list[i - n]);
       else {
-        let next = random.pick(pool);
-        if (i >= n && next === list[i - n]) next = pool[(pool.indexOf(next) + 1) % pool.length];
-        list.push(next);
+        // Un símbolo nuevo no puede ser el de N atrás (sería una coincidencia) y, si hay de dónde elegir, tampoco
+        // el inmediato anterior: dos símbolos iguales seguidos parecería que la pantalla no cambió.
+        const avoid = [i >= n ? list[i - n] : undefined, i > 0 && pool.length > 2 ? list[i - 1] : undefined];
+        list.push(pickAvoiding(random, pool, avoid));
       }
     }
     return list;

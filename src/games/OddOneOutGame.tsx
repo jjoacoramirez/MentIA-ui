@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { GameProps, num, seededRandom, TICK_MS, useCountdown } from "./common";
+import { GameProps, num, seededRandom, spreadPicks, TICK_MS, useCountdown } from "./common";
 import { PhaseStage, RoundDots } from "./PhaseBanner";
 
 const ROUNDS = 5;
@@ -20,8 +20,8 @@ export function OddOneOutGame({ item, paused, onDone }: GameProps) {
     ? pairs[Math.min(pairs.length - 1, Math.round(num(item.params.similarity, 0.3) * (pairs.length - 1)))]
     : (["◆", "◇"] as [string, string]);
   const rounds = useMemo(() => {
-    const random = seededRandom(item.seed);
-    return Array.from({ length: ROUNDS }, () => random.int(count));
+    // El distinto cambia de lugar en cada ronda: no sale dos veces seguidas en la misma casilla.
+    return spreadPicks(seededRandom(item.seed), count, ROUNDS);
   }, [item, count]);
 
   const [round, setRound] = useState(0);

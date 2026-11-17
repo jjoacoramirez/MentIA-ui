@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { GameProps, num, seededRandom, TICK_MS, useCountdown } from "./common";
+import { GameProps, num, seededRandom, spreadPicks, TICK_MS, useCountdown } from "./common";
 import { PhaseStage, RoundDots } from "./PhaseBanner";
 
 interface Color { name: string; hex: string }
@@ -16,8 +16,12 @@ export function StroopGame({ item, paused, onDone }: GameProps) {
   const incongruent = num(item.params.incongruentRatio, 0.5);
   const sequence = useMemo(() => {
     const random = seededRandom(item.seed);
-    return Array.from({ length: trials }, () => {
-      const ink = random.int(colors.length);
+    // Con 3 colores o más, la tinta cambia de un ensayo al siguiente (nunca se ve dos veces seguidas la misma palabra
+    // con el mismo color). Con 2 sería alternar siempre y el ensayo se volvería predecible.
+    const inks = colors.length >= 3
+      ? spreadPicks(random, colors.length, trials)
+      : Array.from({ length: trials }, () => random.int(colors.length));
+    return inks.map((ink) => {
       let word = ink;
       if (random.next() < incongruent) word = (ink + 1 + random.int(colors.length - 1)) % colors.length;
       return { ink, word };

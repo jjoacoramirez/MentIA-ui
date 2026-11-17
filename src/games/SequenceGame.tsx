@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { GameProps, num, seededRandom, strings, useActiveClock, useCountdown } from "./common";
+import { GameProps, num, pickAvoiding, seededRandom, strings, useActiveClock, useCountdown } from "./common";
 import { PhaseBanner, PhaseStage } from "./PhaseBanner";
 
 const GAP_MS = 250;
@@ -18,7 +18,10 @@ export function SequenceGame({ item, paused, onDone }: GameProps) {
   }, [item]);
   const target = useMemo(() => {
     const random = seededRandom(item.seed);
-    return Array.from({ length }, () => random.pick(palette));
+    // Un mismo elemento no se muestra dos veces seguidas (se confundiría con que la pantalla no cambió).
+    const picks: string[] = [];
+    for (let i = 0; i < length; i++) picks.push(pickAvoiding(random, palette, [picks[i - 1]]));
+    return picks;
   }, [item, length, palette]);
   const expected = reverse ? [...target].reverse() : target;
 
