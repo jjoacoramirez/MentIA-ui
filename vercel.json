@@ -7,6 +7,25 @@
     {
       "source": "/api/:path*",
       "destination": "https://mentia-api-production.up.railway.app/api/:path*"
+    },
+    {
+      "source": "/((?!api/|assets/|sw\\.js).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
+      ]
     }
   ]
 }
