@@ -1,4 +1,5 @@
 import { Select } from "../components/Select";
+import { EncouragementNote } from "../components/EncouragementNote";
 import { LevelProgress, progressChange } from "../components/LevelProgress";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
@@ -309,6 +310,9 @@ export function TrainingScreen() {
           <li>Respondé a tu ritmo; podés pausar cuando quieras.</li>
           <li>Al terminar, revisá tus resultados y cómo sigue tu nivel.</li>
         </ol>
+        {initial && (
+          <EncouragementNote className="mb-5" text="No es un examen y no hay respuestas «malas»: si te equivocás, es normal. Solo buscamos un punto de partida para armar tus sesiones." />
+        )}
         {initial && assessed && (
           <p className="text-sm mb-4">Ya completaste la evaluación. Si la repetís, se reemplaza tu punto de partida.</p>
         )}

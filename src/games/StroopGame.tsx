@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import { GameProps, num, seededRandom, TICK_MS, useCountdown } from "./common";
+import { PhaseStage, RoundDots } from "./PhaseBanner";
 
 interface Color { name: string; hex: string }
 
@@ -46,7 +47,8 @@ export function StroopGame({ item, paused, onDone }: GameProps) {
   if (trial >= trials) return null;
   const current = sequence[trial];
   return (
-    <>
+    <PhaseStage phase={trial}>
+      <RoundDots total={trials} current={trial} label={`Ensayo ${trial + 1} de ${trials}`} />
       <p className="mb-3 text-sm">{trial + 1} de {trials} · ¿De qué color está pintada la palabra?</p>
       <p className="text-5xl font-bold text-center py-8 uppercase" style={{ color: colors[current.ink].hex }}
         aria-label={`Palabra ${colors[current.word].name}`}>{colors[current.word].name}</p>
@@ -56,6 +58,6 @@ export function StroopGame({ item, paused, onDone }: GameProps) {
             onClick={() => answer(i)}>{c.name}</button>
         ))}
       </div>
-    </>
+    </PhaseStage>
   );
 }

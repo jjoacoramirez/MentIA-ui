@@ -1,5 +1,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import { GameProps, num, seededRandom, TICK_MS, useCountdown } from "./common";
+import { PhaseStage, RoundDots } from "./PhaseBanner";
 
 const ROUNDS = 5;
 
@@ -45,7 +46,8 @@ export function OddOneOutGame({ item, paused, onDone }: GameProps) {
 
   if (round >= ROUNDS) return null;
   return (
-    <>
+    <PhaseStage phase={round}>
+      <RoundDots total={ROUNDS} current={round} label={`Ronda ${round + 1} de ${ROUNDS}`} />
       <div className="flex items-center justify-between mb-3 text-sm">
         <span>Ronda {round + 1} de {ROUNDS}</span>
         <span className="font-semibold" aria-label="Tiempo restante">{Math.ceil(remaining / 1000)} s</span>
@@ -58,6 +60,6 @@ export function OddOneOutGame({ item, paused, onDone }: GameProps) {
             onClick={() => answer(i)}>{i === rounds[round] ? pair[1] : pair[0]}</button>
         ))}
       </div>
-    </>
+    </PhaseStage>
   );
 }

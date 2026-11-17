@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { GameProps, num, seededRandom, strings, useActiveClock, useCountdown } from "./common";
+import { PhaseBanner, PhaseStage } from "./PhaseBanner";
 
 /**
  * Reconocimiento visual (VISUAL_RECOGNITION): se memoriza un grupo de imágenes y después se marcan
@@ -36,15 +37,17 @@ export function RecognitionGame({ item, paused, onDone }: GameProps) {
 
   if (!testing)
     return (
-      <>
+      <PhaseStage phase="study">
+        <PhaseBanner tone="study" label="Memorizá" remainingMs={remaining} totalMs={exposure} />
         <p className="mb-3 text-sm">Tratá de recordar estas imágenes · {Math.ceil(remaining / 1000)} s</p>
         <div className="grid grid-cols-4 gap-3 py-4" aria-label="Imágenes para memorizar">
           {targets.map((t) => <span key={t} className="text-4xl text-center">{t}</span>)}
         </div>
-      </>
+      </PhaseStage>
     );
   return (
-    <>
+    <PhaseStage phase="answer">
+      <PhaseBanner tone="answer" label="Tu turno" />
       <p className="mb-3 text-sm">¿Cuáles viste recién? Tocá para marcarlas y después confirmá.</p>
       <div className="grid grid-cols-4 gap-3 mb-5">
         {options.map((o) => {
@@ -57,6 +60,6 @@ export function RecognitionGame({ item, paused, onDone }: GameProps) {
         })}
       </div>
       <button className="flow-primary" disabled={paused} onClick={confirm}>Confirmar selección</button>
-    </>
+    </PhaseStage>
   );
 }
