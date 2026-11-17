@@ -194,6 +194,7 @@ export interface ConsistencyReport {
 }
 
 export interface PushConfig { enabled: boolean; publicKey: string | null }
+export interface TestPushResult { devices: number; sent: number; removed: number; failed: number }
 
 // ---- Operaciones ----
 
@@ -259,6 +260,9 @@ export const mentiaApi = {
     apiRequest<void>("/notifications/push-subscription", { method: "PUT", body: json({ endpoint }) }, token),
   unsubscribePush: (token: string, endpoint: string) =>
     apiRequest<void>("/notifications/push-subscription", { method: "DELETE", body: json({ endpoint }) }, token),
+  /** Solo ADMIN (debug): manda ya el aviso de recordatorio a los dispositivos de una cuenta. */
+  sendTestPush: (token: string, username: string) =>
+    apiRequest<TestPushResult>("/admin/notifications/test", { method: "POST", body: json({ username }) }, token),
   /** Solo ADMIN: evolución del desempeño según la constancia, en agregados por grupo. */
   consistencyReport: (token: string) => apiRequest<ConsistencyReport>("/admin/metrics/consistency", {}, token),
 };

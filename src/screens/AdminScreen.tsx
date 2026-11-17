@@ -3,6 +3,7 @@ import { useJourney } from "../context/JourneyContext";
 import { useApiData } from "../hooks/useApiData";
 import { mentiaApi, type ConsistencyGroup, type ConsistencyReport } from "../services/api";
 import { Panel } from "./FlowScreens";
+import { AdminPushTest } from "../components/AdminPushTest";
 
 /** Por debajo de esta cantidad de usuarios, los promedios de un grupo se marcan como poco representativos. */
 const SMALL_GROUP = 5;
@@ -18,7 +19,7 @@ const signed = (value?: number | null, decimals = 2) =>
  * grupo (el servidor no devuelve datos individuales). Pensado para analizar y presentar resultados.
  */
 export function AdminScreen() {
-  const { isAdmin, categories } = useJourney();
+  const { isAdmin, categories, token } = useJourney();
   const report = useApiData(mentiaApi.consistencyReport, []);
 
   if (!isAdmin) {
@@ -134,6 +135,7 @@ export function AdminScreen() {
         Generado {new Date(data.generatedAt).toLocaleString("es-AR")} · días contados en {data.timeZone}. Los valores describen
         el desempeño dentro de MentIA, no capacidades.
       </p>
+      {token && <AdminPushTest token={token} />}
     </Panel>
   );
 }
