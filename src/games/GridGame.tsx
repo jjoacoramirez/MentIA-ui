@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { GameProps, num, seededRandom, useActiveClock, useCountdown } from "./common";
+import { PhaseBanner, PhaseStage } from "./PhaseBanner";
 
 /** Cuadrícula (SPATIAL_GRID): se iluminan casillas y después hay que marcar las mismas. */
 export function GridGame({ item, paused, onDone }: GameProps) {
@@ -15,7 +16,7 @@ export function GridGame({ item, paused, onDone }: GameProps) {
 
   const [answering, setAnswering] = useState(false);
   const [marked, setMarked] = useState<number[]>([]);
-  useCountdown(exposure, !answering, paused, () => setAnswering(true));
+  const remaining = useCountdown(exposure, !answering, paused, () => setAnswering(true));
   const clock = useActiveClock(answering, paused);
 
   function confirm() {
@@ -30,7 +31,10 @@ export function GridGame({ item, paused, onDone }: GameProps) {
   }
 
   return (
-    <>
+    <PhaseStage phase={answering ? "answer" : "study"}>
+      {answering
+        ? <PhaseBanner tone="answer" label="Tu turno" />
+        : <PhaseBanner tone="study" label="Memorizá" remainingMs={remaining} totalMs={exposure} />}
       <p className="mb-3 text-sm">
         {answering ? `Tocá las ${count} casillas que se encendieron (${marked.length} de ${count}).` : "Mirá bien qué casillas se encienden."}
       </p>
@@ -48,6 +52,6 @@ export function GridGame({ item, paused, onDone }: GameProps) {
         })}
       </div>
       {answering && <button className="flow-primary" disabled={marked.length !== count || paused} onClick={confirm}>Confirmar</button>}
-    </>
+    </PhaseStage>
   );
 }
