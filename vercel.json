@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://TU-DOMINIO.up.railway.app/api/:path*"
+      "destination": "https://mentia-api-production.up.railway.app/api/:path*"
     }
   ]
 }
