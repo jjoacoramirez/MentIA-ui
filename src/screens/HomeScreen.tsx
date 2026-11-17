@@ -9,6 +9,7 @@ import { useApp } from "../context/AppContext";
 import { categoryName, useJourney } from "../context/JourneyContext";
 import { DraggableDashboardCard } from "../components/DraggableDashboardCard";
 import { EncouragementNote } from "../components/EncouragementNote";
+import { ReminderCard } from "../components/ReminderCard";
 import { DashboardWidget, WidgetId } from "../types";
 
 export const HomeScreen: React.FC = () => {
@@ -451,6 +452,7 @@ export const HomeScreen: React.FC = () => {
       </div>
 
       <EncouragementNote seed={new Date().getDate()} dismissKey="mentia.home-encouragement.dismissed" className="mb-4" />
+      {userStats.completedActivities > 0 && <ReminderCard variant="prompt" className="mb-4" />}
 
       {/* Drag & Drop Customizer Banner */}
       {isCustomizingLayout && (

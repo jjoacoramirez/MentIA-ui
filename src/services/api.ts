@@ -193,6 +193,8 @@ export interface ConsistencyReport {
   groups: ConsistencyGroup[];
 }
 
+export interface PushConfig { enabled: boolean; publicKey: string | null }
+
 // ---- Operaciones ----
 
 const json = (body: unknown) => JSON.stringify(body);
@@ -251,6 +253,12 @@ export const mentiaApi = {
     apiRequest<CategoryProgress[]>(`/progress/categories?granularity=${granularity}`, {}, token),
   gamification: (token: string) => apiRequest<GamificationState>("/gamification/me", {}, token),
   achievements: (token: string) => apiRequest<Achievement[]>("/achievements", {}, token),
+  /** Recordatorios de racha por push: si el servidor los tiene habilitados y la clave pública para suscribirse. */
+  pushConfig: (token: string) => apiRequest<PushConfig>("/notifications/push-config", {}, token),
+  subscribePush: (token: string, endpoint: string) =>
+    apiRequest<void>("/notifications/push-subscription", { method: "PUT", body: json({ endpoint }) }, token),
+  unsubscribePush: (token: string, endpoint: string) =>
+    apiRequest<void>("/notifications/push-subscription", { method: "DELETE", body: json({ endpoint }) }, token),
   /** Solo ADMIN: evolución del desempeño según la constancia, en agregados por grupo. */
   consistencyReport: (token: string) => apiRequest<ConsistencyReport>("/admin/metrics/consistency", {}, token),
 };
