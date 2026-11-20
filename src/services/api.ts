@@ -250,8 +250,8 @@ export const mentiaApi = {
     apiRequest<SessionHistoryPage>(`/sessions?page=${page}&size=${size}`, {}, token),
 
   progressSummary: (token: string) => apiRequest<ProgressSummary>("/progress/summary", {}, token),
-  categoryProgress: (token: string, granularity: "week" | "month" = "week") =>
-    apiRequest<CategoryProgress[]>(`/progress/categories?granularity=${granularity}`, {}, token),
+  categoryProgress: (token: string, granularity: "day" | "week" | "month" = "week", from?: string, to?: string) =>
+    apiRequest<CategoryProgress[]>(`/progress/categories?${new URLSearchParams({ granularity, ...(from ? { from } : {}), ...(to ? { to } : {}) })}`, {}, token),
   gamification: (token: string) => apiRequest<GamificationState>("/gamification/me", {}, token),
   achievements: (token: string) => apiRequest<Achievement[]>("/achievements", {}, token),
   /** Recordatorios de racha por push: si el servidor los tiene habilitados y la clave pública para suscribirse. */
