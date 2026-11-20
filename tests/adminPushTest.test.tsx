@@ -49,7 +49,22 @@ describe("Probar notificaciones (panel admin)", () => {
   it("describe cada resultado en palabras, sin datos técnicos", () => {
     expect(describeTestPush({ devices: 1, sent: 1, removed: 0, failed: 0 })).toBe("Aviso enviado a 1 dispositivo.");
     expect(describeTestPush({ devices: 3, sent: 1, removed: 1, failed: 1 })).toBe(
-      "Aviso enviado a 1 dispositivo. 1 suscripción ya no existía y se borró. 1 envío falló. Desde el perfil, probá en este dispositivo y renová las notificaciones. Si persiste, revisá el error del envío en el backend.",
+      "Aviso enviado a 1 dispositivo. 1 suscripción ya no existía y se borró. 1 envío falló. Esta versión de la API no informa el motivo. Actualizá el backend para verlo en este panel.",
     );
   });
+});
+
+it("muestra la causa del rechazo y la acción sugerida sin requerir acceso a los logs", async () => {
+  vi.spyOn(mentiaApi, "sendTestPush").mockResolvedValue({ devices: 2, sent: 0, removed: 0, failed: 2, failures: { FORBIDDEN: 2 } });
+  render(<AdminPushTest token="t" />);
+  send("ana");
+  expect(await screen.findByRole("status")).toHaveTextContent("HTTP 403");
+  expect(screen.getByRole("status")).toHaveTextContent("Revisar las claves VAPID");
+});
+
+it("distingue fallas de conexión y límites del proveedor", () => {
+  expect(describeTestPush({ devices: 2, sent: 0, removed: 0, failed: 2, failures: { CONNECTION_FAILED: 1, RATE_LIMITED: 1 } }))
+    .toContain("El backend no pudo conectarse");
+  expect(describeTestPush({ devices: 1, sent: 0, removed: 0, failed: 1, failures: { RATE_LIMITED: 1 } }))
+    .toContain("HTTP 429");
 });
