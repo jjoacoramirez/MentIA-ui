@@ -190,28 +190,35 @@ export function AuthScreen({
               ? "Crear cuenta"
               : "Restablecer contraseña"}
         </button>
-      </form>
-      <div className="flex flex-wrap gap-4 mt-5">
-        <button
-          className="flow-link"
-          onClick={() =>
-            setCurrentTab(mode === "registro" ? "ingreso" : "registro")
-          }
-        >
-          {mode === "registro" ? "Ya tengo una cuenta" : "Crear cuenta"}
-        </button>
         {mode === "ingreso" && (
           <button
-            className="flow-link"
+            type="button"
+            className="flow-link self-center min-h-11 px-3 text-sm font-medium text-center"
             onClick={() => setCurrentTab("recuperacion")}
           >
             Olvidé mi contraseña
           </button>
         )}
-        <button className="flow-link" onClick={() => setCurrentTab("landing")}>
+      </form>
+      <nav aria-label="Opciones de acceso" className="mt-6 flex flex-col items-center gap-2 text-center text-sm">
+        <p className="flex flex-wrap items-center justify-center gap-x-1 px-2 text-slate-600 dark:text-slate-300">
+          <span>{mode === "registro" ? "¿Ya tenés una cuenta?" : "¿Todavía no tenés cuenta?"}</span>
+          <button
+            type="button"
+            className="flow-link min-h-11 px-2"
+            onClick={() => setCurrentTab(mode === "registro" ? "ingreso" : "registro")}
+          >
+            {mode === "registro" ? "Ingresar" : "Crear cuenta"}
+          </button>
+        </p>
+        <button
+          type="button"
+          className="min-h-11 rounded-xl px-5 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-200/50 hover:text-slate-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-current dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100"
+          onClick={() => setCurrentTab("landing")}
+        >
           Volver
         </button>
-      </div>
+      </nav>
     </Panel>
   );
 }
