@@ -9,7 +9,7 @@
       "destination": "https://mentia-api-production.up.railway.app/api/:path*"
     },
     {
-      "source": "/((?!api/|assets/|sw\\.js).*)",
+      "source": "/((?!api/|assets/|icons/|favicon\\.svg|manifest\\.webmanifest|sw\\.js).*)",
       "destination": "/index.html"
     }
   ],

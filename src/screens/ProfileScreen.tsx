@@ -1,3 +1,4 @@
+import { InstallAppCard } from "../components/InstallApp";
 import { Zap } from "lucide-react";
 /**
  * @license
@@ -364,6 +365,7 @@ export const ProfileScreen: React.FC = () => {
         <button className="flow-secondary" onClick={() => setCurrentTab("evaluacion")}>{assessed ? "Repetir evaluación inicial" : "Hacer evaluación inicial"}</button>
       </section>
 
+      <InstallAppCard />
       <ReminderCard className="mb-4" />
 
       <section className="flow-card mb-4">
