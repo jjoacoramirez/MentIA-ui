@@ -115,18 +115,20 @@ const MainLayout: React.FC = () => {
             </div>
           )}
           {journey.username && ["progreso", "historial", "logros"].includes(currentTab) && (
-            <nav aria-label="Secciones de progreso" className="section-nav">
-              {([
-                ["progreso", "Evolución", "monitoring"],
-                ["historial", "Historial", "history"],
-                ["logros", "Logros", "workspace_premium"],
-              ] as const).map(([tab, label, icon]) => (
-                <button key={tab} aria-current={currentTab === tab ? "page" : undefined}
-                  onClick={() => setCurrentTab(tab)} className={currentTab === tab ? "active" : ""}>
-                  <span aria-hidden="true" className="material-symbols-outlined">{icon}</span>{label}
-                </button>
-              ))}
-            </nav>
+            <div className="progress-navigation-frame">
+              <nav aria-label="Secciones de progreso" className="section-nav">
+                {([
+                  ["progreso", "Evolución", "monitoring"],
+                  ["historial", "Historial", "history"],
+                  ["logros", "Logros", "workspace_premium"],
+                ] as const).map(([tab, label, icon]) => (
+                  <button key={tab} aria-current={currentTab === tab ? "page" : undefined}
+                    onClick={() => setCurrentTab(tab)} className={currentTab === tab ? "active" : ""}>
+                    <span aria-hidden="true" className="material-symbols-outlined">{icon}</span>{label}
+                  </button>
+                ))}
+              </nav>
+            </div>
           )}
           {/* Screen View */}
           <main className="app-content" key={currentTab} id="app-content" tabIndex={-1} aria-busy={!journey.ready}>
