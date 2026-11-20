@@ -7,7 +7,7 @@ export function describeTestPush(result: TestPushResult): string {
   const parts: string[] = [];
   if (result.sent) parts.push(`Aviso enviado a ${result.sent} ${result.sent === 1 ? "dispositivo" : "dispositivos"}.`);
   if (result.removed) parts.push(`${result.removed} ${result.removed === 1 ? "suscripción ya no existía y se borró" : "suscripciones ya no existían y se borraron"}.`);
-  if (result.failed) parts.push(`${result.failed} ${result.failed === 1 ? "envío falló" : "envíos fallaron"}; se puede reintentar.`);
+  if (result.failed) parts.push(`${result.failed} ${result.failed === 1 ? "envío falló" : "envíos fallaron"}. Desde el perfil, probá en este dispositivo y renová las notificaciones. Si persiste, revisá el error del envío en el backend.`);
   return parts.join(" ");
 }
 

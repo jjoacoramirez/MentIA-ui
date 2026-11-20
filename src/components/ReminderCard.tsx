@@ -47,10 +47,17 @@ export function ReminderCard({ variant = "settings", className = "" }: { variant
             <p className="text-sm mb-3">Bloqueaste las notificaciones en este navegador. Para activarlas, permitilas desde los ajustes del sitio.</p>
           )}
           {reminder.error && <p role="alert" className="text-rose-600 dark:text-rose-300 text-sm mb-3">{reminder.error}</p>}
+          {reminder.message && <p role="status" className="text-sm mb-3">{reminder.message}</p>}
           {!reminder.blocked && (
             <button className={reminder.on ? "flow-secondary" : "flow-primary"} disabled={reminder.busy} onClick={reminder.toggle}>
               {reminder.busy ? "Un momento…" : reminder.on ? "Desactivar recordatorio" : "Activar recordatorio"}
             </button>
+          )}
+          {variant === "settings" && reminder.on && !reminder.blocked && (
+            <div className="flex flex-wrap gap-3 mt-3">
+              <button className="flow-link" disabled={reminder.busy} onClick={reminder.test}>Probar en este dispositivo</button>
+              <button className="flow-link" disabled={reminder.busy} onClick={reminder.repair}>Renovar notificaciones</button>
+            </div>
           )}
         </div>
         {variant === "prompt" && (

@@ -46,7 +46,8 @@ export function keyToBytes(base64Url: string): Uint8Array<ArrayBuffer> {
 }
 
 async function registration() {
-  return (await navigator.serviceWorker.getRegistration("/sw.js")) ?? navigator.serviceWorker.register("/sw.js");
+  await navigator.serviceWorker.register("/sw.js");
+  return navigator.serviceWorker.ready;
 }
 
 async function currentSubscription(): Promise<PushSubscription | null> {
@@ -67,16 +68,26 @@ export async function isReminderOn(username: string): Promise<boolean> {
 export type EnableResult = "ok" | "denied" | "unavailable";
 
 /** Pide permiso, suscribe este navegador y le avisa al servidor. */
-export async function enableReminder(token: string, username: string): Promise<EnableResult> {
+export async function enableReminder(token: string, username: string, renew = false): Promise<EnableResult> {
   if (!pushSupported()) return "unavailable";
   const config = await mentiaApi.pushConfig(token);
   if (!config.enabled || !config.publicKey) return "unavailable";
-  const permission = await Notification.requestPermission();
+  const permission = pushPermission() === "granted" ? "granted" : await Notification.requestPermission();
   if (permission !== "granted") return "denied";
   const reg = await registration();
-  const subscription =
-    (await reg.pushManager.getSubscription()) ??
-    (await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyToBytes(config.publicKey) }));
+  const serverKey = keyToBytes(config.publicKey);
+  let subscription = await reg.pushManager.getSubscription();
+  const storedKey = subscription?.options?.applicationServerKey;
+  const storedBytes = storedKey ? new Uint8Array(storedKey) : null;
+  const matchesKey = storedBytes?.length === serverKey.length
+    && storedBytes.every((byte, index) => byte === serverKey[index]);
+  if (subscription && (renew || !matchesKey)) {
+    await mentiaApi.unsubscribePush(token, subscription.endpoint);
+    if (!await subscription.unsubscribe()) throw new Error("No se pudo renovar la suscripción del navegador.");
+    writeFlag(username, false);
+    subscription = null;
+  }
+  subscription ??= await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: serverKey });
   await mentiaApi.subscribePush(token, subscription.endpoint);
   writeFlag(username, true);
   return "ok";
@@ -97,9 +108,8 @@ export async function disableReminder(token: string, username: string): Promise<
  * porque al cerrar sesión se lo desvincula de la cuenta: si no, quien use el dispositivo después recibiría sus avisos.
  */
 export async function resyncReminder(token: string, username: string): Promise<void> {
-  if (!(await isReminderOn(username))) return;
-  const subscription = await currentSubscription();
-  if (subscription) await mentiaApi.subscribePush(token, subscription.endpoint).catch(() => undefined);
+  if (!pushSupported() || !readFlag(username) || pushPermission() !== "granted") return;
+  await enableReminder(token, username);
 }
 
 /** Al cerrar sesión: el navegador deja de estar atado a la cuenta, pero la elección queda guardada. */
@@ -111,4 +121,17 @@ export async function detachReminder(token: string): Promise<void> {
   } catch {
     /* si falla, el servidor lo reasigna cuando otra cuenta active los avisos */
   }
+}
+
+/** Prueba local para comprobar permiso y presentación, independiente del envío desde el servidor. */
+export async function testLocalNotification(): Promise<void> {
+  if (!pushSupported() || pushPermission() !== "granted") throw new Error("Permití las notificaciones para realizar la prueba.");
+  const reg = await registration();
+  await reg.showNotification("MentIA · Prueba en este dispositivo", {
+    body: "Esta es una prueba local de las notificaciones de MentIA.",
+    tag: "mentia-local-test",
+    icon: "/icons/icon-192.png",
+    badge: "/icons/badge-96.png",
+    data: { url: "/" },
+  });
 }
