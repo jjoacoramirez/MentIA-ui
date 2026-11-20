@@ -303,6 +303,11 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
 .app-content > .home-page,
 .app-content > .welcome-page,
 .app-content > .profile-page { flex:0 0 auto; }
+/* Espacio de cierre para la acción final de progreso, incluso dentro del área desplazable. */
+.app-frame[data-screen="progreso"] .flow-page {
+  flex:0 0 auto;
+  padding-bottom:calc(3rem + env(safe-area-inset-bottom, 0px));
+}
 .home-page { display:block; }
 .home-page .dashboard-grid { grid-auto-rows:auto; align-items:stretch; }
 .home-page .dashboard-grid > [data-widget] { min-width:0; align-self:stretch; display:flex; flex-direction:column; }
