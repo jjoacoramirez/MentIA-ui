@@ -1,3 +1,4 @@
+import { useVisibleViewport } from "./hooks/useVisibleViewport";
 import { InstallAppProvider } from "./components/InstallApp";
 import { AdminMetricsScreen } from "./screens/AdminMetricsScreen";
 import { LibraryScreen } from "./screens/LibraryScreen";
@@ -28,6 +29,7 @@ import { ProfileScreen } from "./screens/ProfileScreen";
 import { AdminScreen } from "./screens/AdminScreen";
 
 const MainLayout: React.FC = () => {
+  useVisibleViewport();
   const { currentTab, setCurrentTab } = useApp();
   const journey = useJourney();
   const publicTabs = ["landing", "registro", "ingreso", "recuperacion"];

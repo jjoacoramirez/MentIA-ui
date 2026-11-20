@@ -220,7 +220,7 @@ a:focus-visible {
 /* Full-height app: content scrolls between the header and navigation. */
 html, body, #root { width:100%; min-height:100%; margin:0; }
 * { box-sizing:border-box; }
-.app-root { height:100dvh; min-height:0; overflow:hidden; }
+.app-root { height:var(--mentia-visible-height, 100dvh); min-height:0; overflow:hidden; }
 .app-workspace { width:100%; flex:1; min-height:0; display:flex; justify-content:center; }
 .app-frame { width:100%; height:100%; min-width:0; min-height:0; display:flex; flex-direction:column; position:relative; isolation:isolate; overflow:hidden; background:var(--canvas); color:var(--ink); }
 .app-frame > header { flex-shrink:0; }
@@ -238,7 +238,15 @@ html, body, #root { width:100%; min-height:100%; margin:0; }
 .session-content { width:100%; max-width:640px; margin-inline:auto; }
 .session-screen > [role="dialog"] { position:fixed; }
 .app-frame:has([role="dialog"]) { transform:translateZ(0); }
-.app-navigation { padding-top:.5rem; background:var(--canvas); }
+.app-navigation {
+  padding-top:.5rem;
+  padding-bottom:max(.5rem, env(safe-area-inset-bottom, 0px));
+  background:var(--canvas);
+}
+/* Reserva para la barra de botones de Android cuando la app instalada informa inset 0. */
+@media (max-width:767px) and (display-mode:standalone) {
+  .app-navigation { padding-bottom:max(3rem, env(safe-area-inset-bottom, 0px)); }
+}
 .navigation-item { min-width:0; min-height:48px; }
 .welcome-page { max-width:1000px; margin-inline:auto; min-height:100%; }
 /* Bienvenida: una columna en el celular (marca, pilares, info, botones); en pantallas anchas, marca, info y
