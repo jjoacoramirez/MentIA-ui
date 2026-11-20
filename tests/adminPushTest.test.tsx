@@ -49,7 +49,7 @@ describe("Probar notificaciones (panel admin)", () => {
   it("describe cada resultado en palabras, sin datos técnicos", () => {
     expect(describeTestPush({ devices: 1, sent: 1, removed: 0, failed: 0 })).toBe("Aviso enviado a 1 dispositivo.");
     expect(describeTestPush({ devices: 3, sent: 1, removed: 1, failed: 1 })).toBe(
-      "Aviso enviado a 1 dispositivo. 1 suscripción ya no existía y se borró. 1 envío falló; se puede reintentar.",
+      "Aviso enviado a 1 dispositivo. 1 suscripción ya no existía y se borró. 1 envío falló. Desde el perfil, probá en este dispositivo y renová las notificaciones. Si persiste, revisá el error del envío en el backend.",
     );
   });
 });

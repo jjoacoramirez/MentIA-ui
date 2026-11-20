@@ -9,6 +9,7 @@ import {
   isReminderOn,
   keyToBytes,
   resyncReminder,
+  testLocalNotification,
 } from "../src/services/push";
 import { ReminderCard } from "../src/components/ReminderCard";
 
@@ -19,18 +20,27 @@ const ENDPOINT = "https://fcm.googleapis.com/fcm/send/abc";
 
 /** Navegador simulado con soporte de push: una sola suscripción que vive en `state`. */
 function installBrowser(permission: NotificationPermission = "default", subscribed = false) {
-  const state = { subscription: subscribed ? { endpoint: ENDPOINT, unsubscribe: vi.fn(async () => true) } : null };
+  const state: { subscription: { endpoint: string; options: { applicationServerKey: ArrayBuffer }; unsubscribe: ReturnType<typeof vi.fn> } | null } = { subscription: null };
+  function makeSubscription(key = keyToBytes("BD5bHl05Qu_Yu8mxUKbg").buffer) {
+    const subscription = {
+      endpoint: ENDPOINT,
+      options: { applicationServerKey: key },
+      unsubscribe: vi.fn(async () => { if (state.subscription === subscription) state.subscription = null; return true; }),
+    };
+    return subscription;
+  }
+  if (subscribed) state.subscription = makeSubscription();
   const pushManager = {
     getSubscription: vi.fn(async () => state.subscription),
-    subscribe: vi.fn(async () => {
-      state.subscription = { endpoint: ENDPOINT, unsubscribe: vi.fn(async () => true) };
+    subscribe: vi.fn(async (options: { applicationServerKey: Uint8Array<ArrayBuffer> }) => {
+      state.subscription = makeSubscription(options.applicationServerKey.buffer);
       return state.subscription;
     }),
   };
-  const registration = { pushManager };
+  const registration = { pushManager, showNotification: vi.fn(async () => undefined) };
   Object.defineProperty(navigator, "serviceWorker", {
     configurable: true,
-    value: { getRegistration: vi.fn(async () => registration), register: vi.fn(async () => registration) },
+    value: { ready: Promise.resolve(registration), getRegistration: vi.fn(async () => registration), register: vi.fn(async () => registration) },
   });
   (window as unknown as Record<string, unknown>).PushManager = class {};
   const notification = {
@@ -43,7 +53,7 @@ function installBrowser(permission: NotificationPermission = "default", subscrib
   };
   (window as unknown as Record<string, unknown>).Notification = notification;
   (globalThis as unknown as Record<string, unknown>).Notification = notification;
-  return { state, pushManager, notification };
+  return { state, pushManager, notification, registration };
 }
 
 function removeBrowserSupport() {
@@ -134,6 +144,35 @@ describe("Recordatorios de racha (servicio)", () => {
 
     await resyncReminder("token-2", "beto");
 
+    expect(mentiaApi.subscribePush).not.toHaveBeenCalled();
+  });
+
+  it("renueva una suscripción creada con una clave anterior", async () => {
+    const { state, pushManager } = installBrowser("granted");
+    await enableReminder("token-1", "ana");
+    const old = state.subscription!;
+    vi.spyOn(mentiaApi, "pushConfig").mockResolvedValue({ enabled: true, publicKey: "AQID" });
+    await resyncReminder("token-2", "ana");
+    expect(old.unsubscribe).toHaveBeenCalledOnce();
+    expect(mentiaApi.unsubscribePush).toHaveBeenCalledWith("token-2", ENDPOINT);
+    expect(pushManager.subscribe).toHaveBeenCalledTimes(2);
+    expect(Array.from(new Uint8Array(state.subscription!.options.applicationServerKey))).toEqual([1, 2, 3]);
+  });
+
+  it("la renovación manual reemplaza el registro y no vuelve a pedir un permiso ya concedido", async () => {
+    const { state, notification } = installBrowser("granted");
+    await enableReminder("token-1", "ana");
+    const old = state.subscription!;
+    await enableReminder("token-1", "ana", true);
+    expect(old.unsubscribe).toHaveBeenCalledOnce();
+    expect(notification.requestPermission).not.toHaveBeenCalled();
+    expect(await isReminderOn("ana")).toBe(true);
+  });
+
+  it("la prueba local muestra un aviso sin mandar un push desde el servidor", async () => {
+    const { registration } = installBrowser("granted");
+    await testLocalNotification();
+    expect(registration.showNotification).toHaveBeenCalledWith("MentIA · Prueba en este dispositivo", expect.objectContaining({ tag: "mentia-local-test" }));
     expect(mentiaApi.subscribePush).not.toHaveBeenCalled();
   });
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useApp } from "../context/AppContext";
 import { useJourney } from "../context/JourneyContext";
 import { ApiError, mentiaApi } from "../services/api";
-import { disableReminder, enableReminder, isReminderOn, pushPermission, pushSupported } from "../services/push";
+import { disableReminder, enableReminder, isReminderOn, pushPermission, pushSupported, testLocalNotification } from "../services/push";
 
 export interface ReminderState {
   /** El navegador y el servidor permiten los avisos: si es false, no hay nada para mostrar. */
@@ -13,6 +13,9 @@ export interface ReminderState {
   busy: boolean;
   error: string;
   toggle: () => Promise<void>;
+  repair: () => Promise<void>;
+  test: () => Promise<void>;
+  message: string;
 }
 
 /** Estado y acciones de los recordatorios de racha para la cuenta con sesión iniciada. */
@@ -25,6 +28,7 @@ export function useReminder(): ReminderState {
   const [blocked, setBlocked] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (!token || !pushSupported()) return;
@@ -47,6 +51,7 @@ export function useReminder(): ReminderState {
     if (!token) return;
     setBusy(true);
     setError("");
+    setMessage("");
     try {
       if (on) {
         await disableReminder(token, username);
@@ -64,5 +69,30 @@ export function useReminder(): ReminderState {
     }
   }, [token, username, on]);
 
-  return { available: pushSupported() && serverEnabled, on, blocked, busy, error, toggle };
+  const check = useCallback(async (renew: boolean) => {
+    if (!token) return;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      if (renew) {
+        const result = await enableReminder(token, username, true);
+        setBlocked(result === "denied");
+        setOn(result === "ok");
+        if (result === "ok") setMessage("Se renovó el registro de este dispositivo. Volvé a enviar el aviso desde el panel de administración.");
+        else setError("No pudimos renovar las notificaciones. Revisá el permiso del navegador y volvé a intentar.");
+      } else {
+        await testLocalNotification();
+        setMessage("Se solicitó la prueba local. Si no aparece, revisá las notificaciones de tu navegador en los ajustes del dispositivo. Esta prueba permite comprobar la recepción en este dispositivo. El envío desde el servidor se prueba desde administración.");
+      }
+    } catch (failure) {
+      setOn(await isReminderOn(username));
+      setError(failure instanceof ApiError ? failure.message : "No pudimos completar la prueba. Revisá la conexión y los permisos del navegador.");
+    } finally {
+      setBusy(false);
+    }
+  }, [token, username]);
+
+  return { available: pushSupported() && serverEnabled, on, blocked, busy, error, toggle,
+    repair: () => check(true), test: () => check(false), message };
 }
