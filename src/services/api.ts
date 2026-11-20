@@ -194,7 +194,7 @@ export interface ConsistencyReport {
 }
 
 export interface PushConfig { enabled: boolean; publicKey: string | null }
-export interface TestPushResult { devices: number; sent: number; removed: number; failed: number }
+export interface TestPushResult { devices: number; sent: number; removed: number; failed: number; failures?: Record<string, number> }
 
 // ---- Operaciones ----
 

@@ -1,13 +1,26 @@
 import React, { useState } from "react";
 import { ApiError, mentiaApi, type TestPushResult } from "../services/api";
 
-/** Texto del resultado en palabras: no se muestra nada técnico del dispositivo. */
+const failureDescriptions: Record<string, string> = {
+  UNAUTHORIZED: "El proveedor exige autenticación válida (HTTP 401). Revisar la configuración VAPID del backend.",
+  FORBIDDEN: "El proveedor rechazó la autorización (HTTP 403). Revisar las claves VAPID del backend y renovar las notificaciones en el perfil.",
+  RATE_LIMITED: "El proveedor limitó los envíos (HTTP 429). Esperá unos minutos antes de reintentar.",
+  PROVIDER_UNAVAILABLE: "El proveedor de notificaciones tuvo un error (HTTP 5xx). Volvé a intentar más tarde.",
+  REJECTED: "El proveedor rechazó la solicitud. Revisar la configuración y el estado HTTP del envío en el backend.",
+  CONNECTION_FAILED: "El backend no pudo conectarse al proveedor de notificaciones. Revisar su conexión de salida y los tiempos de espera.",
+  FAILED: "Se produjo un error interno al preparar o enviar el aviso. Revisar el backend.",
+};
+
+/** Diagnóstico de administración con códigos seguros, sin URLs de suscripción ni secretos. */
 export function describeTestPush(result: TestPushResult): string {
   if (result.devices === 0) return "Esa cuenta no tiene el recordatorio activado en ningún dispositivo.";
   const parts: string[] = [];
   if (result.sent) parts.push(`Aviso enviado a ${result.sent} ${result.sent === 1 ? "dispositivo" : "dispositivos"}.`);
   if (result.removed) parts.push(`${result.removed} ${result.removed === 1 ? "suscripción ya no existía y se borró" : "suscripciones ya no existían y se borraron"}.`);
-  if (result.failed) parts.push(`${result.failed} ${result.failed === 1 ? "envío falló" : "envíos fallaron"}. Desde el perfil, probá en este dispositivo y renová las notificaciones. Si persiste, revisá el error del envío en el backend.`);
+  if (result.failed && Object.keys(result.failures ?? {}).length === 0) parts.push(`${result.failed} ${result.failed === 1 ? "envío falló" : "envíos fallaron"}. Esta versión de la API no informa el motivo. Actualizá el backend para verlo en este panel.`);
+  for (const [code, count] of Object.entries(result.failures ?? {})) {
+    parts.push(`${count} ${count === 1 ? "dispositivo" : "dispositivos"} · ${failureDescriptions[code] ?? "El servidor informó un fallo de envío."}`);
+  }
   return parts.join(" ");
 }
 
