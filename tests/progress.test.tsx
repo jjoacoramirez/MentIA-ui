@@ -17,7 +17,7 @@ it("identifica el mes con año completo y las semanas que cruzan mes o año", ()
   expect(isoWeek("2026-11-20")).toEqual({ week: 47, year: 2026 });
   expect(isoWeek("2027-01-01")).toEqual({ week: 53, year: 2026 });
   expect(progressPeriod("week", "2026-11-20")).toMatchObject({ from: "2026-11-16", to: "2026-11-22", granularity: "day" });
-  expect(progressPeriod("month", "2028-02-29")).toMatchObject({ from: "2028-02-01", to: "2028-02-29" });
+  expect(progressPeriod("month", "2028-02-29")).toMatchObject({ from: "2027-09-01", to: "2028-07-31", granularity: "month" });
   expect(movePeriod("month", "2026-03-31", -1)).toBe("2026-02-01");
   expect(periodLabel("2026-11-01", "month")).toBe("noviembre de 2026");
   expect(periodLabel("2026-11-16", "week")).toMatch(/16 de nov de 2026.*22 de nov de 2026/);
@@ -39,10 +39,10 @@ it("cambia la consulta y oculta los puntos anteriores durante la carga y si fall
   await screen.findByRole("region", { name: "Gráfico de Memoria" });
   fireEvent.click(screen.getByRole("combobox"));
   fireEvent.click(screen.getByRole("option", { name: "Mes" }));
-  expect(progress).toHaveBeenLastCalledWith("token", "day", "2026-11-01", "2026-11-20");
+  expect(progress).toHaveBeenLastCalledWith("token", "month", "2026-06-01", "2026-11-20");
   expect(screen.queryByRole("region", { name: "Gráfico de Memoria" })).not.toBeInTheDocument();
   await act(async () => finish([{ category: "Memoria", points: [{ periodStart: "2026-11-01", accuracy: .9, avgDifficultyLevel: 3, sessions: 4 }] }]));
-  expect(screen.getByText(/1 de nov de 2026: 90%/)).toBeInTheDocument();
+  expect(screen.getByText(/noviembre de 2026: 90%/)).toBeInTheDocument();
   fireEvent.click(screen.getByRole("combobox"));
   fireEvent.click(screen.getByRole("option", { name: "Semana" }));
   await act(async () => fail(new Error("falló")));
@@ -78,4 +78,22 @@ it("permite consultar semanas anteriores y bloquea avanzar al futuro", async () 
   fireEvent.click(screen.getByLabelText("Período anterior"));
   expect(query).toHaveBeenLastCalledWith("token", "day", "2026-11-09", "2026-11-15");
   expect(screen.getByLabelText("Período siguiente")).not.toBeDisabled();
+});
+
+it("centra el mes elegido y adapta los meses visibles al ancho sin scroll", async () => {
+  const { ProgressLineChart } = await import("../src/components/ProgressLineChart");
+  let width = 320;
+  vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockImplementation(() => ({
+    width, height: 230, x: 0, y: 0, top: 0, left: 0, right: width, bottom: 230, toJSON() {},
+  }));
+  const { container } = render(<ProgressLineChart name="Memoria" granularity="month" from="2026-06-01" to="2027-04-30" metric="accuracy"
+    points={[{ periodStart: "2026-11-01", accuracy: .8, avgDifficultyLevel: 2, sessions: 1 }]} />);
+  expect(container.querySelector("circle")).toHaveAttribute("cx", "160");
+  expect(container.querySelector("svg")).toHaveAttribute("width", "100%");
+  expect(container.querySelector("svg")).not.toHaveAttribute("style");
+  expect(container.querySelectorAll('text[y="202"]')).toHaveLength(3);
+  width = 1100;
+  act(() => { window.dispatchEvent(new Event("resize")); });
+  expect(container.querySelector("circle")).toHaveAttribute("cx", "550");
+  expect(container.querySelectorAll('text[y="202"]')).toHaveLength(11);
 });

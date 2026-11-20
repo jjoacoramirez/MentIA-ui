@@ -90,7 +90,7 @@ export const ProgressScreen: React.FC = () => {
           <button className={metric === "accuracy" ? "flow-primary" : "flow-secondary"} aria-pressed={metric === "accuracy"} onClick={() => setMetric("accuracy")}>Precisión</button>
           <button className={metric === "difficulty" ? "flow-primary" : "flow-secondary"} aria-pressed={metric === "difficulty"} onClick={() => setMetric("difficulty")}>Dificultad</button>
         </div>
-        <p className="text-xs mt-3">{view === "history" ? "Cada punto resume una semana de lunes a domingo." : "Cada punto resume un día de entrenamiento."} Se usan los ejercicios de sesiones completadas, según la fecha de Argentina. Los días sin actividad quedan sin punto. El período actual se actualiza al completar sesiones.</p>
+        <p className="text-xs mt-3">{view === "history" ? "Cada punto resume una semana de lunes a domingo." : view === "month" ? "Cada punto resume un mes. El mes seleccionado queda en el centro y los meses futuros quedan vacíos." : "Cada punto resume un día de entrenamiento."} Se usan los ejercicios de sesiones completadas, según la fecha de Argentina. Los días sin actividad quedan sin punto. El período actual se actualiza al completar sesiones.</p>
         {evolution.loading && <p className="mt-3">Cargando…</p>}
         {evolution.error && <p role="alert" className="mt-3">{evolution.error}</p>}
         {!evolution.loading && !evolution.error && evolution.data && !evolution.data.length && <p className="my-4">No hay sesiones completadas en este período. Podés consultar períodos anteriores.</p>}

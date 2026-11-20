@@ -13,6 +13,12 @@ export function addDays(iso: string, days: number): string {
   date.setUTCDate(date.getUTCDate() + days);
   return dateIso(date);
 }
+export function addMonths(iso: string, months: number): string {
+  const date = periodDate(iso);
+  date.setUTCDate(1);
+  date.setUTCMonth(date.getUTCMonth() + months);
+  return dateIso(date);
+}
 export function argentinaToday(): string {
   const parts = new Intl.DateTimeFormat("en", {
     timeZone: "America/Argentina/Buenos_Aires", year: "numeric", month: "2-digit", day: "2-digit",
@@ -43,11 +49,9 @@ export function progressPeriod(view: ProgressView, anchor: string) {
   const date = periodDate(anchor);
   const monday = addDays(anchor, 1 - (date.getUTCDay() || 7));
   if (view === "month") {
-    const first = new Date(date);
-    first.setUTCDate(1);
-    const last = new Date(first);
-    last.setUTCMonth(last.getUTCMonth() + 1, 0);
-    return { from: dateIso(first), to: dateIso(last), granularity: "day" as const, label: periodLabel(dateIso(first), "month") };
+    const first = addMonths(anchor, -5);
+    const last = addDays(addMonths(anchor, 6), -1);
+    return { from: first, to: last, granularity: "month" as const, label: `Comparación mensual · ${periodLabel(anchor, "month")}` };
   }
   if (view === "history") {
     return { from: addDays(monday, -77), to: addDays(monday, 6), granularity: "week" as const, label: "Últimas 12 semanas" };
