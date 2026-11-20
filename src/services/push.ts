@@ -130,8 +130,8 @@ export async function testLocalNotification(): Promise<void> {
   await reg.showNotification("MentIA · Prueba en este dispositivo", {
     body: "Esta es una prueba local de las notificaciones de MentIA.",
     tag: "mentia-local-test",
-    icon: "/icons/icon-192.png",
-    badge: "/icons/badge-96.png",
+    icon: "/icons/icon-192.png?v=2",
+    badge: "/icons/badge-96.png?v=2",
     data: { url: "/" },
   });
 }
