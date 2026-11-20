@@ -8,11 +8,13 @@ self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim(
 
 self.addEventListener("push", (event) => {
   event.waitUntil(
-    self.registration.showNotification("MentIA", {
-      body: "Hoy todavía no entrenaste. Con unos minutos alcanzás para mantener tu racha.",
+    self.registration.showNotification("Un momento para tu mente", {
+      body: "Todavía estás a tiempo de entrenar hoy y mantener tu racha.",
       tag: "streak-reminder",
-      icon: "/icons/icon-192.png",
-      badge: "/icons/badge-96.png",
+      // Versionar las URLs permite refrescar íconos antiguos guardados por el navegador.
+      icon: "/icons/icon-192.png?v=2",
+      badge: "/icons/badge-96.png?v=2",
+      actions: [{ action: "train", title: "Entrenar" }],
       data: { url: "/" },
     }),
   );
