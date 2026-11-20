@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ApiError, apiRequest, mentiaApi } from "../services/api";
+import { AdminPushTest } from "../components/AdminPushTest";
 
 interface Report {
   from: string;
@@ -7,9 +8,32 @@ interface Report {
   participants: number;
   activity: { day: string; active: number; started: number; completed: number; abandoned: number }[];
   cohorts: { bucket: number; participants: number; comparable: number; improved: number; meanChange: number | null }[];
-  exercises: { code: string; name: string; category: string; attempts: number; accuracy: number; medianMs: number }[];
+  exercises: { code: string; name: string; category: string; attempts: number; players?: number; avgLevel?: number; accuracy: number; medianMs: number }[];
   options: { code: string; name: string; category: string; categoryName: string }[];
+  // Opcionales: una API más vieja no los manda y el panel sigue funcionando sin esas secciones.
+  overview?: { registered: number; newUsers: number; assessed: number; trained: number; reminderUsers: number; medianSessionSeconds: number | null };
+  signups?: { day: string; users: number }[];
+  hours?: { hour: number; started: number; completed: number }[];
+  ageRanges?: { ageRange: string; users: number; active: number }[];
+  levels?: { category: string; level: number; users: number }[];
+  retention?: { d1Eligible: number; d1Returned: number; d7Eligible: number; d7Returned: number };
 }
+
+/** Barras simples: el alto es proporcional al máximo, y cada barra tiene su valor en el título para quien pase el mouse. */
+function Bars({ items }: { items: { key: string; value: number; title: string }[] }) {
+  const max = Math.max(1, ...items.map(item => item.value));
+  return <div className="flex items-end gap-0.5 h-32" aria-hidden="true">
+    {items.map(item => <div key={item.key} className="flex flex-1 h-full items-end" title={item.title}>
+      <span className={`w-full rounded-t ${item.value ? "bg-brand" : "bg-slate-400/30"}`} style={{ height: item.value ? `${item.value / max * 100}%` : "2px" }} />
+    </div>)}
+  </div>;
+}
+
+const duration = (seconds: number | null | undefined) => {
+  if (seconds == null) return "—";
+  const minutes = Math.floor(seconds / 60);
+  return minutes ? `${minutes} min ${Math.round(seconds % 60)} s` : `${Math.round(seconds)} s`;
+};
 
 const number = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 });
 const signed = new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2, signDisplay: "exceptZero" });
@@ -91,6 +115,15 @@ export function AdminMetricsScreen() {
     const iso = day.toISOString().slice(0, 10);
     return { day: iso, completed: report.activity.find(row => row.day === iso)?.completed ?? 0 };
   }) : [];
+  const signupTimeline = report ? timeline.map(row => ({ day: row.day, users: report.signups?.find(s => s.day === row.day)?.users ?? 0 })) : [];
+  const hourly = Array.from({ length: 24 }, (_, hour) => ({ hour, ...(report?.hours?.find(row => row.hour === hour) ?? { started: 0, completed: 0 }) }));
+  const peakHour = hourly.reduce((best, row) => row.started > best.started ? row : best, hourly[0]);
+  const categoryNames = new Map(categories);
+  const levelsByCategory = [...new Set(report?.levels?.map(row => row.category) ?? [])].map(code => {
+    const rows = report!.levels!.filter(row => row.category === code);
+    const top = Math.max(10, ...rows.map(row => row.level));
+    return { code, name: categoryNames.get(code) ?? code, counts: Array.from({ length: top }, (_, i) => rows.find(row => row.level === i + 1)?.users ?? 0) };
+  });
 
   return <main className="min-h-dvh bg-canvas text-ink px-4 py-6 sm:px-8">
     <div className="mx-auto max-w-6xl space-y-6">
@@ -146,6 +179,76 @@ export function AdminMetricsScreen() {
               <p className="text-xs opacity-75">{note}</p>
             </section>)}
           </div>
+          {report.overview && <section className={card} aria-label="Cuentas">
+            <h2 className="text-xl font-bold">Cuentas</h2>
+            <p className="text-sm opacity-80">Totales de la plataforma, sin cuentas admin. Solo «nuevas» depende del período elegido.</p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+              {[
+                ["Registradas", number.format(report.overview.registered), `${report.overview.newUsers} nuevas en el período`],
+                ["Con evaluación inicial", percent(report.overview.assessed, report.overview.registered), `${report.overview.assessed} de ${report.overview.registered}`],
+                ["Con algún entrenamiento", percent(report.overview.trained, report.overview.registered), `${report.overview.trained} de ${report.overview.registered}`],
+                ["Recordatorio activado", percent(report.overview.reminderUsers, report.overview.registered), `${report.overview.reminderUsers} cuentas`],
+                ["Duración de una sesión", duration(report.overview.medianSessionSeconds), "Mediana en el período"],
+              ].map(([label, value, note]) => <div className="rounded-xl border border-slate-400/25 p-4 space-y-1" key={label}>
+                <h3 className="text-sm font-semibold">{label}</h3>
+                <strong className="block text-2xl text-accent tabular-nums">{value}</strong>
+                <p className="text-xs opacity-75">{note}</p>
+              </div>)}
+            </div>
+          </section>}
+          {report.retention && <section className={card} aria-label="Retención">
+            <h2 className="text-xl font-bold">Quiénes vuelven</h2>
+            <p className="text-sm opacity-80">De quienes completaron su primer entrenamiento en el período, cuántos volvieron a entrenar. Solo cuenta a quien ya tuvo tiempo de volver y no usa los filtros de categoría ni ejercicio.</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[
+                ["Al día siguiente", report.retention.d1Returned, report.retention.d1Eligible],
+                ["Dentro de los 7 días", report.retention.d7Returned, report.retention.d7Eligible],
+              ].map(([label, returned, eligible]) => <div className="rounded-xl border border-slate-400/25 p-4 space-y-1" key={label}>
+                <h3 className="text-sm font-semibold">{label}</h3>
+                <strong className="block text-3xl text-accent tabular-nums">{percent(Number(returned), Number(eligible))}</strong>
+                <p className="text-xs opacity-75">{eligible ? `${returned} de ${eligible} personas` : "Todavía no hay personas que hayan tenido tiempo de volver"}</p>
+              </div>)}
+            </div>
+          </section>}
+          {report.signups && <section className={card}>
+            <h2 className="text-xl font-bold">Altas por día</h2>
+            <Bars items={signupTimeline.map(row => ({ key: row.day, value: row.users, title: `${date(row.day)} · ${row.users}` }))} />
+            <div className="flex justify-between text-xs"><span>{date(report.from)}</span><span>{date(report.to)}</span></div>
+          </section>}
+          {report.hours && <section className={card}>
+            <h2 className="text-xl font-bold">A qué hora entrenan</h2>
+            <p className="text-sm opacity-80">Entrenamientos iniciados por hora del día (hora de Argentina).{peakHour.started > 0 && ` El pico es a las ${peakHour.hour} h.`}</p>
+            <Bars items={hourly.map(row => ({ key: String(row.hour), value: row.started, title: `${row.hour} h · ${row.started} iniciados, ${row.completed} completados` }))} />
+            <div className="flex justify-between text-xs"><span>0 h</span><span>12 h</span><span>23 h</span></div>
+            <details><summary className="cursor-pointer text-accent">Ver detalle por hora</summary>
+              <ul className="mt-2 max-h-48 overflow-auto text-sm">
+                {hourly.filter(row => row.started).map(row => <li key={row.hour}>{row.hour} h · {row.started} iniciados · {row.completed} completados</li>)}
+                {peakHour.started === 0 && <li>Sin entrenamientos con estos filtros.</li>}
+              </ul>
+            </details>
+          </section>}
+          {(report.ageRanges?.length || levelsByCategory.length) ? <div className="grid gap-6 lg:grid-cols-2">
+            {report.ageRanges && report.ageRanges.length > 0 && <section className={card}>
+              <h2 className="text-xl font-bold">Cuentas por rango etario</h2>
+              <div className="overflow-auto"><table className="w-full text-sm">
+                <thead><tr>{["Rango", "Cuentas", "Activas en el período"].map(label => <th key={label} scope="col" className={cell}>{label}</th>)}</tr></thead>
+                <tbody>{report.ageRanges.map(row => <tr key={row.ageRange} className="border-t border-slate-400/25">
+                  <th scope="row" className={cell}>{row.ageRange}</th><td className={cell}>{row.users}</td>
+                  <td className={cell}>{row.active} ({percent(row.active, row.users)})</td>
+                </tr>)}</tbody>
+              </table></div>
+              <p className="text-xs opacity-75">Con pocas cuentas en un rango, los porcentajes son poco representativos.</p>
+            </section>}
+            {levelsByCategory.length > 0 && <section className={card}>
+              <h2 className="text-xl font-bold">Personas por nivel</h2>
+              <p className="text-sm opacity-80">Cuántas están hoy en cada nivel, del 1 en adelante.</p>
+              {levelsByCategory.map(row => <div key={row.code}>
+                <h3 className="text-sm font-semibold">{row.name}</h3>
+                <Bars items={row.counts.map((users, i) => ({ key: String(i + 1), value: users, title: `Nivel ${i + 1} · ${users}` }))} />
+                <div className="flex justify-between text-xs"><span>Nivel 1</span><span>Nivel {row.counts.length}</span></div>
+              </div>)}
+            </section>}
+          </div> : null}
           <section className={card}>
             <h2 className="text-xl font-bold">Cambio de dificultad según días de práctica</h2>
             <p className="text-sm opacity-80">Compara la primera y la última sesión del mismo ejercicio. Cada participante cuenta una vez, con el promedio de sus cambios. La relación es descriptiva.</p>
@@ -181,14 +284,16 @@ export function AdminMetricsScreen() {
             <h2 className="text-xl font-bold">Desempeño por ejercicio</h2>
             {report.exercises.length === 0 ? <p>Sin intentos en entrenamientos completados.</p> :
               <div className="overflow-auto"><table className="w-full text-sm">
-                <thead><tr>{["Ejercicio", "Intentos", "Precisión media", "Tiempo mediano"].map(label => <th key={label} scope="col" className={cell}>{label}</th>)}</tr></thead>
+                <thead><tr>{["Ejercicio", "Jugadores", "Intentos", "Nivel medio", "Precisión media", "Tiempo mediano"].map(label => <th key={label} scope="col" className={cell}>{label}</th>)}</tr></thead>
                 <tbody>{report.exercises.map(row => <tr key={row.code} className="border-t border-slate-400/25">
-                  <th scope="row" className={cell}>{row.name}</th><td className={cell}>{row.attempts}</td>
+                  <th scope="row" className={cell}>{row.name}</th><td className={cell}>{row.players ?? "—"}</td><td className={cell}>{row.attempts}</td>
+                  <td className={cell}>{row.avgLevel == null ? "—" : number.format(row.avgLevel)}</td>
                   <td className={cell}>{percent(row.accuracy, 1)}</td><td className={cell}>{number.format(row.medianMs / 1000)} s</td>
                 </tr>)}</tbody>
               </table></div>}
           </section>
         </>}
+        <AdminPushTest token={token} />
       </>}
     </div>
   </main>;

@@ -1,3 +1,4 @@
+import { InstallAppCard } from "../components/InstallApp";
 import { Zap } from "lucide-react";
 /**
  * @license
@@ -9,6 +10,7 @@ import { useApp } from "../context/AppContext";
 import { useTheme } from "../context/ThemeContext";
 import { categoryName, useJourney } from "../context/JourneyContext";
 import { ApiError } from "../services/api";
+import { ReminderCard } from "../components/ReminderCard";
 
 export const ProfileScreen: React.FC = () => {
   const { logout, minutes, assessed, goals, categories, regenerateRecoveryCode, busy, isAdmin } = useJourney();
@@ -362,6 +364,9 @@ export const ProfileScreen: React.FC = () => {
         <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">{assessed ? "Ya completaste tu evaluación inicial." : "Todavía no realizaste la evaluación inicial. La necesitás para empezar a entrenar."}</p>
         <button className="flow-secondary" onClick={() => setCurrentTab("evaluacion")}>{assessed ? "Repetir evaluación inicial" : "Hacer evaluación inicial"}</button>
       </section>
+
+      <InstallAppCard />
+      <ReminderCard className="mb-4" />
 
       <section className="flow-card mb-4">
         <h3 className="font-space font-bold mb-3">Preferencias y acceso</h3>

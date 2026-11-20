@@ -1,5 +1,8 @@
 import React, { useMemo, useState } from "react";
-import { GameProps, num, seededRandom, strings, useActiveClock, useCountdown } from "./common";
+import { GameProps, num, pickAvoiding, seededRandom, strings, useActiveClock, useCountdown } from "./common";
+import { PhaseBanner, PhaseStage } from "./PhaseBanner";
+
+const GAP_MS = 250;
 
 /**
  * Secuencias (REVERSE_SEQUENCE; AUDITORY_SEQUENCE se muestra visual hasta tener audio).
@@ -15,14 +18,17 @@ export function SequenceGame({ item, paused, onDone }: GameProps) {
   }, [item]);
   const target = useMemo(() => {
     const random = seededRandom(item.seed);
-    return Array.from({ length }, () => random.pick(palette));
+    // Un mismo elemento no se muestra dos veces seguidas (se confundiría con que la pantalla no cambió).
+    const picks: string[] = [];
+    for (let i = 0; i < length; i++) picks.push(pickAvoiding(random, palette, [picks[i - 1]]));
+    return picks;
   }, [item, length, palette]);
   const expected = reverse ? [...target].reverse() : target;
 
   const [shown, setShown] = useState(0);
   const [answer, setAnswer] = useState<string[]>([]);
   const answering = shown >= length;
-  useCountdown(displayMs, !answering, paused, () => setShown((s) => s + 1), shown);
+  const remaining = useCountdown(displayMs, !answering, paused, () => setShown((s) => s + 1), shown);
   const clock = useActiveClock(answering, paused);
 
   function confirm() {
@@ -36,15 +42,23 @@ export function SequenceGame({ item, paused, onDone }: GameProps) {
     });
   }
 
+  // Al final de cada elemento el escenario queda vacío un momento: así se nota cuando el siguiente es igual.
+  const visible = remaining > Math.min(GAP_MS, displayMs / 4);
   if (!answering)
     return (
-      <div className="py-8 text-center" aria-live="polite">
-        <p className="text-sm mb-4">Mirá con atención · {shown + 1} de {length}</p>
-        <span key={shown} className="nback-symbol" aria-label="Elemento de la secuencia">{target[shown]}</span>
-      </div>
+      <PhaseStage phase="study">
+        <PhaseBanner tone="study" label="Mirá con atención" />
+        <div className="py-2 text-center" aria-live="polite">
+          <p className="text-sm mb-2">Elemento {shown + 1} de {length}</p>
+          <div className="nback-stage">
+            {visible && <span key={shown} className="nback-symbol" aria-label="Elemento de la secuencia">{target[shown]}</span>}
+          </div>
+        </div>
+      </PhaseStage>
     );
   return (
-    <>
+    <PhaseStage phase="answer">
+      <PhaseBanner tone="answer" label="Tu turno" />
       <p className="mb-3 text-sm">{reverse ? "Ahora armala al revés: empezá por el último que viste." : "Ahora repetila en el mismo orden."}</p>
       <div className="grid gap-2 mb-5" style={{ gridTemplateColumns: `repeat(${Math.min(length, 6)}, minmax(0, 1fr))` }} aria-label="Tu respuesta">
         {Array.from({ length }, (_, i) => (
@@ -60,6 +74,6 @@ export function SequenceGame({ item, paused, onDone }: GameProps) {
       </div>
       <button className="flow-link my-4" disabled={!answer.length} onClick={() => setAnswer((a) => a.slice(0, -1))}>Deshacer</button>
       <button className="flow-primary" disabled={answer.length !== length || paused} onClick={confirm}>Confirmar respuesta</button>
-    </>
+    </PhaseStage>
   );
 }

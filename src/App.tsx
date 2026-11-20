@@ -1,3 +1,4 @@
+import { InstallAppProvider } from "./components/InstallApp";
 import { AdminMetricsScreen } from "./screens/AdminMetricsScreen";
 import { LibraryScreen } from "./screens/LibraryScreen";
 /**
@@ -151,7 +152,7 @@ export default function App() {
     <ThemeProvider>
       <AppProvider>
         <JourneyProvider>
-          <MainLayout />
+          <InstallAppProvider><MainLayout /></InstallAppProvider>
         </JourneyProvider>
       </AppProvider>
     </ThemeProvider>

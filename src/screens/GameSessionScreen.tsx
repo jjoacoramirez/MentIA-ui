@@ -4,6 +4,7 @@ import { useApp } from "../context/AppContext";
 import { Pause, X, Brain, CheckCircle2 } from "lucide-react";
 import { exerciseNames, Game, levelHint, type GameOutcome } from "../games";
 import { ApiError } from "../services/api";
+import { EncouragementNote } from "../components/EncouragementNote";
 
 /**
  * Ejecuta una sesión del servidor: muestra cada ítem con su mecánica, registra el intento y al final la cierra.
@@ -87,6 +88,7 @@ export const GameSessionScreen: React.FC = () => {
               <h2 className="text-lg font-bold mb-3">{exerciseNames[item.exerciseType]}</h2>
               <p className="mb-5">{item.instructions}</p>
               {levelHint(item) && <p className="mb-5 font-semibold text-accent">{levelHint(item)}</p>}
+              <EncouragementNote seed={done} className="mb-5" />
               <button className="flow-primary" onClick={() => setPhase("play")}>Comenzar actividad</button>
             </>
           )}
@@ -98,6 +100,9 @@ export const GameSessionScreen: React.FC = () => {
             <div aria-live="polite">
               <h2 className="text-lg font-bold mb-3">{last.isCorrect ? "¡Muy bien!" : "Seguí practicando"}</h2>
               <p className="mb-5">Precisión de esta actividad: {Math.round(last.accuracy * 100)}%.</p>
+              {!last.isCorrect && (
+                <EncouragementNote className="mb-5" text="Equivocarte es normal: así se aprende. En la próxima actividad vas a tener otra oportunidad." />
+              )}
               {error ? (
                 <>
                   <p role="alert" className="text-rose-600 dark:text-rose-300 mb-4">{error}</p>

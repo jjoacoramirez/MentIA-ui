@@ -1,3 +1,5 @@
+import { ProgressLineChart, type ProgressMetric } from "../components/ProgressLineChart";
+import { argentinaToday, movePeriod, progressPeriod, periodLabel, type ProgressView } from "../utils/progressPeriods";
 import { Select } from "../components/Select";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
@@ -9,11 +11,15 @@ import { mentiaApi } from "../services/api";
 export const ProgressScreen: React.FC = () => {
   const { setCurrentTab } = useApp();
   const { summary, gamification, categories } = useJourney();
-  const [granularity, setGranularity] = useState<"week" | "month">("week");
+  const [view, setView] = useState<ProgressView>("week");
+  const [anchor, setAnchor] = useState(argentinaToday);
+  const [metric, setMetric] = useState<ProgressMetric>("accuracy");
+  const today = argentinaToday();
+  const period = progressPeriod(view, view === "history" ? today : anchor);
+  const queryEnd = period.to < today ? period.to : today;
+  const currentPeriod = progressPeriod(view, today);
   const performance = useApiData(mentiaApi.performance);
-  const evolution = useApiData((t) => mentiaApi.categoryProgress(t, granularity), [granularity]);
-  const periodLabel = (iso: string) =>
-    new Date(`${iso}T12:00:00`).toLocaleDateString("es-AR", granularity === "week" ? { day: "numeric", month: "short" } : { month: "short", year: "2-digit" });
+  const evolution = useApiData((t) => mentiaApi.categoryProgress(t, period.granularity, period.from, queryEnd), [period.granularity, period.from, queryEnd]);
 
   return (
     <Panel title="Tu progreso">
@@ -65,32 +71,39 @@ export const ProgressScreen: React.FC = () => {
       <section className="flow-card mb-4">
         <h2 className="font-bold text-lg mb-3">Evolución por área</h2>
         <label>
-          Agrupar por
-          <Select value={granularity} onChange={(e) => setGranularity(e.target.value as "week" | "month")}>
+          Período
+          <Select value={view} onChange={(e) => { setView(e.target.value as ProgressView); setAnchor(today); }}>
             <option value="week">Semana</option>
             <option value="month">Mes</option>
+            <option value="history">Histórico</option>
           </Select>
         </label>
+        <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
+          <strong className="text-sm" aria-live="polite">{period.label}</strong>
+          {view !== "history" && <div className="flex gap-3">
+            <button className="flow-link" aria-label="Período anterior" onClick={() => setAnchor(movePeriod(view, anchor, -1))}>Anterior</button>
+            <button className="flow-link disabled:opacity-40" aria-label="Período siguiente" disabled={period.from >= currentPeriod.from}
+              onClick={() => setAnchor(movePeriod(view, anchor, 1))}>Siguiente</button>
+          </div>}
+        </div>
+        <div className="flex gap-2 my-4" role="group" aria-label="Dato del gráfico">
+          <button className={metric === "accuracy" ? "flow-primary" : "flow-secondary"} aria-pressed={metric === "accuracy"} onClick={() => setMetric("accuracy")}>Precisión</button>
+          <button className={metric === "difficulty" ? "flow-primary" : "flow-secondary"} aria-pressed={metric === "difficulty"} onClick={() => setMetric("difficulty")}>Dificultad</button>
+        </div>
+        <p className="text-xs mt-3">{view === "history" ? "Cada punto resume una semana de lunes a domingo." : "Cada punto resume un día de entrenamiento."} Se usan los ejercicios de sesiones completadas, según la fecha de Argentina. Los días sin actividad quedan sin punto. El período actual se actualiza al completar sesiones.</p>
         {evolution.loading && <p className="mt-3">Cargando…</p>}
-        {evolution.data && !evolution.data.length && <p className="my-4">Completá una sesión para ver tu evolución.</p>}
-        {evolution.data?.map((c) => (
+        {evolution.error && <p role="alert" className="mt-3">{evolution.error}</p>}
+        {!evolution.loading && !evolution.error && evolution.data && !evolution.data.length && <p className="my-4">No hay sesiones completadas en este período. Podés consultar períodos anteriores.</p>}
+        {!evolution.loading && !evolution.error && evolution.data?.map((c) => (
           <div key={c.category} className="mt-5">
             <h3 className="font-bold text-sm mb-2">{categoryName(categories, c.category)}</h3>
-            <div className="flex items-end gap-1 h-24" role="img" aria-label={`Precisión por período en ${categoryName(categories, c.category)}`}>
-              {c.points.map((p) => (
-                <div key={p.periodStart} className="flex-1 flex flex-col justify-end h-full"
-                  title={`${periodLabel(p.periodStart)}: ${Math.round(p.accuracy * 100)}% · nivel ${p.avgDifficultyLevel.toFixed(1)}`}>
-                  <div className="rounded-t-md bg-brand min-h-1" style={{ height: `${p.accuracy * 100}%` }} />
-                  <span className="text-[9px] text-center mt-1">{periodLabel(p.periodStart)}</span>
-                </div>
-              ))}
-            </div>
+            <ProgressLineChart points={c.points} name={categoryName(categories, c.category)} granularity={period.granularity} from={period.from} to={period.to} metric={metric} />
             <details className="mt-2">
               <summary className="flow-link">Ver valores</summary>
               <ul className="text-sm mt-2 space-y-1">
                 {c.points.map((p) => (
                   <li key={p.periodStart}>
-                    {periodLabel(p.periodStart)}: {Math.round(p.accuracy * 100)}% de precisión · nivel promedio {p.avgDifficultyLevel.toFixed(1)} · {p.sessions} {p.sessions === 1 ? "sesión" : "sesiones"}
+                    {periodLabel(p.periodStart, period.granularity)}: {Math.round(p.accuracy * 100)}% de precisión · dificultad promedio {p.avgDifficultyLevel.toFixed(1)} · {p.sessions} {p.sessions === 1 ? "sesión" : "sesiones"}
                   </li>
                 ))}
               </ul>

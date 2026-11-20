@@ -16,6 +16,7 @@ import {
   type SessionSummary,
 } from "../services/api";
 import type { GameOutcome } from "../games";
+import { detachReminder, resyncReminder } from "../services/push";
 import { clearAuth, loadAuth, loadDoneItems, saveAuth, saveDoneItems, type StoredAuth } from "./authStorage";
 
 interface Journey {
@@ -135,6 +136,11 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Con los recordatorios ya elegidos, este navegador se vuelve a vincular a la cuenta que inicia sesión.
+  useEffect(() => {
+    if (auth) void resyncReminder(auth.token, auth.username).catch(() => undefined);
+  }, [auth?.token, auth?.username]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Los datos que muestran Inicio y Perfil salen del servidor.
   useEffect(() => {
     if (!auth) return;
@@ -183,7 +189,11 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
 
   async function logout() {
     const t = tokenRef.current;
-    if (t) await mentiaApi.logout(t).catch(() => undefined);
+    if (t) {
+      // El navegador deja de estar atado a esta cuenta: así otra persona que use el dispositivo no recibe sus avisos.
+      await detachReminder(t);
+      await mentiaApi.logout(t).catch(() => undefined);
+    }
     reset();
     setCurrentTab("landing");
   }

@@ -43,6 +43,31 @@ export function seededRandom(seed: number) {
   };
 }
 
+type Random = ReturnType<typeof seededRandom>;
+
+/**
+ * `rounds` posiciones de 0 a `count - 1`, sin repetir hasta haber usado todas y sin que dos rondas seguidas caigan en
+ * el mismo lugar (aunque `count` sea menor a `rounds`, y también al empezar una vuelta nueva).
+ */
+export function spreadPicks(random: Random, count: number, rounds: number): number[] {
+  const picks: number[] = [];
+  let bag: number[] = [];
+  while (picks.length < rounds) {
+    if (bag.length === 0) {
+      bag = random.shuffle(Array.from({ length: count }, (_, i) => i));
+      if (count > 1 && bag[0] === picks[picks.length - 1]) bag.push(bag.shift()!);
+    }
+    picks.push(bag.shift()!);
+  }
+  return picks;
+}
+
+/** Elige al azar uno de `pool` que no esté en `avoid`; si no queda ninguno, elige cualquiera. */
+export function pickAvoiding<T>(random: Random, pool: readonly T[], avoid: readonly (T | undefined)[]): T {
+  const allowed = pool.filter((item) => !avoid.includes(item));
+  return random.pick(allowed.length ? allowed : pool);
+}
+
 export const num = (value: unknown, fallback: number) =>
   typeof value === "number" && Number.isFinite(value) ? value : fallback;
 export const strings = (value: unknown): string[] =>

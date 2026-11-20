@@ -193,6 +193,9 @@ export interface ConsistencyReport {
   groups: ConsistencyGroup[];
 }
 
+export interface PushConfig { enabled: boolean; publicKey: string | null }
+export interface TestPushResult { devices: number; sent: number; removed: number; failed: number }
+
 // ---- Operaciones ----
 
 const json = (body: unknown) => JSON.stringify(body);
@@ -247,10 +250,19 @@ export const mentiaApi = {
     apiRequest<SessionHistoryPage>(`/sessions?page=${page}&size=${size}`, {}, token),
 
   progressSummary: (token: string) => apiRequest<ProgressSummary>("/progress/summary", {}, token),
-  categoryProgress: (token: string, granularity: "week" | "month" = "week") =>
-    apiRequest<CategoryProgress[]>(`/progress/categories?granularity=${granularity}`, {}, token),
+  categoryProgress: (token: string, granularity: "day" | "week" | "month" = "week", from?: string, to?: string) =>
+    apiRequest<CategoryProgress[]>(`/progress/categories?${new URLSearchParams({ granularity, ...(from ? { from } : {}), ...(to ? { to } : {}) })}`, {}, token),
   gamification: (token: string) => apiRequest<GamificationState>("/gamification/me", {}, token),
   achievements: (token: string) => apiRequest<Achievement[]>("/achievements", {}, token),
+  /** Recordatorios de racha por push: si el servidor los tiene habilitados y la clave pública para suscribirse. */
+  pushConfig: (token: string) => apiRequest<PushConfig>("/notifications/push-config", {}, token),
+  subscribePush: (token: string, endpoint: string) =>
+    apiRequest<void>("/notifications/push-subscription", { method: "PUT", body: json({ endpoint }) }, token),
+  unsubscribePush: (token: string, endpoint: string) =>
+    apiRequest<void>("/notifications/push-subscription", { method: "DELETE", body: json({ endpoint }) }, token),
+  /** Solo ADMIN (debug): manda ya el aviso de recordatorio a los dispositivos de una cuenta. */
+  sendTestPush: (token: string, username: string) =>
+    apiRequest<TestPushResult>("/admin/notifications/test", { method: "POST", body: json({ username }) }, token),
   /** Solo ADMIN: evolución del desempeño según la constancia, en agregados por grupo. */
   consistencyReport: (token: string) => apiRequest<ConsistencyReport>("/admin/metrics/consistency", {}, token),
 };
