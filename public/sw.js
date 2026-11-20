@@ -11,6 +11,8 @@ self.addEventListener("push", (event) => {
     self.registration.showNotification("MentIA", {
       body: "Hoy todavía no entrenaste. Con unos minutos alcanzás para mantener tu racha.",
       tag: "streak-reminder",
+      icon: "/icons/icon-192.png",
+      badge: "/icons/badge-96.png",
       data: { url: "/" },
     }),
   );

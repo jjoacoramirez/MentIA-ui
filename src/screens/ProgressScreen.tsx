@@ -1,3 +1,5 @@
+import { ProgressLineChart } from "../components/ProgressLineChart";
+import { periodLabel } from "../utils/progressPeriods";
 import { Select } from "../components/Select";
 import React, { useState } from "react";
 import { useApp } from "../context/AppContext";
@@ -12,8 +14,6 @@ export const ProgressScreen: React.FC = () => {
   const [granularity, setGranularity] = useState<"week" | "month">("week");
   const performance = useApiData(mentiaApi.performance);
   const evolution = useApiData((t) => mentiaApi.categoryProgress(t, granularity), [granularity]);
-  const periodLabel = (iso: string) =>
-    new Date(`${iso}T12:00:00`).toLocaleDateString("es-AR", granularity === "week" ? { day: "numeric", month: "short" } : { month: "short", year: "2-digit" });
 
   return (
     <Panel title="Tu progreso">
@@ -72,25 +72,19 @@ export const ProgressScreen: React.FC = () => {
           </Select>
         </label>
         {evolution.loading && <p className="mt-3">Cargando…</p>}
-        {evolution.data && !evolution.data.length && <p className="my-4">Completá una sesión para ver tu evolución.</p>}
-        {evolution.data?.map((c) => (
+        <p className="text-xs mt-3">{granularity === "week" ? "Últimas 12 semanas, agrupadas de lunes a domingo." : "Últimos 6 meses, agrupados por mes calendario."} Cada punto muestra la precisión promedio de las sesiones completadas. El período actual puede estar incompleto. Se muestran los períodos con actividad.</p>
+        {evolution.error && <p role="alert" className="mt-3">{evolution.error}</p>}
+        {!evolution.loading && !evolution.error && evolution.data && !evolution.data.length && <p className="my-4">Completá una sesión para ver tu evolución.</p>}
+        {!evolution.loading && !evolution.error && evolution.data?.map((c) => (
           <div key={c.category} className="mt-5">
             <h3 className="font-bold text-sm mb-2">{categoryName(categories, c.category)}</h3>
-            <div className="flex items-end gap-1 h-24" role="img" aria-label={`Precisión por período en ${categoryName(categories, c.category)}`}>
-              {c.points.map((p) => (
-                <div key={p.periodStart} className="flex-1 flex flex-col justify-end h-full"
-                  title={`${periodLabel(p.periodStart)}: ${Math.round(p.accuracy * 100)}% · nivel ${p.avgDifficultyLevel.toFixed(1)}`}>
-                  <div className="rounded-t-md bg-brand min-h-1" style={{ height: `${p.accuracy * 100}%` }} />
-                  <span className="text-[9px] text-center mt-1">{periodLabel(p.periodStart)}</span>
-                </div>
-              ))}
-            </div>
+            <ProgressLineChart points={c.points} name={categoryName(categories, c.category)} granularity={granularity} />
             <details className="mt-2">
               <summary className="flow-link">Ver valores</summary>
               <ul className="text-sm mt-2 space-y-1">
                 {c.points.map((p) => (
                   <li key={p.periodStart}>
-                    {periodLabel(p.periodStart)}: {Math.round(p.accuracy * 100)}% de precisión · nivel promedio {p.avgDifficultyLevel.toFixed(1)} · {p.sessions} {p.sessions === 1 ? "sesión" : "sesiones"}
+                    {periodLabel(p.periodStart, granularity)}: {Math.round(p.accuracy * 100)}% de precisión · nivel promedio {p.avgDifficultyLevel.toFixed(1)} · {p.sessions} {p.sessions === 1 ? "sesión" : "sesiones"}
                   </li>
                 ))}
               </ul>
