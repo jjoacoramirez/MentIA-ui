@@ -4,6 +4,7 @@ import {
   ApiError,
   mentiaApi,
   setUnauthorizedHandler,
+  setReplacementTokenHandler,
   type AgeRange,
   type Category,
   type GamificationState,
@@ -17,7 +18,7 @@ import {
 } from "../services/api";
 import type { GameOutcome } from "../games";
 import { detachReminder, resyncReminder } from "../services/push";
-import { clearAuth, loadAuth, loadDoneItems, saveAuth, saveDoneItems, type StoredAuth } from "./authStorage";
+import { clearAuth, loadAuth, loadDoneItems, saveAuth, saveDoneItems, shouldRenewAuth, type StoredAuth } from "./authStorage";
 
 interface Journey {
   /** false mientras se restaura una sesión guardada al recargar. */
@@ -83,9 +84,18 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
   const token = auth?.token ?? null;
   const tokenRef = useRef(token);
   tokenRef.current = token;
+  const authRef = useRef(auth);
+  authRef.current = auth;
+  const renewing = useRef<Promise<void> | null>(null);
+  const replaced = useRef(new Set<string>());
+  const loggingOut = useRef(false);
+  const restorePending = useRef(!!auth);
 
   const reset = useCallback(() => {
     clearAuth();
+    tokenRef.current = null;
+    authRef.current = null;
+    replaced.current.clear();
     setAuth(null);
     setProfile(null);
     setGamification(null);
@@ -96,12 +106,76 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    setUnauthorizedHandler(() => {
+    setUnauthorizedHandler((failedToken) => {
+      if (failedToken !== tokenRef.current) return;
       reset();
       setNotice("Tu sesión se cerró o venció. Ingresá de nuevo para continuar.");
       setCurrentTab("ingreso");
     });
-    return () => setUnauthorizedHandler(null);
+    setReplacementTokenHandler(async (oldToken) => {
+      await renewing.current?.catch(() => undefined);
+      const stored = loadAuth();
+      if (stored && stored.username === authRef.current?.username && stored.token !== oldToken) {
+        replaced.current.add(oldToken);
+        authRef.current = stored;
+        tokenRef.current = stored.token;
+        setAuth(stored);
+      }
+      return replaced.current.has(oldToken) ? tokenRef.current : null;
+    });
+    return () => { setUnauthorizedHandler(null); setReplacementTokenHandler(null); };
+  }, [reset, setCurrentTab]);
+
+  const renewAccess = useCallback(async () => {
+    if (loggingOut.current) return;
+    if (renewing.current) return renewing.current;
+    const previous = authRef.current;
+    if (!previous || !shouldRenewAuth(previous)) return;
+    const renew = async () => {
+      const stored = loadAuth();
+      if (stored?.token !== previous.token) {
+        if (stored?.username === previous.username && tokenRef.current === previous.token) {
+          replaced.current.add(previous.token);
+          authRef.current = stored;
+          tokenRef.current = stored.token;
+          setAuth(stored);
+        }
+        return;
+      }
+      const response = await mentiaApi.refreshSession(previous.token);
+      if (tokenRef.current !== previous.token) return;
+      const next = { ...previous, token: response.accessToken, role: response.role,
+        renewedAt: Date.now(), expiresAt: Date.now() + response.expiresIn * 1000 };
+      replaced.current.add(previous.token);
+      saveAuth(next);
+      authRef.current = next;
+      tokenRef.current = next.token;
+      setAuth(next);
+    };
+    // Una sola renovación por navegador, aunque MentIA esté abierta en varias pestañas.
+    const request = navigator.locks ? navigator.locks.request("mentia-session-renewal", renew) : renew();
+    renewing.current = request;
+    try { await request; } finally { renewing.current = null; }
+  }, []);
+
+  useEffect(() => {
+    const sync = (event: StorageEvent) => {
+      if (event.key !== "mentia_auth_v1" && event.key !== null) return;
+      const stored = loadAuth();
+      if (stored?.token === tokenRef.current) return;
+      if (!stored) { reset(); setCurrentTab("landing"); return; }
+      // Una cuenta diferente debe cargar sus propios datos desde cero.
+      if (authRef.current?.username !== stored.username) {
+        window.location.reload();
+        return;
+      }
+      if (tokenRef.current) replaced.current.add(tokenRef.current);
+      authRef.current = stored;
+      tokenRef.current = stored.token;
+      setAuth(stored);
+    };
+    window.addEventListener("storage", sync);
+    return () => window.removeEventListener("storage", sync);
   }, [reset, setCurrentTab]);
 
   const refreshStats = useCallback(async () => {
@@ -128,18 +202,57 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
   // Al recargar con una sesión guardada, se restaura el perfil y se vuelve al inicio.
   useEffect(() => {
     if (!auth) return;
-    loadAll(auth.token)
-      .then((p) => setCurrentTab(!p.onboardingCompleted ? "configuracion" : "inicio"))
-      .catch(() => reset())
+    renewAccess().then(() => tokenRef.current ? loadAll(tokenRef.current) : null)
+      .then((p) => {
+        if (p && tokenRef.current) {
+          restorePending.current = false;
+          setCurrentTab(!p.onboardingCompleted ? "configuracion" : "inicio");
+        }
+      })
+      .catch((error) => {
+        // Un fallo de red/servidor no equivale a un token inválido ni borra el acceso guardado.
+        if (tokenRef.current && !(error instanceof ApiError && error.status === 401)) {
+          setNotice("No pudimos cargar tus datos. Tu sesión sigue guardada; reintentaremos al recuperar la conexión.");
+          setCurrentTab("inicio");
+        }
+      })
       .finally(() => setReady(true));
     // Solo al montar.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!ready || !auth) return;
+    const resume = async () => {
+      if (document.hidden || loggingOut.current) return;
+      try {
+        await renewAccess();
+        const t = tokenRef.current;
+        if (t && (restorePending.current || !profile)) {
+          const p = await loadAll(t);
+          if (t !== tokenRef.current) return;
+          restorePending.current = false;
+          setNotice("");
+          setCurrentTab(!p.onboardingCompleted ? "configuracion" : "inicio");
+        }
+      } catch { /* Se vuelve a intentar; los 401 se gestionan en el cliente de API. */ }
+    };
+    window.addEventListener("online", resume);
+    window.addEventListener("focus", resume);
+    document.addEventListener("visibilitychange", resume);
+    const interval = window.setInterval(resume, 15 * 60 * 1000);
+    return () => {
+      window.removeEventListener("online", resume);
+      window.removeEventListener("focus", resume);
+      document.removeEventListener("visibilitychange", resume);
+      window.clearInterval(interval);
+    };
+  }, [ready, auth?.token, profile, renewAccess, loadAll, setCurrentTab]);
+
   // Con los recordatorios ya elegidos, este navegador se vuelve a vincular a la cuenta que inicia sesión.
   useEffect(() => {
-    if (auth) void resyncReminder(auth.token, auth.username).catch(() => undefined);
-  }, [auth?.token, auth?.username]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (ready && auth) void resyncReminder(auth.token, auth.username).catch(() => undefined);
+  }, [ready, auth?.token, auth?.username]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Los datos que muestran Inicio y Perfil salen del servidor.
   useEffect(() => {
@@ -178,16 +291,21 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
   async function login(alias: string, password: string) {
     await run(async () => {
       const response = await mentiaApi.login(alias, password);
-      const stored = { token: response.accessToken, username: alias.toLowerCase(), role: response.role };
+      const stored = { token: response.accessToken, username: alias.toLowerCase(), role: response.role,
+        renewedAt: Date.now(), expiresAt: Date.now() + response.expiresIn * 1000 };
       saveAuth(stored);
       tokenRef.current = stored.token;
+      authRef.current = stored;
       setAuth(stored);
       const p = await loadAll(stored.token);
+      restorePending.current = false;
       setCurrentTab(!p.onboardingCompleted ? "configuracion" : "inicio");
     });
   }
 
   async function logout() {
+    loggingOut.current = true;
+    await renewing.current?.catch(() => undefined);
     const t = tokenRef.current;
     if (t) {
       // El navegador deja de estar atado a esta cuenta: así otra persona que use el dispositivo no recibe sus avisos.
@@ -195,6 +313,7 @@ export function JourneyProvider({ children }: { children: React.ReactNode }) {
       await mentiaApi.logout(t).catch(() => undefined);
     }
     reset();
+    loggingOut.current = false;
     setCurrentTab("landing");
   }
 

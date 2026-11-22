@@ -16,12 +16,14 @@ export class ApiError extends Error {
 }
 
 /** Se invoca ante un 401 en una request autenticada (token vencido o revocado). */
-let onUnauthorized: (() => void) | null = null;
-export function setUnauthorizedHandler(handler: (() => void) | null) {
+let onUnauthorized: ((token: string) => void) | null = null;
+export function setUnauthorizedHandler(handler: ((token: string) => void) | null) {
   onUnauthorized = handler;
 }
+let replacementToken: ((token: string) => Promise<string | null>) | null = null;
+export function setReplacementTokenHandler(handler: typeof replacementToken) { replacementToken = handler; }
 
-export async function apiRequest<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
+export async function apiRequest<T>(path: string, options: RequestInit = {}, token?: string, retried = false): Promise<T> {
   const headers = new Headers(options.headers);
   if (options.body) headers.set("Content-Type", "application/json");
   if (token) headers.set("Authorization", `Bearer ${token}`);
@@ -33,7 +35,14 @@ export async function apiRequest<T>(path: string, options: RequestInit = {}, tok
   }
   if (!response.ok) {
     const problem = await response.json().catch(() => ({}));
-    if (response.status === 401 && token) onUnauthorized?.();
+    if (response.status === 401 && token) {
+      // Una request que salió justo antes de renovar puede traer el token anterior.
+      if (!retried && path !== "/auth/refresh") {
+        const next = await replacementToken?.(token);
+        if (next && next !== token) return apiRequest<T>(path, options, next, true);
+      }
+      onUnauthorized?.(token);
+    }
     throw new ApiError(
       response.status,
       problem.code || "HTTP_ERROR",
@@ -209,6 +218,7 @@ export const mentiaApi = {
   login: (username: string, password: string) =>
     apiRequest<TokenResponse>("/auth/login", { method: "POST", body: json({ username, password }) }),
   logout: (token: string) => apiRequest<void>("/auth/logout", { method: "POST" }, token),
+  refreshSession: (token: string) => apiRequest<TokenResponse>("/auth/refresh", { method: "POST" }, token),
   resetPassword: (username: string, recoveryCode: string, newPassword: string) =>
     apiRequest<{ recoveryCode: string }>("/auth/recovery/reset", {
       method: "POST",

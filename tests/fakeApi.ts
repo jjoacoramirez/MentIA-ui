@@ -68,7 +68,7 @@ export function installFakeApi() {
       if (!found || found.password !== body.password) return problem(401, "INVALID_CREDENTIALS", "El nombre de usuario o la contraseña no son correctos.");
       const token = `token-${++counter}`;
       tokens.set(token, body.username);
-      return ok({ accessToken: token, tokenType: "Bearer", expiresIn: 86400, role: found.role });
+      return ok({ accessToken: token, tokenType: "Bearer", expiresIn: 2592000, role: found.role });
     }
     if (method === "POST" && path === "/auth/recovery/reset") {
       const found = users.get(body.username);
@@ -79,6 +79,12 @@ export function installFakeApi() {
     if (!user || !username) return problem(401, "UNAUTHORIZED", "Necesitás iniciar sesión para acceder a este recurso.");
 
     if (method === "POST" && path === "/auth/logout") { tokens.delete(auth!); return ok(null, 204); }
+    if (method === "POST" && path === "/auth/refresh") {
+      const token = `token-${++counter}`;
+      tokens.set(token, username);
+      tokens.delete(auth!);
+      return ok({ accessToken: token, tokenType: "Bearer", expiresIn: 2592000, role: user.role });
+    }
     if (method === "POST" && path === "/auth/recovery/regenerate") {
       if (body.password !== user.password) return problem(401, "INVALID_CREDENTIALS", "La contraseña no es correcta.");
       return ok({ recoveryCode: "NUEVO-CODIG-OPARA-PROBA" });

@@ -46,7 +46,7 @@ Son una primera versión funcional para validar con el equipo (mecánica, tiempo
 
 ## Sesión y datos guardados
 
-El token, el alias y el rol se guardan en `sessionStorage`: sobreviven a una recarga y se borran al cerrar la pestaña o la sesión. No se guardan contraseñas ni códigos de recuperación. Si el servidor responde 401 (token vencido o revocado), se vuelve al ingreso. En `localStorage` solo quedan el tema y la disposición de tarjetas de Inicio.
+El token, el alias y el rol se guardan en `localStorage` para conservar el acceso al cerrar la app o el navegador. Las sesiones anteriores de `sessionStorage` se migran al abrir la app. No se guardan contraseñas ni códigos de recuperación. Mientras se usa la app, la sesión se renueva como máximo una vez por día mediante `POST /auth/refresh`; el backend entrega 30 días de vigencia por defecto. Si se vence o revoca, se vuelve al ingreso. Un error de conexión no borra el acceso. Cerrar sesión manualmente borra el acceso y desvincula los avisos de ese dispositivo; el vencimiento automático no elimina las suscripciones de notificaciones.
 
 ## Paneles de administración
 
