@@ -57,6 +57,45 @@ async function playSession() {
 }
 
 describe("Recorrido contra la API", () => {
+  it("renueva al reabrir una sesión usada hace más de un día sin volver a pedir contraseña", async () => {
+    api.users.set("persistente", {
+      password: PASSWORD, role: "USER", hasLevels: true,
+      profile: { ageRange: "18-24", sessionMinutes: 10, goals: [], onboardingCompleted: true, assessmentCompleted: true },
+    });
+    await login("persistente");
+    await screen.findByText("Hola, persistente");
+    cleanup();
+    const previous = JSON.parse(localStorage.getItem("mentia_auth_v1")!);
+    localStorage.setItem("mentia_auth_v1", JSON.stringify({ ...previous, renewedAt: Date.now() - 2 * 864e5 }));
+    sessionStorage.clear();
+    render(<App />);
+    await screen.findByText("Hola, persistente");
+    const renewed = JSON.parse(localStorage.getItem("mentia_auth_v1")!);
+    expect(renewed.token).not.toBe(previous.token);
+    expect(api.calls.filter((call) => call.path === "/auth/refresh")).toHaveLength(1);
+    expect(api.calls.filter((call) => call.path === "/auth/login")).toHaveLength(1);
+    expect(api.calls.some((call) => call.method === "DELETE" && call.path === "/notifications/push-subscription")).toBe(false);
+  });
+
+  it("una caída de red no borra el acceso ni la preferencia de avisos y reintenta al reconectar", async () => {
+    api.users.set("sin_red", {
+      password: PASSWORD, role: "USER", hasLevels: true,
+      profile: { ageRange: "18-24", sessionMinutes: 10, goals: [], onboardingCompleted: true, assessmentCompleted: true },
+    });
+    await login("sin_red");
+    await screen.findByText("Hola, sin_red");
+    cleanup();
+    const saved = localStorage.getItem("mentia_auth_v1");
+    localStorage.setItem("mentia.push.enabled.sin_red", "1");
+    api.fetchMock.mockImplementationOnce(async () => { throw new TypeError("Sin conexión"); });
+    render(<App />);
+    await screen.findByText(/Tu sesión sigue guardada/);
+    expect(localStorage.getItem("mentia_auth_v1")).toBe(saved);
+    expect(localStorage.getItem("mentia.push.enabled.sin_red")).toBe("1");
+    fireEvent(window, new Event("online"));
+    await waitFor(() => expect(screen.queryByText(/Tu sesión sigue guardada/)).not.toBeInTheDocument());
+    expect(screen.getByText("Hola, sin_red")).toBeInTheDocument();
+  });
   it("registra, configura, hace la evaluación y muestra resultado, historial y logros", async () => {
     await register();
     fireEvent.click(screen.getByRole("combobox", { name: "Duración preferida" }));
@@ -90,7 +129,7 @@ describe("Recorrido contra la API", () => {
     expect(screen.getByText("15 min / sesión")).toBeInTheDocument();
     click("Cerrar sesión en este dispositivo");
     expect(await screen.findByRole("button", { name: "Comenzar" })).toBeInTheDocument();
-    expect(sessionStorage.getItem("mentia_auth_v1")).toBeNull();
+    expect(localStorage.getItem("mentia_auth_v1")).toBeNull();
     expect(JSON.stringify({ ...localStorage, ...sessionStorage })).not.toContain(PASSWORD);
     expect(api.calls.some((c) => c.path === "/auth/logout")).toBe(true);
   });
@@ -209,7 +248,7 @@ describe("Recorrido contra la API", () => {
     expect(await screen.findByText("Hola, olvido")).toBeInTheDocument();
   });
 
-  it("al recargar restaura la sesión de la pestaña, y si el token venció vuelve al ingreso", async () => {
+  it("al reabrir restaura la sesión persistente, y si el token venció vuelve al ingreso", async () => {
     api.users.set("recarga", {
       password: PASSWORD, role: "USER", hasLevels: true,
       profile: { ageRange: "18-24", sessionMinutes: 20, goals: ["ATENCION"], onboardingCompleted: true, assessmentCompleted: true },
@@ -217,9 +256,10 @@ describe("Recorrido contra la API", () => {
     await login("recarga");
     await screen.findByText("Hola, recarga");
 
-    // Recargar: se desmonta y se vuelve a montar con lo guardado en sessionStorage.
-    expect(sessionStorage.getItem("mentia_auth_v1")).not.toBeNull();
+    // Reabrir: cerrar la pestaña borra sessionStorage pero conserva la sesión del dispositivo.
+    expect(localStorage.getItem("mentia_auth_v1")).not.toBeNull();
     cleanup();
+    sessionStorage.clear();
     render(<App />);
     expect(await screen.findByText("Hola, recarga")).toBeInTheDocument();
 
@@ -228,6 +268,6 @@ describe("Recorrido contra la API", () => {
       new Response(JSON.stringify({ status: 401, code: "UNAUTHORIZED", title: "No autenticado" }), { status: 401 }));
     click("Progreso");
     expect(await screen.findByText(/Tu sesión se cerró o venció/)).toBeInTheDocument();
-    await waitFor(() => expect(sessionStorage.getItem("mentia_auth_v1")).toBeNull());
+    await waitFor(() => expect(localStorage.getItem("mentia_auth_v1")).toBeNull());
   });
 });

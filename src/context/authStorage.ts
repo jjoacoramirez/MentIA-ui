@@ -1,13 +1,15 @@
 import type { Role } from "../services/api";
 
 /**
- * Sesión de la pestaña: token, username y rol en sessionStorage, para sobrevivir a una recarga.
- * Se borra al cerrar la pestaña o la sesión. Nunca se guardan contraseñas ni códigos de recuperación.
+ * Sesión persistente del dispositivo. Nunca guarda contraseñas ni códigos de recuperación.
+ * El servidor sigue validando la vigencia, el rol y las revocaciones de cada token.
  */
 export interface StoredAuth {
   token: string;
   username: string;
   role: Role;
+  renewedAt?: number;
+  expiresAt?: number;
 }
 
 const AUTH = "mentia_auth_v1";
@@ -15,9 +17,12 @@ const DONE = "mentia_done_items_v1:";
 
 export function loadAuth(): StoredAuth | null {
   try {
-    const value = JSON.parse(sessionStorage.getItem(AUTH) || "null");
-    return value && typeof value.token === "string" && typeof value.username === "string"
-      && (value.role === "USER" || value.role === "ADMIN") ? value : null;
+    const value = JSON.parse(localStorage.getItem(AUTH) || sessionStorage.getItem(AUTH) || "null");
+    if (!value || typeof value.token !== "string" || typeof value.username !== "string"
+      || (value.role !== "USER" && value.role !== "ADMIN")) return null;
+    // Migra una sesión anterior que todavía esté abierta en esta pestaña.
+    saveAuth(value);
+    return value;
   } catch {
     return null;
   }
@@ -25,7 +30,8 @@ export function loadAuth(): StoredAuth | null {
 
 export function saveAuth(auth: StoredAuth) {
   try {
-    sessionStorage.setItem(AUTH, JSON.stringify(auth));
+    localStorage.setItem(AUTH, JSON.stringify(auth));
+    sessionStorage.removeItem(AUTH);
   } catch {
     // Sin almacenamiento la sesión dura hasta recargar.
   }
@@ -33,10 +39,17 @@ export function saveAuth(auth: StoredAuth) {
 
 export function clearAuth() {
   try {
+    localStorage.removeItem(AUTH);
     sessionStorage.removeItem(AUTH);
   } catch {
     // Nada que limpiar.
   }
+}
+
+/** Solo planifica la renovación; la validez del JWT siempre la decide el servidor. */
+export function shouldRenewAuth(auth: StoredAuth, now = Date.now()): boolean {
+  if (auth.expiresAt && auth.expiresAt <= now) return false;
+  return !auth.renewedAt || now - auth.renewedAt >= 864e5 || (!!auth.expiresAt && auth.expiresAt - now <= 864e5);
 }
 
 /** Ítems ya respondidos de una sesión en curso, para retomarla después de recargar sin repetirlos. */
