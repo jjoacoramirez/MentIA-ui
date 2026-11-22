@@ -5,6 +5,7 @@ import { Pause, X, Brain, CheckCircle2 } from "lucide-react";
 import { exerciseNames, Game, levelHint, type GameOutcome } from "../games";
 import { ApiError } from "../services/api";
 import { EncouragementNote } from "../components/EncouragementNote";
+import { ExerciseTutorial } from "../components/ExerciseTutorial";
 
 /**
  * Ejecuta una sesión del servidor: muestra cada ítem con su mecánica, registra el intento y al final la cierra.
@@ -86,7 +87,11 @@ export const GameSessionScreen: React.FC = () => {
           {phase === "intro" && item && (
             <>
               <h2 className="text-lg font-bold mb-3">{exerciseNames[item.exerciseType]}</h2>
-              <p className="mb-5">{item.instructions}</p>
+              <ExerciseTutorial key={item.sessionItemId} item={item} paused={paused || exit} />
+              {item.instructions && <details className="text-left text-sm mb-5">
+                <summary className="flow-link cursor-pointer py-2">Ver consigna de la actividad</summary>
+                <p className="mt-2 leading-relaxed">{item.instructions}</p>
+              </details>}
               {levelHint(item) && <p className="mb-5 font-semibold text-accent">{levelHint(item)}</p>}
               <EncouragementNote seed={done} className="mb-5" />
               <button className="flow-primary" onClick={() => setPhase("play")}>Comenzar actividad</button>
