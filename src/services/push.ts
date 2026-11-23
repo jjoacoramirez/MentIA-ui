@@ -1,7 +1,7 @@
 import { mentiaApi } from "./api";
 
 /**
- * Recordatorios de racha por web push. El navegador entrega una URL de suscripción y el servidor la usa para avisar
+ * Recordatorios de entrenamiento por web push. El navegador entrega una URL de suscripción y el servidor la usa para avisar
  * aunque la app esté cerrada. No se piden ni se guardan datos personales: solo esa URL, atada a la cuenta.
  *
  * Todo es "mejor esfuerzo": si el navegador no lo soporta o el servidor lo tiene apagado, la app funciona igual.

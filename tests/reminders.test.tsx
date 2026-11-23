@@ -224,7 +224,7 @@ describe("Cartel de recordatorio", () => {
     const { unmount } = render(<ReminderCard variant="prompt" />);
 
     fireEvent.click(await screen.findByRole("button", { name: "Ahora no" }));
-    expect(screen.queryByRole("region", { name: "Recordatorio de racha" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("region", { name: "Recordatorio de entrenamiento" })).not.toBeInTheDocument();
 
     unmount();
     const { container } = render(<ReminderCard variant="prompt" />);
