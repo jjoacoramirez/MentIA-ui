@@ -266,8 +266,8 @@ export const mentiaApi = {
   achievements: (token: string) => apiRequest<Achievement[]>("/achievements", {}, token),
   /** Recordatorios de racha por push: si el servidor los tiene habilitados y la clave pública para suscribirse. */
   pushConfig: (token: string) => apiRequest<PushConfig>("/notifications/push-config", {}, token),
-  subscribePush: (token: string, endpoint: string) =>
-    apiRequest<void>("/notifications/push-subscription", { method: "PUT", body: json({ endpoint }) }, token),
+  subscribePush: (token: string, endpoint: string, keys?: { p256dh: string; auth: string }) =>
+    apiRequest<void>("/notifications/push-subscription", { method: "PUT", body: json({ endpoint, ...keys }) }, token),
   unsubscribePush: (token: string, endpoint: string) =>
     apiRequest<void>("/notifications/push-subscription", { method: "DELETE", body: json({ endpoint }) }, token),
   /** Solo ADMIN (debug): manda ya el aviso de recordatorio a los dispositivos de una cuenta. */

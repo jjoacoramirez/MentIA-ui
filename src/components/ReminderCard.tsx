@@ -40,7 +40,7 @@ export function ReminderCard({ variant = "settings", className = "" }: { variant
           <h3 className="font-space font-bold mb-1">Recordatorio de entrenamiento</h3>
           <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">
             {reminder.on
-              ? "Te avisamos a las 19:00 (hora de Argentina) si todavía no entrenaste ese día, aunque aún no tengas racha. Un aviso por dispositivo al día como máximo."
+              ? "Te avisamos a las 19:00 (hora de Argentina) si todavía no entrenaste ese día: para mantener tu racha o animarte a empezar. Un aviso por dispositivo al día como máximo."
               : "¿Querés un recordatorio para empezar o seguir entrenando? Te avisamos a las 19:00 (hora de Argentina) si todavía no entrenaste ese día. Un aviso por dispositivo al día como máximo, y lo apagás cuando quieras."}
           </p>
           {reminder.blocked && (
