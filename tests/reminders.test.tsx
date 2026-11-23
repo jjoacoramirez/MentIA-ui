@@ -104,6 +104,16 @@ describe("Recordatorios de racha (servicio)", () => {
     expect(await isReminderOn("ana")).toBe(false);
   });
 
+  it("actualiza las claves del dispositivo ya habilitado sin pedir permiso ni volver a suscribir", async () => {
+    const { state, pushManager, notification } = installBrowser("granted", true);
+    const keys = { p256dh: "clave-publica-del-dispositivo", auth: "secreto-del-dispositivo" };
+    Object.assign(state.subscription!, { toJSON: () => ({ keys }) });
+    await expect(enableReminder("token-1", "ana")).resolves.toBe("ok");
+    expect(mentiaApi.subscribePush).toHaveBeenCalledWith("token-1", ENDPOINT, keys);
+    expect(notification.requestPermission).not.toHaveBeenCalled();
+    expect(pushManager.subscribe).not.toHaveBeenCalled();
+  });
+
   it("con el servidor sin recordatorios no pide permiso", async () => {
     const { notification } = installBrowser();
     vi.spyOn(mentiaApi, "pushConfig").mockResolvedValue({ enabled: false, publicKey: null });

@@ -88,7 +88,9 @@ export async function enableReminder(token: string, username: string, renew = fa
     subscription = null;
   }
   subscription ??= await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: serverKey });
-  await mentiaApi.subscribePush(token, subscription.endpoint);
+  const keys = subscription.toJSON?.().keys;
+  if (keys?.p256dh && keys.auth) await mentiaApi.subscribePush(token, subscription.endpoint, { p256dh: keys.p256dh, auth: keys.auth });
+  else await mentiaApi.subscribePush(token, subscription.endpoint);
   writeFlag(username, true);
   return "ok";
 }
