@@ -18,7 +18,7 @@ export interface ReminderState {
   message: string;
 }
 
-/** Estado y acciones de los recordatorios de racha para la cuenta con sesión iniciada. */
+/** Estado y acciones de los recordatorios de entrenamiento para la cuenta con sesión iniciada. */
 export function useReminder(): ReminderState {
   const { token } = useJourney();
   const { userStats } = useApp();

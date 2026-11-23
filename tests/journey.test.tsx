@@ -90,6 +90,8 @@ describe("Recorrido contra la API", () => {
     api.fetchMock.mockImplementationOnce(async () => { throw new TypeError("Sin conexión"); });
     render(<App />);
     await screen.findByText(/Tu sesión sigue guardada/);
+    // El aviso puede pintarse antes del finally que habilita los listeners de reconexión.
+    await waitFor(() => expect(screen.getByRole("main")).toHaveAttribute("aria-busy", "false"));
     expect(localStorage.getItem("mentia_auth_v1")).toBe(saved);
     expect(localStorage.getItem("mentia.push.enabled.sin_red")).toBe("1");
     fireEvent(window, new Event("online"));

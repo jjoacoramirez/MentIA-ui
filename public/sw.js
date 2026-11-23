@@ -1,5 +1,5 @@
 /*
- * Service worker de MentIA: solo muestra el recordatorio de racha.
+ * Service worker de MentIA: muestra el recordatorio de entrenamiento, con o sin racha.
  * El servidor manda el aviso sin contenido, así que el texto vive acá. No guarda nada en caché ni intercepta
  * requests: la app funciona igual sin él.
  */
@@ -9,7 +9,7 @@ self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim(
 self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification("Un momento para tu mente", {
-      body: "Todavía estás a tiempo de entrenar hoy y mantener tu racha.",
+      body: "Hoy podés dar el primer paso o seguir con tu hábito. Dedicá unos minutos a entrenar.",
       tag: "streak-reminder",
       // Versionar las URLs permite refrescar íconos antiguos guardados por el navegador.
       icon: "/icons/icon-192.png?v=2",
